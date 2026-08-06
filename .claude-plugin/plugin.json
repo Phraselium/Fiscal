@@ -1,0 +1,23 @@
+{
+  "name": "asesoria-fiscal-es",
+  "version": "1.0.0",
+  "description": "Asesoría fiscal española de despacho: todos los modelos de la AEAT, cálculo y revisión de IRPF, IVA, Sociedades, retenciones e informativas, procedimientos tributarios, Intrastat y generación de ficheros en los diseños de registro oficiales listos para importar en la sede electrónica.",
+  "license": "MIT",
+  "keywords": [
+    "fiscal",
+    "impuestos",
+    "aeat",
+    "irpf",
+    "iva",
+    "sociedades",
+    "retenciones",
+    "informativas",
+    "intrastat",
+    "espana",
+    "asesoria",
+    "contabilidad",
+    "modelo-303",
+    "modelo-200",
+    "modelo-100"
+  ]
+}

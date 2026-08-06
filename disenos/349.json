@@ -1,0 +1,50 @@
+{
+  "modelo": "349",
+  "descripcion": "Declaracion recapitulativa de operaciones intracomunitarias",
+  "longitud": 250,
+  "verificado": false,
+  "fuente": "Orden EHA/769/2010 y modificaciones posteriores — anexo de disenos de registro. Contrastar en https://www.boe.es y en la ficha del modelo 349 de la sede de la AEAT.",
+  "aviso": "BORRADOR. Contrastar posiciones con el anexo de la orden vigente antes de usarse en produccion.",
+  "pendiente_verificacion": [
+    "registro 1: posiciones 136-250 (totales y periodo)",
+    "registro 2: posiciones 92-250 (bloque de rectificaciones de periodos anteriores)",
+    "tabla de claves de operacion vigente"
+  ],
+  "registros": {
+    "1": [
+      {"nombre": "tipo_registro", "desde": 1, "hasta": 1, "tipo": "C", "valor": "1"},
+      {"nombre": "modelo", "desde": 2, "hasta": 4, "tipo": "C", "valor": "349"},
+      {"nombre": "ejercicio", "desde": 5, "hasta": 8, "tipo": "N", "obligatorio": true},
+      {"nombre": "nif_declarante", "desde": 9, "hasta": 17, "tipo": "A", "obligatorio": true},
+      {"nombre": "denominacion_declarante", "desde": 18, "hasta": 57, "tipo": "A", "obligatorio": true},
+      {"nombre": "tipo_soporte", "desde": 58, "hasta": 58, "tipo": "C", "valor": "T"},
+      {"nombre": "telefono_contacto", "desde": 59, "hasta": 67, "tipo": "N", "obligatorio": true},
+      {"nombre": "persona_contacto", "desde": 68, "hasta": 107, "tipo": "A", "obligatorio": true},
+      {"nombre": "numero_identificativo", "desde": 108, "hasta": 120, "tipo": "N", "obligatorio": true},
+      {"nombre": "declaracion_complementaria", "desde": 121, "hasta": 121, "tipo": "A"},
+      {"nombre": "declaracion_sustitutiva", "desde": 122, "hasta": 122, "tipo": "A"},
+      {"nombre": "numero_identificativo_anterior", "desde": 123, "hasta": 135, "tipo": "N"},
+      {"nombre": "periodo", "desde": 136, "hasta": 137, "tipo": "A", "obligatorio": true, "descripcion": "01-12 mensual, 1T-4T trimestral, 0A anual"},
+      {"nombre": "numero_total_operadores", "desde": 138, "hasta": 146, "tipo": "N", "obligatorio": true},
+      {"nombre": "signo_total_operaciones", "desde": 147, "hasta": 147, "tipo": "S", "campo_importe": "importe_total_operaciones"},
+      {"nombre": "importe_total_operaciones", "desde": 148, "hasta": 162, "tipo": "I", "obligatorio": true},
+      {"nombre": "numero_total_operadores_rectificaciones", "desde": 163, "hasta": 171, "tipo": "N"},
+      {"nombre": "signo_total_rectificaciones", "desde": 172, "hasta": 172, "tipo": "S", "campo_importe": "importe_total_rectificaciones"},
+      {"nombre": "importe_total_rectificaciones", "desde": 173, "hasta": 187, "tipo": "I"},
+      {"nombre": "blancos_final", "desde": 188, "hasta": 250, "tipo": "X"}
+    ],
+    "2": [
+      {"nombre": "tipo_registro", "desde": 1, "hasta": 1, "tipo": "C", "valor": "2"},
+      {"nombre": "modelo", "desde": 2, "hasta": 4, "tipo": "C", "valor": "349"},
+      {"nombre": "ejercicio", "desde": 5, "hasta": 8, "tipo": "N", "obligatorio": true},
+      {"nombre": "nif_declarante", "desde": 9, "hasta": 17, "tipo": "A", "obligatorio": true},
+      {"nombre": "codigo_pais_operador", "desde": 18, "hasta": 19, "tipo": "A", "obligatorio": true},
+      {"nombre": "nif_operador_intracomunitario", "desde": 20, "hasta": 36, "tipo": "A", "obligatorio": true, "descripcion": "Sin el prefijo de pais"},
+      {"nombre": "nombre_operador", "desde": 37, "hasta": 76, "tipo": "A", "obligatorio": true},
+      {"nombre": "clave_operacion", "desde": 77, "hasta": 77, "tipo": "A", "obligatorio": true, "descripcion": "A adquisiciones, E entregas, T ventas en otro EM tras AIB, S prestaciones de servicios, I adquisiciones de servicios, M entregas sin impuesto tras importacion, H entregas por representante fiscal, R transferencias en acuerdos de venta en consigna, D devoluciones de bienes en consigna, C sustitucion del destinatario"},
+      {"nombre": "signo_base_imponible", "desde": 78, "hasta": 78, "tipo": "S", "campo_importe": "base_imponible"},
+      {"nombre": "base_imponible", "desde": 79, "hasta": 91, "tipo": "I", "obligatorio": true},
+      {"nombre": "bloque_rectificaciones", "desde": 92, "hasta": 250, "tipo": "X", "descripcion": "PENDIENTE DE VERIFICAR: ejercicio y periodo rectificados, signo e importe de la base rectificada"}
+    ]
+  }
+}

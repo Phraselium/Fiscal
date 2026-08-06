@@ -1,0 +1,24 @@
+# Datos de clientes y ficheros generados — NUNCA se versionan
+clientes/
+salidas/
+*.csv.local
+datos/
+
+# Ficheros de declaración generados
+*.txt.aeat
+190-*.txt
+347-*.txt
+349-*.txt
+180-*.txt
+193-*.txt
+intrastat-*.csv
+
+# Certificados y credenciales
+*.p12
+*.pfx
+*.pem
+*.key
+
+__pycache__/
+*.pyc
+.DS_Store

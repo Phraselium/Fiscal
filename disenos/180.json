@@ -1,0 +1,50 @@
+{
+  "modelo": "180",
+  "descripcion": "Resumen anual de retenciones e ingresos a cuenta sobre rendimientos procedentes del arrendamiento de inmuebles urbanos",
+  "longitud": 250,
+  "verificado": false,
+  "fuente": "Orden de 1998 del modelo 180 y modificaciones posteriores — anexo de disenos de registro. Contrastar en https://www.boe.es y en la ficha del modelo 180 de la sede de la AEAT.",
+  "aviso": "BORRADOR. Contrastar posiciones con el anexo de la orden vigente antes de usarse en produccion.",
+  "pendiente_verificacion": [
+    "registro 1: posiciones 136-250 (totales)",
+    "registro 2: posiciones 110-250 (situacion del inmueble, referencia catastral, modo de determinacion y datos del local)"
+  ],
+  "registros": {
+    "1": [
+      {"nombre": "tipo_registro", "desde": 1, "hasta": 1, "tipo": "C", "valor": "1"},
+      {"nombre": "modelo", "desde": 2, "hasta": 4, "tipo": "C", "valor": "180"},
+      {"nombre": "ejercicio", "desde": 5, "hasta": 8, "tipo": "N", "obligatorio": true},
+      {"nombre": "nif_declarante", "desde": 9, "hasta": 17, "tipo": "A", "obligatorio": true},
+      {"nombre": "denominacion_declarante", "desde": 18, "hasta": 57, "tipo": "A", "obligatorio": true},
+      {"nombre": "tipo_soporte", "desde": 58, "hasta": 58, "tipo": "C", "valor": "T"},
+      {"nombre": "telefono_contacto", "desde": 59, "hasta": 67, "tipo": "N", "obligatorio": true},
+      {"nombre": "persona_contacto", "desde": 68, "hasta": 107, "tipo": "A", "obligatorio": true},
+      {"nombre": "numero_identificativo", "desde": 108, "hasta": 120, "tipo": "N", "obligatorio": true},
+      {"nombre": "declaracion_complementaria", "desde": 121, "hasta": 121, "tipo": "A"},
+      {"nombre": "declaracion_sustitutiva", "desde": 122, "hasta": 122, "tipo": "A"},
+      {"nombre": "numero_identificativo_anterior", "desde": 123, "hasta": 135, "tipo": "N"},
+      {"nombre": "numero_total_perceptores", "desde": 136, "hasta": 144, "tipo": "N", "obligatorio": true},
+      {"nombre": "signo_total_percepciones", "desde": 145, "hasta": 145, "tipo": "S", "campo_importe": "importe_total_percepciones"},
+      {"nombre": "importe_total_percepciones", "desde": 146, "hasta": 160, "tipo": "I", "obligatorio": true},
+      {"nombre": "signo_total_retenciones", "desde": 161, "hasta": 161, "tipo": "S", "campo_importe": "importe_total_retenciones"},
+      {"nombre": "importe_total_retenciones", "desde": 162, "hasta": 176, "tipo": "I", "obligatorio": true},
+      {"nombre": "blancos_final", "desde": 177, "hasta": 250, "tipo": "X"}
+    ],
+    "2": [
+      {"nombre": "tipo_registro", "desde": 1, "hasta": 1, "tipo": "C", "valor": "2"},
+      {"nombre": "modelo", "desde": 2, "hasta": 4, "tipo": "C", "valor": "180"},
+      {"nombre": "ejercicio", "desde": 5, "hasta": 8, "tipo": "N", "obligatorio": true},
+      {"nombre": "nif_declarante", "desde": 9, "hasta": 17, "tipo": "A", "obligatorio": true},
+      {"nombre": "nif_perceptor", "desde": 18, "hasta": 26, "tipo": "A", "obligatorio": true},
+      {"nombre": "nif_representante", "desde": 27, "hasta": 35, "tipo": "A"},
+      {"nombre": "apellidos_nombre_perceptor", "desde": 36, "hasta": 75, "tipo": "A", "obligatorio": true},
+      {"nombre": "codigo_provincia", "desde": 76, "hasta": 77, "tipo": "N", "obligatorio": true},
+      {"nombre": "ejercicio_devengo", "desde": 78, "hasta": 81, "tipo": "N"},
+      {"nombre": "signo_percepcion_integra", "desde": 82, "hasta": 82, "tipo": "S", "campo_importe": "percepcion_integra"},
+      {"nombre": "percepcion_integra", "desde": 83, "hasta": 95, "tipo": "I", "obligatorio": true},
+      {"nombre": "signo_retenciones", "desde": 96, "hasta": 96, "tipo": "S", "campo_importe": "retenciones_practicadas"},
+      {"nombre": "retenciones_practicadas", "desde": 97, "hasta": 109, "tipo": "I", "obligatorio": true},
+      {"nombre": "datos_inmueble", "desde": 110, "hasta": 250, "tipo": "X", "descripcion": "PENDIENTE DE VERIFICAR: modo de determinacion, situacion del inmueble, referencia catastral y direccion del local arrendado"}
+    ]
+  }
+}

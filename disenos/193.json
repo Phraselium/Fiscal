@@ -1,0 +1,52 @@
+{
+  "modelo": "193",
+  "descripcion": "Resumen anual de retenciones e ingresos a cuenta sobre determinados rendimientos del capital mobiliario",
+  "longitud": 250,
+  "verificado": false,
+  "fuente": "Orden EHA/3377/2011 y modificaciones posteriores — anexo de disenos de registro. Contrastar en https://www.boe.es y en la ficha del modelo 193 de la sede de la AEAT.",
+  "aviso": "BORRADOR. Contrastar posiciones con el anexo de la orden vigente antes de usarse en produccion.",
+  "pendiente_verificacion": [
+    "registro 1: posiciones 136-250 (totales)",
+    "registro 2: posiciones 110-250 (gastos, porcentaje de retencion y datos adicionales por clave)"
+  ],
+  "registros": {
+    "1": [
+      {"nombre": "tipo_registro", "desde": 1, "hasta": 1, "tipo": "C", "valor": "1"},
+      {"nombre": "modelo", "desde": 2, "hasta": 4, "tipo": "C", "valor": "193"},
+      {"nombre": "ejercicio", "desde": 5, "hasta": 8, "tipo": "N", "obligatorio": true},
+      {"nombre": "nif_declarante", "desde": 9, "hasta": 17, "tipo": "A", "obligatorio": true},
+      {"nombre": "denominacion_declarante", "desde": 18, "hasta": 57, "tipo": "A", "obligatorio": true},
+      {"nombre": "tipo_soporte", "desde": 58, "hasta": 58, "tipo": "C", "valor": "T"},
+      {"nombre": "telefono_contacto", "desde": 59, "hasta": 67, "tipo": "N", "obligatorio": true},
+      {"nombre": "persona_contacto", "desde": 68, "hasta": 107, "tipo": "A", "obligatorio": true},
+      {"nombre": "numero_identificativo", "desde": 108, "hasta": 120, "tipo": "N", "obligatorio": true},
+      {"nombre": "declaracion_complementaria", "desde": 121, "hasta": 121, "tipo": "A"},
+      {"nombre": "declaracion_sustitutiva", "desde": 122, "hasta": 122, "tipo": "A"},
+      {"nombre": "numero_identificativo_anterior", "desde": 123, "hasta": 135, "tipo": "N"},
+      {"nombre": "numero_total_perceptores", "desde": 136, "hasta": 144, "tipo": "N", "obligatorio": true},
+      {"nombre": "signo_total_percepciones", "desde": 145, "hasta": 145, "tipo": "S", "campo_importe": "importe_total_percepciones"},
+      {"nombre": "importe_total_percepciones", "desde": 146, "hasta": 160, "tipo": "I", "obligatorio": true},
+      {"nombre": "signo_total_retenciones", "desde": 161, "hasta": 161, "tipo": "S", "campo_importe": "importe_total_retenciones"},
+      {"nombre": "importe_total_retenciones", "desde": 162, "hasta": 176, "tipo": "I", "obligatorio": true},
+      {"nombre": "blancos_final", "desde": 177, "hasta": 250, "tipo": "X"}
+    ],
+    "2": [
+      {"nombre": "tipo_registro", "desde": 1, "hasta": 1, "tipo": "C", "valor": "2"},
+      {"nombre": "modelo", "desde": 2, "hasta": 4, "tipo": "C", "valor": "193"},
+      {"nombre": "ejercicio", "desde": 5, "hasta": 8, "tipo": "N", "obligatorio": true},
+      {"nombre": "nif_declarante", "desde": 9, "hasta": 17, "tipo": "A", "obligatorio": true},
+      {"nombre": "nif_perceptor", "desde": 18, "hasta": 26, "tipo": "A", "obligatorio": true},
+      {"nombre": "nif_representante", "desde": 27, "hasta": 35, "tipo": "A"},
+      {"nombre": "apellidos_nombre_perceptor", "desde": 36, "hasta": 75, "tipo": "A", "obligatorio": true},
+      {"nombre": "codigo_provincia", "desde": 76, "hasta": 77, "tipo": "N", "obligatorio": true},
+      {"nombre": "clave_percepcion", "desde": 78, "hasta": 78, "tipo": "A", "obligatorio": true, "descripcion": "A dividendos y participaciones en fondos propios, B otros rendimientos del capital mobiliario, C propiedad intelectual e industrial, D arrendamiento de bienes muebles y negocios"},
+      {"nombre": "subclave", "desde": 79, "hasta": 80, "tipo": "N"},
+      {"nombre": "ejercicio_devengo", "desde": 81, "hasta": 84, "tipo": "N"},
+      {"nombre": "signo_percepcion_integra", "desde": 85, "hasta": 85, "tipo": "S", "campo_importe": "percepcion_integra"},
+      {"nombre": "percepcion_integra", "desde": 86, "hasta": 98, "tipo": "I", "obligatorio": true},
+      {"nombre": "signo_retenciones", "desde": 99, "hasta": 99, "tipo": "S", "campo_importe": "retenciones_practicadas"},
+      {"nombre": "retenciones_practicadas", "desde": 100, "hasta": 112, "tipo": "I", "obligatorio": true},
+      {"nombre": "datos_adicionales", "desde": 113, "hasta": 250, "tipo": "X", "descripcion": "PENDIENTE DE VERIFICAR: gastos deducibles, porcentaje de retencion y datos especificos por clave"}
+    ]
+  }
+}

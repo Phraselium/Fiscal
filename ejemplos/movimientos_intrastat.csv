@@ -1,0 +1,4 @@
+estado_miembro;pais_origen;provincia;condiciones_entrega;naturaleza_transaccion;modalidad_transporte;codigo_nc8;masa_neta;unidades_suplementarias;importe_facturado;importe_estadistico;regimen_estadistico;nif_iva_contraparte
+FR;ES;28;EXW;11;3;84713000;1250,500;40;38500,00;38500,00;1;FR12345678901
+DE;ES;28;CIF;11;3;85176200;320,750;120;27400,50;27900,00;1;DE123456789
+IT;PT;08;FCA;11;3;39269097;890,000;;15250,00;15250,00;1;IT12345678901
