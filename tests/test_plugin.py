@@ -400,10 +400,28 @@ class TestPrivacidad(unittest.TestCase):
                            cwd=RAIZ, capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, f"hay datos privados versionados:\n{r.stdout}")
 
+    @staticmethod
+    def _nif_valido_no_permitido() -> str:
+        """Genera un NIF con letra correcta que no este en la lista de permitidos.
+
+        Se construye en tiempo de ejecucion a proposito: asi ningun identificador
+        con letra de control valida aparece literalmente en el codigo fuente, y el
+        propio comprobador no tiene nada que marcar en este fichero.
+        """
+        from lib.validaciones import LETRAS_NIF
+        import comprobar_privacidad as priv
+        for numero in range(11111111, 11111211):
+            candidato = f"{numero:08d}{LETRAS_NIF[numero % 23]}"
+            if candidato not in priv.NIF_PERMITIDOS:
+                return candidato
+        raise AssertionError("no se ha podido generar un NIF de prueba")
+
     def test_detecta_nif_real(self):
+        nif = self._nif_valido_no_permitido()
+        self.assertTrue(validar_nif(nif)[0], "el vector generado debe ser un NIF valido")
         with tempfile.TemporaryDirectory() as tmp:
             f = Path(tmp) / "fuga.md"
-            f.write_text("NIF B58818501 del cliente", encoding="utf-8")
+            f.write_text(f"NIF {nif} del cliente", encoding="utf-8")
             import comprobar_privacidad as priv
             hallazgos = priv.revisar_texto(f, "fuga.md", [])
             self.assertTrue(any(h.tipo == "NIF/NIE/CIF VALIDO" for h in hallazgos))

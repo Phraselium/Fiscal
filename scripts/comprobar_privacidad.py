@@ -54,8 +54,15 @@ RE_IBAN = re.compile(r"\b(ES\d{2}[ ]?(?:\d{4}[ ]?){5})\b", re.I)
 RE_EMAIL = re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.]{2,}\b")
 RE_TELEFONO = re.compile(r"(?<!\d)(?:\+34[ -]?)?[6789]\d{2}[ -]?\d{3}[ -]?\d{3}(?!\d)")
 
-# NIF sinteticos admitidos en ejemplos y documentacion.
-NIF_PERMITIDOS = {"12345678Z", "87654321X", "00000001R", "B12345674", "X1234567L", "00000000T"}
+# Identificadores sinteticos admitidos en ejemplos y documentacion.
+# Las pruebas NO anaden vectores aqui: generan sus identificadores en tiempo de
+# ejecucion, para que ningun NIF con letra valida aparezca literal en el codigo.
+NIF_PERMITIDOS = {
+    "12345678Z", "87654321X", "00000001R", "B12345674", "X1234567L", "00000000T",
+}
+IBAN_PERMITIDOS = {
+    "ES9121000418450200051332",  # IBAN de ejemplo de la documentacion del algoritmo
+}
 EMAIL_PERMITIDOS = {"fiscal@ejemplo.es", "noreply@anthropic.com"}
 TELEFONO_PERMITIDOS = {"911234567"}
 
@@ -110,6 +117,8 @@ def revisar_texto(ruta: Path, relativo: str, denylist: list[str]) -> list[Hallaz
 
         for bruto in RE_IBAN.findall(linea):
             iban = bruto.replace(" ", "").upper()
+            if iban in IBAN_PERMITIDOS:
+                continue
             valido, _ = validar_iban(iban)
             if valido:
                 hallazgos.append(Hallazgo(relativo, numero, "IBAN VALIDO", iban))
