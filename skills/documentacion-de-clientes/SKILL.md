@@ -102,7 +102,7 @@ Vencimiento Comunicación de qué se ha presentado, con qué datos y con qué re
 Refleja el estado en el control para que la cola de trabajo sea real:
 
 ```bash
-python3 scripts/control.py marcar --cliente "X" --modelo 303 --estado Documentación --simular
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py marcar --cliente "X" --modelo 303 --estado Documentación --simular
 ```
 
 ## Priorizar 85 clientes

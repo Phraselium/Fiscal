@@ -14,7 +14,7 @@ un local, donde retiene el, no el arrendador.
 ## Tipos
 
 ```bash
-python3 scripts/parametros.py buscar retenciones
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar retenciones
 ```
 
 Los mas usados: profesionales **15 %** (7 % en el ano de inicio y los 2 siguientes, previa
@@ -44,7 +44,7 @@ El trabajo por cuenta ajena no tiene tipo fijo: procedimiento del art. 80 ss. RI
 
 **Regla practica**: antes de cada trimestre, contrasta la matriz del control con el 036 de
 cada cliente. Las celdas «No aplica» que deberian estar en flujo (y al reves) salen con
-`python3 scripts/control.py huecos`.
+`python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py huecos`.
 
 ## Modelos
 

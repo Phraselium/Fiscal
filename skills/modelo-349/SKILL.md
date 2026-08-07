@@ -75,7 +75,7 @@ corriente, indicando el ejercicio y el periodo rectificados y el importe correct
 ## 6. Generar el fichero
 
 ```bash
-python3 scripts/generar_informativa.py \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_informativa.py \
   --modelo 349 --ejercicio 2026 \
   --declarante clientes/<NIF>/declarante.json \
   --detalle    clientes/<NIF>/operadores-2026-07.csv \

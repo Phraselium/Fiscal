@@ -8,17 +8,19 @@ electrónica. Diseñado para usarse con ~85 clientes sin quemar contexto ni inve
 ## Instalación
 
 ```
-/plugin marketplace add <usuario>/<repositorio>
+/plugin marketplace add Phraselium/Fiscal
 /plugin install asesoria-fiscal-es@asesoria-fiscal-es
 ```
+
+Guía completa en **[INSTALACION.md](INSTALACION.md)**.
 
 Después:
 
 ```bash
 pip install -r requirements.txt                        # openpyxl, solo para el control
-python3 scripts/comprobar_privacidad.py --instalar-hook # bloquea commits con datos privados
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/comprobar_privacidad.py --instalar-hook # bloquea commits con datos privados
 python3 tests/test_plugin.py                            # 54 pruebas
-python3 scripts/parametros.py revisar                   # qué cifras hay que contrastar
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py revisar                   # qué cifras hay que contrastar
 ```
 
 Y completa `config/configuracion.md` con los datos del despacho — pero **no lo subas
@@ -101,38 +103,38 @@ prohibición de inventar cifras), `catalogo-modelos-aeat`, `calendario-fiscal`,
 
 ```bash
 # Estado de la cartera (NO leas el Excel entero)
-python3 scripts/control.py --fichero Control.xlsx resumen
-python3 scripts/control.py --fichero Control.xlsx cola --estado Revisar
-python3 scripts/control.py --fichero Control.xlsx cliente "EJEMPLO CLIENTE SL"
-python3 scripts/control.py --fichero Control.xlsx huecos
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx resumen
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cola --estado Revisar
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cliente "EJEMPLO CLIENTE SL"
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx huecos
 
 # Cuadre entre modelos antes de presentar
-python3 scripts/cuadrar.py --plantilla > cliente-2025.json
-python3 scripts/cuadrar.py --datos cliente-2025.json
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/cuadrar.py --plantilla > cliente-2025.json
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/cuadrar.py --datos cliente-2025.json
 
 # Parámetros fiscales, con aviso de los que no son fiables
-python3 scripts/parametros.py ver verifactu.fecha_obligatoriedad
-python3 scripts/parametros.py revisar
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py ver verifactu.fecha_obligatoriedad
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py revisar
 
 # Fichero de una informativa en diseño de registro
-python3 scripts/generar_informativa.py --modelo 190 --ejercicio 2025 \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_informativa.py --modelo 190 --ejercicio 2025 \
   --declarante ejemplos/declarante.json --detalle ejemplos/perceptores_190.csv \
   --salida salidas/190-2025.txt
 
 # Intrastat listo para el portal de Aduanas
-python3 scripts/generar_intrastat.py --flujo expedicion --periodo 2026-07 \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_intrastat.py --flujo expedicion --periodo 2026-07 \
   --declarante ejemplos/declarante_intrastat.json \
   --lineas ejemplos/movimientos_intrastat.csv --salida salidas/intrastat-D-2026-07.csv
 
 # Validar y descomponer campo a campo
-python3 scripts/validar_fichero.py salidas/190-2025.txt --modelo 190 --detallar 3
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/validar_fichero.py salidas/190-2025.txt --modelo 190 --detallar 3
 
 # Plazos y recargos
-python3 scripts/calcular_plazos.py recargo --fin-plazo 20/07/2026 \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py recargo --fin-plazo 20/07/2026 \
   --presentacion 05/11/2026 --cuota 4500
 
 # Validar NIF, NIE y CIF
-python3 scripts/lib/validaciones.py 12345678Z B12345674
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/lib/validaciones.py 12345678Z B12345674
 ```
 
 Solo requieren Python 3.10+ de la biblioteca estándar. Sin dependencias externas.
@@ -165,9 +167,9 @@ El plugin es código publicable; los datos del despacho no lo son. Tres capas:
    comprobación.
 
 ```bash
-python3 scripts/comprobar_privacidad.py            # lo versionado
-python3 scripts/comprobar_privacidad.py --staged   # lo que va a commit
-python3 scripts/comprobar_privacidad.py --historial # busca en todo el historial
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/comprobar_privacidad.py            # lo versionado
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/comprobar_privacidad.py --staged   # lo que va a commit
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/comprobar_privacidad.py --historial # busca en todo el historial
 ```
 
 Para vigilar los nombres de tu cartera, copia `datos/nombres_privados.ejemplo.txt` a
@@ -208,7 +210,7 @@ El conocimiento del modelo tiene fecha de corte y la normativa cambia varias vec
 `datos/parametros.json` marca cada dato con su estado y su fuente:
 
 ```
-python3 scripts/parametros.py revisar
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py revisar
 !!  VOLATILES (13)        cambian cada ejercicio — verificar SIEMPRE
 ?   SIN VERIFICAR (9)     del conocimiento del modelo — contrastar
     Fiables sin reverificar: 87/118

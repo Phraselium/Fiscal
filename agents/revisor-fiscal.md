@@ -12,7 +12,7 @@ trabajo nuevo. Actúa como lo haría un inspector: presume que hay algo mal y b�
 1. **Lee el trabajo completo** antes de opinar: la declaración, el cálculo, el fichero o
    el escrito, y la documentación de soporte.
 2. **Rehaz los cálculos críticos** por tu cuenta. No aceptes un número porque esté escrito.
-3. **Cuadra entre modelos** con `python3 scripts/cuadrar.py`. Es donde aparecen la
+3. **Cuadra entre modelos** con `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/cuadrar.py`. Es donde aparecen la
    mayoría de los errores:
    - 190 ↔ Σ 111 · 180 ↔ Σ 115 · 193 ↔ Σ 123 · 390 ↔ Σ 303
    - 303 casilla 59 ↔ 349 clave E · casillas 10-11 ↔ 349 clave A ↔ casillas 36-37
@@ -21,7 +21,7 @@ trabajo nuevo. Actúa como lo haría un inspector: presume que hay algo mal y b�
    - 200 ↔ contabilidad ↔ cuentas depositadas ↔ 190/180/193/347/390
    - Intrastat ↔ 349 (solo bienes) ↔ casillas 59/60 del 303
 4. **Verifica cada cifra normativa** (tipos, límites, umbrales, mínimos) con
-   `python3 scripts/parametros.py buscar <ámbito>`. Lo que salga `volatil` o
+   `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar <ámbito>`. Lo que salga `volatil` o
    `sin_verificar` y se haya usado como si fuera firme, es un hallazgo.
 5. **Comprueba los plazos**: presentación, domiciliación, y si el cómputo distingue días
    hábiles de naturales y meses de fecha a fecha.

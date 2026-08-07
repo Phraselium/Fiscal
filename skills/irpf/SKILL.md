@@ -39,7 +39,7 @@ comerciales, transporte y vigilancia. **No lo confundas con el 50 % del IVA.**
 
 ## Cifras
 
-`python3 scripts/parametros.py buscar irpf` — escalas, minimos y limites. Las marcadas
+`python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar irpf` — escalas, minimos y limites. Las marcadas
 `sin_verificar` hay que contrastarlas en el manual de Renta del ejercicio antes de usarlas.
 
 ## Modelos

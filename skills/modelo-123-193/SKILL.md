@@ -70,7 +70,7 @@ de retener: retener de más obliga al socio a pedir la devolución.
 ## 5. Generar el fichero del 193
 
 ```bash
-python3 scripts/generar_informativa.py \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_informativa.py \
   --modelo 193 --ejercicio 2025 \
   --declarante clientes/<NIF>/declarante.json \
   --detalle    clientes/<NIF>/perceptores-capital.csv \

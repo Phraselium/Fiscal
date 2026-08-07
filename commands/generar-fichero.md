@@ -23,13 +23,13 @@ Carga la skill `generacion-de-ficheros` (o `intrastat` si el modelo es Intrastat
 
 4. **Generar**:
    ```bash
-   python3 scripts/generar_informativa.py --modelo <M> --ejercicio <E> \
+   python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_informativa.py --modelo <M> --ejercicio <E> \
      --declarante <J> --detalle <D> --salida salidas/<M>-<E>-<NIF>.txt
    ```
 
 5. **Validar**:
    ```bash
-   python3 scripts/validar_fichero.py salidas/<fichero> --modelo <M> --detallar 3
+   python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/validar_fichero.py salidas/<fichero> --modelo <M> --detallar 3
    ```
    Revisa visualmente el primer registro de detalle buscando desplazamientos de campo.
 

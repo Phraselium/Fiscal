@@ -30,7 +30,7 @@ presentado»: lo que existe es un fichero pendiente de importar.
 ## 3. Generar una informativa
 
 ```bash
-python3 scripts/generar_informativa.py \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_informativa.py \
   --modelo 190 \
   --ejercicio 2025 \
   --declarante clientes/B12345674/declarante.json \
@@ -98,7 +98,7 @@ darlo por bueno.
 ## 6. Validar antes de subir
 
 ```bash
-python3 scripts/validar_fichero.py salidas/190-2025.txt --modelo 190 --detallar 3
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/validar_fichero.py salidas/190-2025.txt --modelo 190 --detallar 3
 ```
 
 Comprueba codificación ISO-8859-1, longitud de registro, separador CRLF, tipos de
@@ -134,11 +134,11 @@ Si un cuadre no sale, **para y explica la diferencia** antes de generar nada.
 ## 9. Plazos y recargos
 
 ```bash
-python3 scripts/calcular_plazos.py plazo      --notificacion 15/09/2026 --meses 1
-python3 scripts/calcular_plazos.py plazo      --notificacion 15/09/2026 --dias-habiles 10
-python3 scripts/calcular_plazos.py voluntaria --notificacion 03/10/2026
-python3 scripts/calcular_plazos.py recargo    --fin-plazo 20/07/2026 --presentacion 05/11/2026 --cuota 4500
-python3 scripts/calcular_plazos.py ejecutivo  --cuota 4500
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py plazo      --notificacion 15/09/2026 --meses 1
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py plazo      --notificacion 15/09/2026 --dias-habiles 10
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py voluntaria --notificacion 03/10/2026
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py recargo    --fin-plazo 20/07/2026 --presentacion 05/11/2026 --cuota 4500
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py ejecutivo  --cuota 4500
 ```
 
 El cálculo de días hábiles solo excluye sábados y domingos: pasa los festivos con

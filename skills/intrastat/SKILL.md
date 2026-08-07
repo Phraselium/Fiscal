@@ -19,7 +19,7 @@ Gestion: Departamento de Aduanas e II.EE.
 Dos flujos **independientes**: INTRODUCCION (llegadas) y EXPEDICION (salidas).
 
 ```bash
-python3 scripts/parametros.py ver intrastat.umbral_exencion
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py ver intrastat.umbral_exencion
 ```
 
 Umbral de **400.000 €** anuales por flujo. La obligacion nace **el mes en que se supera** y
@@ -46,7 +46,7 @@ perfeccionamiento en ambos sentidos y devoluciones con su naturaleza propia.
 ## Generar
 
 ```bash
-python3 scripts/generar_intrastat.py --flujo expedicion --periodo AAAA-MM \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_intrastat.py --flujo expedicion --periodo AAAA-MM \
   --declarante <json> --lineas <csv> --salida salidas/intrastat-D-AAAA-MM.csv
 ```
 

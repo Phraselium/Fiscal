@@ -31,7 +31,7 @@ description: Impuesto sobre el Valor Añadido — sujeción, exenciones, localiz
 
 ## Cifras
 
-No las memorices. `python3 scripts/parametros.py buscar iva`
+No las memorices. `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar iva`
 
 Los **tipos reducidos temporales** de alimentacion y energia han cambiado varias veces:
 verifica el tipo vigente **a la fecha de devengo** de cada operacion, no el de hoy.

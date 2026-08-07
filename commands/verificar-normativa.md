@@ -8,7 +8,7 @@ Verificación de normativa: **$ARGUMENTS**
 `datos/parametros.json` es una referencia de trabajo, no una fuente oficial. Este comando
 la contrasta y la actualiza.
 
-1. Ejecuta `python3 scripts/parametros.py revisar` y quédate con los marcados `volatil` y
+1. Ejecuta `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py revisar` y quédate con los marcados `volatil` y
    `sin_verificar` del ámbito solicitado. Añade `--caducados` para los verificados hace
    más de 12 meses.
 

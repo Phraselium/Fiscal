@@ -80,7 +80,7 @@ y la situación del inmueble.
 ## 7. Generar el fichero
 
 ```bash
-python3 scripts/generar_informativa.py \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_informativa.py \
   --modelo 347 --ejercicio 2025 \
   --declarante clientes/<NIF>/declarante.json \
   --detalle    clientes/<NIF>/terceros.csv \

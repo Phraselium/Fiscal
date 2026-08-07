@@ -50,7 +50,7 @@ modelo cada periodo.
 | Premios de juegos, concursos y rifas | **19 %** |
 | Cesión de derechos de imagen | **24 %** |
 
-Verifica los tipos del ejercicio: `python3 scripts/parametros.py buscar retenciones`.
+Verifica los tipos del ejercicio: `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar retenciones`.
 
 ## 4. Errores frecuentes
 

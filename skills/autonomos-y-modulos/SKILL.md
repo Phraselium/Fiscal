@@ -35,7 +35,7 @@ afectacion, **factura completa** (no ticket) y registro en los libros.
 Los **limites de exclusion se prorrogan ano a ano**. No los des por sabidos:
 
 ```bash
-python3 scripts/parametros.py ver irpf.modulos.limites
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py ver irpf.modulos.limites
 ```
 
 Consulta la **Orden anual de modulos** del ejercicio (se publica en noviembre-diciembre).

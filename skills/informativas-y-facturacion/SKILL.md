@@ -8,7 +8,7 @@ description: Declaraciones informativas (modelos 347, 349, 720, 721, 232, 190, 1
 ## Informativas: umbrales
 
 ```bash
-python3 scripts/parametros.py buscar informativas
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar informativas
 ```
 
 | Modelo | Umbral | Plazo |
@@ -43,7 +43,7 @@ Rectificativas: **serie propia y separada**, identificando la factura rectificad
 ## VeriFactu: fechas aplazadas DOS veces
 
 ```bash
-python3 scripts/parametros.py ver verifactu.fecha_obligatoriedad
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py ver verifactu.fecha_obligatoriedad
 ```
 
 El RD-ley 15/2025 (BOE 03-12-2025) llevo la obligacion a **1-1-2027** (contribuyentes del

@@ -27,7 +27,7 @@ Carga la skill `intrastat`.
 
 5. **Generar**, un fichero por flujo:
    ```bash
-   python3 scripts/generar_intrastat.py --flujo <introduccion|expedicion> \
+   python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_intrastat.py --flujo <introduccion|expedicion> \
      --periodo AAAA-MM --declarante <J> --lineas <CSV> --salida salidas/<...>.csv
    ```
    El script valida y aborta si encuentra incidencias; resuélvelas antes de forzar.

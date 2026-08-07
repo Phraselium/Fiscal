@@ -56,7 +56,7 @@ catastral** (obtenible en la sede del Catastro) y la situación del inmueble.
 ### Generar el fichero
 
 ```bash
-python3 scripts/generar_informativa.py \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_informativa.py \
   --modelo 180 --ejercicio 2025 \
   --declarante clientes/<NIF>/declarante.json \
   --detalle    clientes/<NIF>/arrendadores.csv \

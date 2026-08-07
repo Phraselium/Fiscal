@@ -388,6 +388,19 @@ class TestEstructuraDelPlugin(unittest.TestCase):
                         self.assertTrue((RAIZ / referencia).exists(),
                                         f"{referencia} no existe")
 
+    def test_rutas_de_script_funcionan_instalado(self):
+        """Instalado como plugin, el cwd no es el repo: las rutas desnudas fallarian."""
+        import re
+        malas = []
+        for carpeta in ("skills", "commands", "agents"):
+            for ruta in (RAIZ / carpeta).rglob("*.md"):
+                for numero, linea in enumerate(ruta.read_text(encoding="utf-8").splitlines(), 1):
+                    if re.search(r"python3\s+scripts/", linea):
+                        malas.append(f"{ruta.relative_to(RAIZ)}:{numero}")
+        self.assertFalse(
+            malas,
+            "usa python3 \"${CLAUDE_PLUGIN_ROOT:-.}\"/scripts/... en:\n  " + "\n  ".join(malas))
+
     def test_plugin_json_valido(self):
         datos = json.loads((RAIZ / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
         for campo in ("name", "version", "description"):

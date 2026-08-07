@@ -75,7 +75,7 @@ cruces que hace Aduanas. Consúltalo en el **TARIC** para el año en curso; camb
 ## 5. Generar el fichero
 
 ```bash
-python3 scripts/generar_intrastat.py \
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/generar_intrastat.py \
   --flujo expedicion \
   --periodo 2026-07 \
   --declarante clientes/B12345674/declarante_intrastat.json \

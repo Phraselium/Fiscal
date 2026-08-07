@@ -11,9 +11,9 @@ Contrato base. Se aplica por encima de cualquier otra skill.
 
 ### No memorices cifras: consúltalas
 ```bash
-python3 scripts/parametros.py buscar iva          # tipos, umbrales, límites
-python3 scripts/parametros.py ver is.tipo.microempresa
-python3 scripts/parametros.py revisar             # qué NO es fiable
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar iva          # tipos, umbrales, límites
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py ver is.tipo.microempresa
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py revisar             # qué NO es fiable
 ```
 Si el parámetro sale como `volatil` o `sin_verificar`, **no lo uses en un entregable sin
 contrastarlo**. Escribe `⚠️ SIN VERIFICAR — contrastar en <fuente>` junto al dato. Nunca

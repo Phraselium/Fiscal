@@ -23,7 +23,7 @@ transitorio decreciente** (Ley 7/2024 y DT 44 LIS, con ajustes posteriores). El 
 cambia cada ejercicio.
 
 ```bash
-python3 scripts/parametros.py ver is.tipo.microempresa
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py ver is.tipo.microempresa
 ```
 
 Consulta el **manual practico de Sociedades del ejercicio concreto**. Un tipo equivocado

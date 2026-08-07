@@ -78,7 +78,7 @@ para que lo valide. Nunca importes a ciegas.
 contabilidad. Cuadra siempre:
 
 ```bash
-python3 scripts/cuadrar.py --help
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/cuadrar.py --help
 ```
 
 Y revisa a ojo, como mínimo: casillas 10-11 y 36-37 del 303 (AIB en devengado y
@@ -103,7 +103,7 @@ La obligación de VeriFactu recae en **el cliente que emite facturas**, no en el
 Fechas vigentes tras el segundo aplazamiento:
 
 ```bash
-python3 scripts/parametros.py ver verifactu.fecha_obligatoriedad
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py ver verifactu.fecha_obligatoriedad
 ```
 
 Verifica la fecha antes de asesorar: se ha aplazado dos veces y cualquier documentación

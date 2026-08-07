@@ -15,7 +15,7 @@ contexto cuesta ~15.000 tokens y hace el trabajo lento y propenso a error. Ejecu
 subcomando que corresponda y trabaja sobre su salida, que ya viene filtrada.
 
 ```bash
-python3 scripts/control.py --fichero <ruta> <subcomando>
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero <ruta> <subcomando>
 ```
 
 | Pregunta del usuario | Subcomando |

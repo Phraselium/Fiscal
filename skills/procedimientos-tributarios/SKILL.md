@@ -8,10 +8,10 @@ description: Procedimientos frente a la AEAT — contestación a requerimientos,
 ## Lo primero, siempre: el plazo
 
 ```bash
-python3 scripts/calcular_plazos.py plazo --notificacion DD/MM/AAAA --meses 1
-python3 scripts/calcular_plazos.py plazo --notificacion DD/MM/AAAA --dias-habiles 10
-python3 scripts/calcular_plazos.py voluntaria --notificacion DD/MM/AAAA
-python3 scripts/calcular_plazos.py recargo --fin-plazo ... --presentacion ... --cuota ...
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py plazo --notificacion DD/MM/AAAA --meses 1
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py plazo --notificacion DD/MM/AAAA --dias-habiles 10
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py voluntaria --notificacion DD/MM/AAAA
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/calcular_plazos.py recargo --fin-plazo ... --presentacion ... --cuota ...
 ```
 
 - Fecha de notificacion = fecha de acceso, o **dia 11** desde la puesta a disposicion si no
