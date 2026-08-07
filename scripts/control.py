@@ -193,8 +193,8 @@ def cargar(ruta: Path, hoja: str | None = None) -> Control:
             continue
         nombre = str(nombre).strip()
         # Descarta unicamente las filas de leyenda: su primera celda es el nombre
-        # de un estado. Nunca descartes por longitud del nombre: hay clientes
-        # cuyo nombre son solo tres letras.
+        # de un estado. Nunca descartes por longitud del nombre: hay carteras con
+        # clientes cuyo nombre son solo tres letras, y desaparecerian en silencio.
         if normalizar(nombre) in {normalizar(e) for e in ESTADOS}:
             continue
         fila_celdas = []

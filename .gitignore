@@ -1,24 +1,47 @@
-# Datos de clientes y ficheros generados — NUNCA se versionan
+# ─────────────────────────────────────────────────────────────
+# DATOS DEL DESPACHO — nunca se versionan
+# ─────────────────────────────────────────────────────────────
+# Ficheros de control y cualquier hoja de cálculo
+*.xlsx
+*.xlsm
+*.xls
+*.xltx
+*.ods
+Control*
+
+# Expedientes, ficheros generados y datos privados
 clientes/
 salidas/
-*.csv.local
-datos/
+expedientes/
+datos/privado/
+datos/nombres_privados.txt
 
-# Ficheros de declaración generados
-*.txt.aeat
+# Declaraciones generadas
 190-*.txt
-347-*.txt
-349-*.txt
 180-*.txt
 193-*.txt
+347-*.txt
+349-*.txt
 intrastat-*.csv
+*.txt.aeat
 
 # Certificados y credenciales
 *.p12
 *.pfx
 *.pem
 *.key
+*.crt
+.env
 
+# Configuración con datos reales del despacho
+config/configuracion.local.md
+
+# ─────────────────────────────────────────────────────────────
+# Técnico
+# ─────────────────────────────────────────────────────────────
 __pycache__/
 *.pyc
+.pytest_cache/
+.venv/
+venv/
 .DS_Store

@@ -1,7 +1,7 @@
 {
   "nif": "B12345674",
-  "nombre": "EMPRESA DE EJEMPLO SL",
-  "contacto": "APELLIDO APELLIDO NOMBRE",
+  "nombre": "RAZON SOCIAL DE PRUEBA SL",
+  "contacto": "PERSONA DE CONTACTO DE PRUEBA",
   "telefono": "911234567",
   "email": "fiscal@ejemplo.es"
 }

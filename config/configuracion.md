@@ -1,9 +1,12 @@
 # Configuración local del despacho
 
 > Este fichero es la **configuración del plugin**. Complétalo con los datos reales antes
-> de trabajar. Todas las skills y comandos lo leen para firmar escritos, generar ficheros
-> y calcular plazos internos. No se distribuye con datos: los placeholders
-> `PENDIENTE_COMPLETAR` deben rellenarse en cada instalación.
+> de trabajar, pero **no lo subas relleno a git**: `scripts/comprobar_privacidad.py` falla
+> si detecta que ya no tiene placeholders. Si prefieres versionar tu configuración, hazlo
+> en `config/configuracion.local.md`, que está en `.gitignore`.
+>
+> Todas las skills y comandos lo leen para firmar escritos, generar ficheros y calcular
+> plazos internos. Los placeholders `PENDIENTE_COMPLETAR` se rellenan en cada instalación.
 
 ## 1. Datos del presentador (obligatorios para generar ficheros)
 

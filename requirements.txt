@@ -1,0 +1,3 @@
+# Única dependencia externa, y solo para el control de cartera (scripts/control.py).
+# El resto del plugin funciona con la biblioteca estándar de Python 3.10+.
+openpyxl>=3.1

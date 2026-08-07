@@ -26,7 +26,7 @@ import json
 import re
 import unicodedata
 from dataclasses import dataclass
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -78,16 +78,59 @@ def normalizar_nif(valor: Any) -> str:
     return nif.rjust(9, "0") if nif and nif[0].isdigit() and len(nif) < 9 else nif
 
 
+class ImporteAmbiguo(ErrorDato):
+    """El importe admite dos lecturas y no se puede elegir sin arriesgar un x1000."""
+
+
+def a_decimal(valor: Any) -> Decimal:
+    """Interpreta un importe escrito en formato español o inglés.
+
+    Reglas, en este orden:
+      · Con coma → la coma es el decimal y el punto el separador de miles
+        ('1.234,56' → 1234.56).
+      · Sin coma y con varios puntos → todos son separadores de miles
+        ('1.234.567' → 1234567).
+      · Sin coma y con un punto seguido de un número de decimales distinto de 3
+        → el punto es decimal ('1234.56' → 1234.56; '0.005' → 0.005).
+      · Sin coma y con un punto seguido de EXACTAMENTE 3 dígitos → ambiguo
+        ('1.234' puede ser mil doscientos treinta y cuatro o uno coma dos tres
+        cuatro). Se rechaza en lugar de adivinar: en una declaración, acertar por
+        defecto no es aceptable.
+    """
+    if valor is None or valor == "":
+        return Decimal("0")
+    if not isinstance(valor, str):
+        return Decimal(str(valor))
+
+    texto = valor.replace("€", "").replace(" ", "").replace(" ", "").strip()
+    if texto in ("", "-"):
+        return Decimal("0")
+
+    negativo = texto.startswith("-")
+    texto = texto.lstrip("+-")
+
+    if "," in texto:
+        texto = texto.replace(".", "").replace(",", ".")
+    elif texto.count(".") > 1:
+        texto = texto.replace(".", "")
+    elif texto.count(".") == 1:
+        entera, decimal = texto.split(".")
+        if len(decimal) == 3 and entera.isdigit():
+            raise ImporteAmbiguo(
+                f"El importe '{valor}' es ambiguo: '.' seguido de tres dígitos puede ser "
+                f"separador de miles ({entera}{decimal}) o decimal ({entera},{decimal}). "
+                "Escríbelo como '1.234,00' o como '1234.000' para que no haya duda."
+            )
+    try:
+        cantidad = Decimal(texto)
+    except InvalidOperation as exc:
+        raise ErrorDato(f"No entiendo el importe '{valor}'") from exc
+    return -cantidad if negativo else cantidad
+
+
 def a_centimos(valor: Any) -> int:
     """Convierte un importe en euros a céntimos enteros, redondeando a la mitad arriba."""
-    if valor is None or valor == "":
-        return 0
-    if isinstance(valor, str):
-        limpio = valor.replace(".", "").replace(",", ".").replace("€", "").strip()
-        if limpio in ("", "-"):
-            return 0
-        valor = limpio
-    cantidad = Decimal(str(valor)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    cantidad = a_decimal(valor).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
     return int(cantidad * 100)
 
 

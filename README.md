@@ -12,9 +12,17 @@ electrónica. Diseñado para usarse con ~85 clientes sin quemar contexto ni inve
 /plugin install asesoria-fiscal-es@asesoria-fiscal-es
 ```
 
-Después: completa `config/configuracion.md`, ejecuta `python3 scripts/parametros.py revisar`
-para ver qué cifras hay que contrastar, e instala `openpyxl` si vas a usar el control de
-cartera (`pip install openpyxl`).
+Después:
+
+```bash
+pip install -r requirements.txt                        # openpyxl, solo para el control
+python3 scripts/comprobar_privacidad.py --instalar-hook # bloquea commits con datos privados
+python3 tests/test_plugin.py                            # 54 pruebas
+python3 scripts/parametros.py revisar                   # qué cifras hay que contrastar
+```
+
+Y completa `config/configuracion.md` con los datos del despacho — pero **no lo subas
+relleno**: el verificador de privacidad falla si detecta que ya no tiene placeholders.
 
 ## Contexto de uso
 
@@ -142,6 +150,49 @@ Es intencionado: un diseño con posiciones erróneas produce ficheros que la AEA
 o peor, que acepta con los datos desplazados.
 
 Para ponerlos en producción: `/verificar-diseno <modelo>` y `disenos/README.md`.
+
+## Privacidad
+
+El plugin es código publicable; los datos del despacho no lo son. Tres capas:
+
+1. **`.gitignore`** excluye toda hoja de cálculo, `clientes/`, `salidas/`, certificados
+   y `datos/nombres_privados.txt`.
+2. **`scripts/comprobar_privacidad.py`** revisa lo que va a subirse y falla si encuentra
+   NIF, NIE o CIF **con letra de control válida** (un identificador inventado casi nunca
+   valida; uno real, siempre), IBAN correctos, correos, teléfonos, ficheros prohibidos, o
+   nombres de tu lista privada.
+3. **Hook de pre-commit** con `--instalar-hook`: ningún commit se crea sin pasar la
+   comprobación.
+
+```bash
+python3 scripts/comprobar_privacidad.py            # lo versionado
+python3 scripts/comprobar_privacidad.py --staged   # lo que va a commit
+python3 scripts/comprobar_privacidad.py --historial # busca en todo el historial
+```
+
+Para vigilar los nombres de tu cartera, crea `datos/nombres_privados.txt` (ignorado por
+git) con un nombre por línea. Sin él, la comprobación cubre identificadores y ficheros,
+pero no razones sociales.
+
+Los ejemplos de `ejemplos/` usan NIF sintéticos y nombres inequívocamente ficticios.
+
+## Pruebas
+
+```bash
+python3 tests/test_plugin.py      # 54 pruebas, ~0,2 s
+python3 tests/test_plugin.py -v   # detalle
+```
+
+Cubren lo que puede romperse en silencio y costar dinero: validación de NIF, NIE, CIF,
+IBAN y NC8; interpretación de importes en formato español e inglés; que los diseños de
+registro cubran exactamente 250 posiciones; signo y codificación de los ficheros
+generados; cómputo de plazos por meses y por días hábiles; los cuadres entre modelos; el
+parseo del control; la coherencia de `parametros.json`; y que no haya datos privados
+versionados.
+
+Incluyen pruebas de regresión de tres defectos reales que aparecieron durante el
+desarrollo: clientes con nombre corto que desaparecían del control, importes en formato
+inglés multiplicados por 100, y referencias a scripts inexistentes.
 
 ## Verificación de la normativa
 

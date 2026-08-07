@@ -1,0 +1,817 @@
+{
+  "_meta": {
+    "descripcion": "Parametros fiscales en formato consultable. Sustituye a la prosa: las skills NO memorizan cifras, las consultan aqui con scripts/parametros.py.",
+    "revisado_el": "2026-08-07",
+    "ejercicio_referencia": 2025,
+    "meses_caducidad_por_defecto": 12,
+    "estados": {
+      "estable": "No cambia de un ejercicio a otro salvo reforma. Fiable sin reverificar.",
+      "verificado": "Contrastado en fuente oficial en la fecha indicada.",
+      "sin_verificar": "Tomado del conocimiento del modelo. NO usar en un entregable sin contrastar.",
+      "volatil": "Cambia cada ejercicio por orden o ley anual. Verificar SIEMPRE."
+    }
+  },
+  "iva.tipo.general": {
+    "valor": 21,
+    "unidad": "%",
+    "estado": "estable",
+    "desde": "2012-09-01",
+    "fuente": "art. 90 LIVA"
+  },
+  "iva.tipo.reducido": {
+    "valor": 10,
+    "unidad": "%",
+    "estado": "estable",
+    "desde": "2012-09-01",
+    "fuente": "art. 91.Uno LIVA"
+  },
+  "iva.tipo.superreducido": {
+    "valor": 4,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 91.Dos LIVA"
+  },
+  "iva.recargo.general": {
+    "valor": 5.2,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 161 LIVA"
+  },
+  "iva.recargo.reducido": {
+    "valor": 1.4,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 161 LIVA"
+  },
+  "iva.recargo.superreducido": {
+    "valor": 0.5,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 161 LIVA"
+  },
+  "iva.tipos_temporales": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Alimentacion, energia y otros han tenido rebajas temporales con calendario de reversion. Verificar el tipo VIGENTE A LA FECHA DE DEVENGO de cada operacion.",
+    "url": "https://sede.agenciatributaria.gob.es/Sede/iva.html"
+  },
+  "iva.umbral.grandes_empresas": {
+    "valor": 6010121.04,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 71.3 RIVA — INCN del ano anterior"
+  },
+  "iva.umbral.recc": {
+    "valor": 2000000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 163 decies LIVA"
+  },
+  "iva.umbral.oss_ventas_distancia": {
+    "valor": 10000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 73 LIVA — umbral comun UE"
+  },
+  "iva.umbral.aib_no_sujecion": {
+    "valor": 10000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 14 LIVA"
+  },
+  "iva.prorrata.diferencia_obliga_especial": {
+    "valor": 10,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 103.Dos.2 LIVA"
+  },
+  "iva.plazo_deduccion": {
+    "valor": 4,
+    "unidad": "anos",
+    "estado": "estable",
+    "fuente": "art. 99.Tres LIVA"
+  },
+  "iva.regularizacion_bienes_inversion": {
+    "valor": 4,
+    "unidad": "anos",
+    "estado": "estable",
+    "fuente": "art. 107 LIVA — 9 anos en terrenos y edificaciones"
+  },
+  "iva.art80cuatro.importe_minimo_consumidor": {
+    "valor": 50,
+    "unidad": "EUR",
+    "estado": "verificado",
+    "verificado_el": "2026-08-07",
+    "fuente": "art. 80.Cuatro LIVA, redaccion Ley 31/2022"
+  },
+  "iva.sii.plazo_suministro": {
+    "valor": 4,
+    "unidad": "dias naturales",
+    "estado": "estable",
+    "fuente": "art. 69 bis RIVA — excluidos sabados, domingos y festivos nacionales"
+  },
+  "irpf.ahorro.escala": {
+    "valor": [
+      [
+        6000,
+        19
+      ],
+      [
+        50000,
+        21
+      ],
+      [
+        200000,
+        23
+      ],
+      [
+        300000,
+        27
+      ],
+      [
+        null,
+        30
+      ]
+    ],
+    "unidad": "[hasta EUR, %]",
+    "estado": "sin_verificar",
+    "fuente": "art. 66 LIRPF",
+    "nota": "El tramo del 30 % se introdujo en 2023. Contrastar con el manual de Renta del ejercicio."
+  },
+  "irpf.general.escala_estatal": {
+    "valor": [
+      [
+        12450,
+        9.5
+      ],
+      [
+        20200,
+        12
+      ],
+      [
+        35200,
+        15
+      ],
+      [
+        60000,
+        18.5
+      ],
+      [
+        300000,
+        22.5
+      ],
+      [
+        null,
+        24.5
+      ]
+    ],
+    "unidad": "[hasta EUR, %]",
+    "estado": "sin_verificar",
+    "fuente": "art. 63 LIRPF",
+    "nota": "Se aplica sobre el 50 % de la base. La escala AUTONOMICA es distinta en cada CCAA y hay que consultarla siempre."
+  },
+  "irpf.escala_autonomica": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "NO EXISTE una escala autonomica general. Consultar la normativa de la CCAA de residencia habitual del contribuyente para cada ejercicio."
+  },
+  "irpf.deducciones_autonomicas": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Cambian cada ano y en cada CCAA. Consultar el boletin autonomico y el manual de Renta. Es la fuente principal de devoluciones perdidas."
+  },
+  "irpf.minimo.contribuyente": {
+    "valor": 5550,
+    "unidad": "EUR",
+    "estado": "sin_verificar",
+    "fuente": "art. 57 LIRPF — importe estatal; las CCAA pueden fijar el suyo"
+  },
+  "irpf.gastos.otros_trabajo": {
+    "valor": 2000,
+    "unidad": "EUR",
+    "estado": "sin_verificar",
+    "fuente": "art. 19.2.f LIRPF"
+  },
+  "irpf.limite.planes_pensiones_individual": {
+    "valor": 1500,
+    "unidad": "EUR",
+    "estado": "sin_verificar",
+    "fuente": "art. 52 LIRPF"
+  },
+  "irpf.limite.planes_pensiones_empresarial": {
+    "valor": 8500,
+    "unidad": "EUR",
+    "estado": "sin_verificar",
+    "fuente": "art. 52 LIRPF — incremento adicional"
+  },
+  "irpf.reduccion.conjunta_biparental": {
+    "valor": 3400,
+    "unidad": "EUR",
+    "estado": "sin_verificar",
+    "fuente": "art. 84.2.3 LIRPF"
+  },
+  "irpf.reduccion.conjunta_monoparental": {
+    "valor": 2150,
+    "unidad": "EUR",
+    "estado": "sin_verificar",
+    "fuente": "art. 84.2.4 LIRPF"
+  },
+  "irpf.reduccion.arrendamiento_vivienda": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Regimen del art. 23.2 LIRPF reformado por la Ley 12/2023: 50 % general y 60/70/90 % en supuestos incentivados, con regimen transitorio para contratos anteriores al 26-05-2023. El porcentaje depende del CONTRATO concreto. Verificar caso a caso."
+  },
+  "irpf.imputacion_inmobiliaria": {
+    "valor": [
+      2,
+      1.1
+    ],
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 85 LIRPF — 1,1 % si el valor catastral se reviso en el ejercicio o en los 10 anteriores"
+  },
+  "irpf.exencion.trabajo_extranjero": {
+    "valor": 60100,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 7.p LIRPF"
+  },
+  "irpf.exencion.despido_maximo": {
+    "valor": 180000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 7.e LIRPF"
+  },
+  "irpf.ed_simplificada.limite_incn": {
+    "valor": 600000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 30 RIRPF"
+  },
+  "irpf.ed_simplificada.gastos_dificil_justificacion": {
+    "valor": [
+      5,
+      2000
+    ],
+    "unidad": "[%, maximo EUR]",
+    "estado": "estable",
+    "fuente": "art. 30 RIRPF"
+  },
+  "irpf.pago_fraccionado.directa": {
+    "valor": 20,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 110 RIRPF"
+  },
+  "irpf.pago_fraccionado.objetiva": {
+    "valor": [
+      4,
+      3,
+      2
+    ],
+    "unidad": "% segun personal (varios / uno / ninguno)",
+    "estado": "estable",
+    "fuente": "art. 110 RIRPF"
+  },
+  "irpf.exoneracion_130": {
+    "valor": 70,
+    "unidad": "% de ingresos con retencion el ano anterior",
+    "estado": "estable",
+    "fuente": "art. 109.2 RIRPF"
+  },
+  "irpf.obligacion_declarar.un_pagador": {
+    "valor": 22000,
+    "unidad": "EUR",
+    "estado": "sin_verificar",
+    "fuente": "art. 96 LIRPF"
+  },
+  "irpf.obligacion_declarar.varios_pagadores": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "art. 96 LIRPF",
+    "nota": "Umbral actualizado en varias reformas recientes. Verificar el del ejercicio en el manual de Renta."
+  },
+  "irpf.modulos.limites": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Los limites de exclusion de modulos se prorrogan ANO A ANO por ley o real decreto-ley. Consultar la Orden anual de modulos del ejercicio.",
+    "url": "https://www.boe.es"
+  },
+  "is.tipo.general": {
+    "valor": 25,
+    "unidad": "%",
+    "estado": "verificado",
+    "verificado_el": "2026-08-07",
+    "fuente": "art. 29.1 LIS"
+  },
+  "is.tipo.nueva_creacion": {
+    "valor": 15,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 29.1 LIS — primer periodo con BI positiva y el siguiente"
+  },
+  "is.tipo.microempresa": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "CALENDARIO TRANSITORIO DECRECIENTE (Ley 7/2024 y DT 44 LIS, con ajustes posteriores). El tipo de las microempresas (INCN < 1 M EUR) y de las entidades de reducida dimension (INCN < 10 M EUR) cambia cada ejercicio. NO usar un tipo de memoria: consultar el manual practico de Sociedades del ejercicio concreto.",
+    "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos.html"
+  },
+  "is.tipo.reducida_dimension": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Ver is.tipo.microempresa: mismo calendario transitorio."
+  },
+  "is.erd.limite_incn": {
+    "valor": 10000000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 101 LIS"
+  },
+  "is.microempresa.limite_incn": {
+    "valor": 1000000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 29 LIS"
+  },
+  "is.bin.limite_general": {
+    "valor": [
+      70,
+      1000000
+    ],
+    "unidad": "[% BI previa, minimo EUR]",
+    "estado": "estable",
+    "fuente": "art. 26 LIS"
+  },
+  "is.bin.limite_incn_20_60M": {
+    "valor": 50,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "DA 15 LIS"
+  },
+  "is.bin.limite_incn_mas_60M": {
+    "valor": 25,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "DA 15 LIS"
+  },
+  "is.gastos_financieros.limite": {
+    "valor": [
+      30,
+      1000000
+    ],
+    "unidad": "[% beneficio operativo, minimo EUR]",
+    "estado": "estable",
+    "fuente": "art. 16 LIS"
+  },
+  "is.tributacion_minima": {
+    "valor": 15,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 30 bis LIS — INCN >= 20 M EUR o consolidacion"
+  },
+  "is.liberalidades.limite_atenciones": {
+    "valor": 1,
+    "unidad": "% del INCN",
+    "estado": "estable",
+    "fuente": "art. 15.e LIS"
+  },
+  "is.exencion_participaciones": {
+    "valor": 95,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 21 LIS — participacion >= 5 % y 1 ano"
+  },
+  "is.reserva_capitalizacion": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "art. 25 LIS",
+    "nota": "El porcentaje de reduccion y sus limites han sido mejorados por reformas recientes. Verificar el vigente en el ejercicio."
+  },
+  "is.reserva_nivelacion": {
+    "valor": [
+      10,
+      1000000
+    ],
+    "unidad": "[% BI, maximo EUR]",
+    "estado": "estable",
+    "fuente": "art. 105 LIS — solo ERD, reversion en 5 anos"
+  },
+  "is.pago_fraccionado.art40_2": {
+    "valor": 18,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 40.2 LIS — sobre la cuota del ultimo periodo declarado"
+  },
+  "is.pago_fraccionado.art40_3": {
+    "valor": "5/7 x tipo, redondeado por defecto",
+    "estado": "estable",
+    "fuente": "art. 40.3 LIS"
+  },
+  "is.pago_fraccionado.obligatorio_art40_3": {
+    "valor": 6000000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 40.3 LIS — INCN de los 12 meses anteriores"
+  },
+  "is.pago_fraccionado.minimo": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "DA 14 LIS",
+    "nota": "Pago minimo para INCN >= 10 M EUR. Porcentaje afectado por reformas y por pronunciamientos del TC. Verificar."
+  },
+  "retenciones.trabajo": {
+    "valor": null,
+    "estado": "estable",
+    "fuente": "arts. 80 y ss. RIRPF",
+    "nota": "Tipo individual por trabajador segun el procedimiento general. No es un porcentaje fijo."
+  },
+  "retenciones.administradores": {
+    "valor": 35,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 101.2 LIRPF"
+  },
+  "retenciones.administradores_incn_bajo": {
+    "valor": 19,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 101.2 LIRPF — INCN de la entidad < 100.000 EUR"
+  },
+  "retenciones.profesionales": {
+    "valor": 15,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 101.5 LIRPF"
+  },
+  "retenciones.profesionales_inicio": {
+    "valor": 7,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 101.5 LIRPF — ano de inicio y los 2 siguientes, previa comunicacion escrita"
+  },
+  "retenciones.cursos_conferencias": {
+    "valor": 15,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 101.3 LIRPF"
+  },
+  "retenciones.agricolas": {
+    "valor": 2,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 95.4 RIRPF — 1 % engorde de porcino y avicultura"
+  },
+  "retenciones.modulos": {
+    "valor": 1,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 95.6 RIRPF"
+  },
+  "retenciones.arrendamiento_urbano": {
+    "valor": 19,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 100 RIRPF"
+  },
+  "retenciones.capital_mobiliario": {
+    "valor": 19,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 90 RIRPF"
+  },
+  "retenciones.115_exencion_importe": {
+    "valor": 900,
+    "unidad": "EUR anuales por arrendador",
+    "estado": "estable",
+    "fuente": "art. 75.3.g RIRPF"
+  },
+  "retenciones.irnr_ue": {
+    "valor": 19,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 25 TRLIRNR — residentes UE/EEE con intercambio de informacion"
+  },
+  "retenciones.irnr_resto": {
+    "valor": 24,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 25 TRLIRNR"
+  },
+  "retenciones.211_compra_inmueble_no_residente": {
+    "valor": 3,
+    "unidad": "% del precio",
+    "estado": "estable",
+    "fuente": "art. 25.2 TRLIRNR"
+  },
+  "informativas.347.umbral": {
+    "valor": 3005.06,
+    "unidad": "EUR anuales por tercero",
+    "estado": "estable",
+    "fuente": "art. 33 RGAT"
+  },
+  "informativas.347.umbral_efectivo": {
+    "valor": 6000,
+    "unidad": "EUR anuales en efectivo",
+    "estado": "estable",
+    "fuente": "art. 34 RGAT"
+  },
+  "informativas.349.umbral_periodicidad": {
+    "valor": 50000,
+    "unidad": "EUR por trimestre",
+    "estado": "estable",
+    "fuente": "art. 81.1 RIVA — por encima, periodicidad mensual"
+  },
+  "informativas.720.umbral": {
+    "valor": 50000,
+    "unidad": "EUR por bloque",
+    "estado": "estable",
+    "fuente": "DA 18 LGT — bloques: cuentas / valores / inmuebles"
+  },
+  "informativas.720.reiteracion": {
+    "valor": 20000,
+    "unidad": "EUR de incremento por bloque",
+    "estado": "estable",
+    "fuente": "art. 42 ter RGAT"
+  },
+  "informativas.232.umbral_misma_vinculada": {
+    "valor": 250000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 13.4 RIS"
+  },
+  "informativas.232.umbral_operaciones_especificas": {
+    "valor": 100000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 13.4 RIS"
+  },
+  "intrastat.umbral_exencion": {
+    "valor": 400000,
+    "unidad": "EUR anuales por flujo",
+    "estado": "verificado",
+    "verificado_el": "2026-08-07",
+    "fuente": "AEAT — Aduanas e II.EE.",
+    "url": "https://sede.agenciatributaria.gob.es/Sede/aduanas/intrastat-obligaciones-estadisticas/obligacion-presentar-declaracion-plazos-presentacion.html",
+    "nota": "La obligacion nace el MES en que se supera el umbral y se mantiene el resto del ano natural y TODO el ano siguiente."
+  },
+  "intrastat.umbral_estadistico": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Umbral superior a partir del cual hay que informar del valor estadistico. Verificar en la guia Intrastat del ejercicio."
+  },
+  "intrastat.plazo": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Con caracter general, dias 1 a 12 del mes siguiente al periodo de referencia, pero el calendario anual de Aduanas introduce adaptaciones por festivos. Consultar el calendario del ejercicio antes de fijar la fecha limite.",
+    "url": "https://sede.agenciatributaria.gob.es/Sede/aduanas/intrastat-obligaciones-estadisticas.html"
+  },
+  "lgt.recargo.art27": {
+    "valor": "1 % el primer mes, +1 % por cada mes completo adicional hasta el 12; 15 % + intereses a partir de los 12 meses",
+    "estado": "estable",
+    "fuente": "art. 27 LGT, redaccion Ley 11/2021",
+    "nota": "Reduccion del 25 % del recargo si se ingresa en plazo y no se recurre (art. 27.5)."
+  },
+  "lgt.recargo.ejecutivo": {
+    "valor": [
+      5,
+      10,
+      20
+    ],
+    "unidad": "% (ejecutivo / apremio reducido / apremio ordinario)",
+    "estado": "estable",
+    "fuente": "art. 28 LGT"
+  },
+  "lgt.sanciones.reducciones": {
+    "valor": [
+      65,
+      30,
+      40
+    ],
+    "unidad": "% (actas con acuerdo / conformidad / pronto pago)",
+    "estado": "estable",
+    "fuente": "art. 188 LGT, redaccion Ley 11/2021"
+  },
+  "lgt.prescripcion": {
+    "valor": 4,
+    "unidad": "anos",
+    "estado": "estable",
+    "fuente": "art. 66 LGT"
+  },
+  "lgt.comprobacion_bin": {
+    "valor": 10,
+    "unidad": "anos",
+    "estado": "estable",
+    "fuente": "art. 66 bis LGT"
+  },
+  "lgt.interes_demora": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "Ley de Presupuestos Generales del Estado de cada ejercicio",
+    "nota": "CAMBIA CADA ANO. Sin este dato no se puede cuantificar una regularizacion. Consultar la LPGE del ejercicio o, en su defecto, la prorroga vigente."
+  },
+  "lgt.interes_legal": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "LPGE de cada ejercicio",
+    "nota": "CAMBIA CADA ANO. Se usa para calcular intereses cuando hay aval en un aplazamiento o suspension. Consultar la Ley de Presupuestos del ejercicio o, si esta prorrogada, la ultima vigente."
+  },
+  "lgt.aplazamiento.exencion_garantias": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "El umbral de exencion de garantias lo fija una orden ministerial y se ha elevado varias veces. Verificar la orden en vigor antes de asesorar.",
+    "url": "https://sede.agenciatributaria.gob.es"
+  },
+  "lgt.pagos_efectivo.limite": {
+    "valor": 1000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 7 Ley 7/2012, redaccion Ley 11/2021 — 10.000 EUR si el pagador es persona fisica no residente y no empresario"
+  },
+  "facturacion.simplificada.limite_general": {
+    "valor": 400,
+    "unidad": "EUR IVA incluido",
+    "estado": "estable",
+    "fuente": "art. 4.1 RD 1619/2012"
+  },
+  "facturacion.simplificada.limite_ampliado": {
+    "valor": 3000,
+    "unidad": "EUR IVA incluido",
+    "estado": "estable",
+    "fuente": "art. 4.2 RD 1619/2012"
+  },
+  "facturacion.plazo_expedicion_empresarios": {
+    "valor": "dia 16 del mes siguiente al devengo",
+    "estado": "estable",
+    "fuente": "art. 11 RD 1619/2012"
+  },
+  "verifactu.fecha_obligatoriedad": {
+    "valor": {
+      "contribuyentes_is": "2027-01-01",
+      "resto_obligados": "2027-07-01"
+    },
+    "estado": "verificado",
+    "verificado_el": "2026-08-07",
+    "fuente": "RD 1007/2023, modificado por RD 254/2025 y APLAZADO por el Real Decreto-ley 15/2025 (BOE 03-12-2025)",
+    "nota": "ATENCION: fechas aplazadas DOS veces. Cualquier fuente que diga 2025 o 2026 esta desactualizada. Los productores de software si mantienen su plazo de adaptacion."
+  },
+  "factura_electronica_b2b": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "Ley 18/2022 'Crea y Crece'",
+    "nota": "Obligacion condicionada al desarrollo reglamentario y a un periodo de adaptacion. NO confundir con VeriFactu: son obligaciones distintas con calendarios distintos. Verificar el estado antes de asesorar."
+  },
+  "patrimonio.minimo_exento_estatal": {
+    "valor": 700000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 28 Ley 19/1991 — las CCAA lo modifican"
+  },
+  "patrimonio.exencion_vivienda_habitual": {
+    "valor": 300000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 4.Nueve Ley 19/1991"
+  },
+  "patrimonio.umbral_obligacion_declarar": {
+    "valor": 2000000,
+    "unidad": "EUR de bienes y derechos",
+    "estado": "estable",
+    "fuente": "art. 37 Ley 19/1991 — obliga a declarar aunque la cuota sea cero"
+  },
+  "patrimonio.limite_conjunto_irpf": {
+    "valor": [
+      60,
+      80
+    ],
+    "unidad": "[% de la BI del IRPF, % maximo de reduccion de la cuota]",
+    "estado": "estable",
+    "fuente": "art. 31 Ley 19/1991"
+  },
+  "patrimonio.empresa_familiar.participacion": {
+    "valor": [
+      5,
+      20
+    ],
+    "unidad": "% (individual / grupo familiar)",
+    "estado": "estable",
+    "fuente": "art. 4.Ocho Ley 19/1991"
+  },
+  "patrimonio.bonificaciones_autonomicas": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Varian por CCAA y han sido modificadas por la interaccion con el ITSGF. Verificar."
+  },
+  "itsgf.vigencia": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "Ley 38/2022",
+    "nota": "Nacio como temporal y ha sido prorrogado. Verificar la vigencia en el ejercicio."
+  },
+  "isd.reduccion_empresa_familiar": {
+    "valor": 95,
+    "unidad": "%",
+    "estado": "estable",
+    "fuente": "art. 20.2.c Ley 29/1987 — mantenimiento 10 anos"
+  },
+  "isd.reduccion_vivienda_habitual": {
+    "valor": [
+      95,
+      122606.47
+    ],
+    "unidad": "[%, limite EUR por causahabiente]",
+    "estado": "estable",
+    "fuente": "art. 20.2.c Ley 29/1987"
+  },
+  "isd.plazo_sucesiones": {
+    "valor": 6,
+    "unidad": "meses desde el fallecimiento",
+    "estado": "estable",
+    "fuente": "art. 67 RISD — prorrogable 6 meses si se solicita en los 5 primeros"
+  },
+  "isd.plazo_donaciones": {
+    "valor": 30,
+    "unidad": "dias habiles",
+    "estado": "estable",
+    "fuente": "art. 67 RISD"
+  },
+  "isd.tarifas_autonomicas": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Impuesto cedido. Tarifa, reducciones y bonificaciones las fija cada CCAA. Diferencias de varios ordenes de magnitud entre comunidades."
+  },
+  "reta.tramos_cotizacion": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "RD-ley 13/2022 — sistema de cotizacion por ingresos reales",
+    "url": "https://www.seg-social.es",
+    "nota": "15 tramos con base minima y maxima. LA TABLA CAMBIA CADA ANO. Consultar la vigente antes de cualquier calculo."
+  },
+  "reta.tarifa_plana": {
+    "valor": null,
+    "estado": "volatil",
+    "nota": "Importe de la cuota reducida fijado anualmente. Verificar."
+  },
+  "reta.deduccion_gastos_genericos": {
+    "valor": [
+      7,
+      3
+    ],
+    "unidad": "% (general / autonomo societario)",
+    "estado": "estable",
+    "fuente": "RD-ley 13/2022 — para el calculo del rendimiento neto a efectos de cotizacion"
+  },
+  "dietas.manutencion_espana": {
+    "valor": 26.67,
+    "unidad": "EUR/dia",
+    "estado": "estable",
+    "fuente": "art. 9 RIRPF — el doble con pernocta"
+  },
+  "dietas.manutencion_extranjero": {
+    "valor": 48.08,
+    "unidad": "EUR/dia",
+    "estado": "estable",
+    "fuente": "art. 9 RIRPF — el doble con pernocta"
+  },
+  "dietas.kilometraje": {
+    "valor": null,
+    "estado": "volatil",
+    "fuente": "art. 9 RIRPF",
+    "nota": "El importe por kilometro fue actualizado por orden ministerial. Verificar el vigente."
+  },
+  "suministros_vivienda_afecta": {
+    "valor": 30,
+    "unidad": "% sobre el porcentaje de superficie afecta",
+    "estado": "estable",
+    "fuente": "art. 30.2.5.b LIRPF"
+  },
+  "seguro_salud_autonomo": {
+    "valor": [
+      500,
+      1500
+    ],
+    "unidad": "[EUR por persona, EUR con discapacidad]",
+    "estado": "estable",
+    "fuente": "art. 30.2.5.a LIRPF"
+  },
+  "iae.exencion_incn": {
+    "valor": 1000000,
+    "unidad": "EUR",
+    "estado": "estable",
+    "fuente": "art. 82.1.c TRLHL — personas fisicas siempre exentas"
+  },
+  "notificaciones.rechazo_tacito": {
+    "valor": 10,
+    "unidad": "dias naturales",
+    "estado": "estable",
+    "fuente": "art. 43.2 Ley 39/2015"
+  },
+  "notificaciones.dias_cortesia": {
+    "valor": [
+      30,
+      7
+    ],
+    "unidad": "[dias naturales al ano, dias de antelacion]",
+    "estado": "estable",
+    "fuente": "art. 4 Orden EHA/3552/2011"
+  }
+}

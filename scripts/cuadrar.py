@@ -46,6 +46,9 @@ import sys
 from decimal import Decimal
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from lib.registro import a_decimal  # noqa: E402
+
 PLANTILLA = {
     "cliente": "", "ejercicio": 2025, "periodo": "4T",
     "m303": [{"periodo": "1T", "casilla_27": 0, "casilla_45": 0, "casilla_59": 0,
@@ -66,11 +69,8 @@ PLANTILLA = {
 
 
 def d(valor) -> Decimal:
-    if valor is None or valor == "":
-        return Decimal("0")
-    if isinstance(valor, str):
-        valor = valor.replace(".", "").replace(",", ".").replace("€", "").strip()
-    return Decimal(str(valor))
+    """Delega en a_decimal para no repetir la interpretacion de formatos."""
+    return a_decimal(valor)
 
 
 def euros(v: Decimal) -> str:
