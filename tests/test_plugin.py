@@ -437,6 +437,62 @@ class TestEstructuraDelPlugin(unittest.TestCase):
             self.assertIn(campo, datos)
 
 
+class TestEmpaquetadoClaudeAI(unittest.TestCase):
+    """El paquete para claude.ai debe ser autonomo: sin rutas de Claude Code."""
+
+    @classmethod
+    def setUpClass(cls):
+        sys.path.insert(0, str(RAIZ / "scripts"))
+        import empaquetar_skill
+        cls.mod = empaquetar_skill
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.paquete = empaquetar_skill.construir(Path(cls.tmp.name))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_skill_md_con_frontmatter_valido(self):
+        texto = (self.paquete / "SKILL.md").read_text(encoding="utf-8")
+        self.assertTrue(texto.startswith("---\n"))
+        fm = texto.split("---\n")[1]
+        self.assertIn("name: asesoria-fiscal-es", fm)
+        self.assertIn("description:", fm)
+
+    def test_todas_las_materias_empaquetadas(self):
+        esperadas = {r.parent.name for r in RAIZ.glob("skills/*/SKILL.md")}
+        obtenidas = {r.stem for r in (self.paquete / "referencias").glob("*.md")}
+        self.assertEqual(esperadas, obtenidas)
+
+    def test_sin_rutas_de_claude_code(self):
+        """CLAUDE_PLUGIN_ROOT no existe en claude.ai: las rutas serian invalidas."""
+        con_ruta = [str(p.relative_to(self.paquete)) for p in self.paquete.rglob("*")
+                    if p.is_file() and p.suffix in (".md", ".py")
+                    and "CLAUDE_PLUGIN_ROOT" in p.read_text(encoding="utf-8", errors="ignore")]
+        self.assertFalse(con_ruta, f"quedan rutas sin traducir en: {con_ruta}")
+
+    def test_sin_herramientas_de_desarrollo(self):
+        for prohibido in ("empaquetar_skill.py", "comprobar_privacidad.py"):
+            self.assertFalse(list(self.paquete.rglob(prohibido)),
+                             f"{prohibido} no pinta nada dentro de la skill")
+
+    def test_el_enrutador_apunta_a_ficheros_que_existen(self):
+        import re
+        texto = (self.paquete / "SKILL.md").read_text(encoding="utf-8")
+        for ref in re.findall(r"`((?:referencias|flujos|revision|scripts)/[\w./-]+)`", texto):
+            with self.subTest(referencia=ref):
+                self.assertTrue((self.paquete / ref).exists(), f"{ref} no existe en el paquete")
+
+    def test_los_scripts_arrancan_desde_la_carpeta_de_la_skill(self):
+        for orden in (["scripts/parametros.py", "ver", "iva.tipo.general"],
+                      ["scripts/calcular_plazos.py", "ejecutivo", "--cuota", "100"],
+                      ["scripts/cuadrar.py", "--plantilla"]):
+            with self.subTest(script=orden[0]):
+                r = subprocess.run([sys.executable, *orden], cwd=self.paquete,
+                                   capture_output=True, text=True)
+                self.assertEqual(r.returncode, 0, r.stderr)
+
+
 class TestPrivacidad(unittest.TestCase):
     def test_el_repositorio_esta_limpio(self):
         r = subprocess.run([sys.executable, "scripts/comprobar_privacidad.py"],

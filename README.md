@@ -7,12 +7,18 @@ electrónica. Diseñado para usarse con ~85 clientes sin quemar contexto ni inve
 
 ## Instalación
 
+**Claude Code** — todo: 27 comandos, 34 skills, 2 agentes y los scripts.
 ```
 /plugin marketplace add Phraselium/Fiscal
 /plugin install asesoria-fiscal-es@asesoria-fiscal-es
 ```
 
-Guía completa en **[INSTALACION.md](INSTALACION.md)**.
+**claude.ai** — el conocimiento y los scripts, sin comandos de barra ni subagentes.
+Descarga [`dist/asesoria-fiscal-es.zip`](dist/asesoria-fiscal-es.zip) y súbelo en
+Ajustes → Capacidades → Skills. O constrúyelo con `python3 scripts/empaquetar_skill.py`.
+
+Guía completa, con la tabla de qué funciona en cada sitio, en
+**[INSTALACION.md](INSTALACION.md)**.
 
 Después:
 

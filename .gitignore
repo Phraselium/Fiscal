@@ -45,3 +45,8 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+
+# Paquete de claude.ai: se versiona el .zip para poder descargarlo,
+# no la carpeta intermedia del empaquetado.
+dist/*
+!dist/asesoria-fiscal-es.zip
