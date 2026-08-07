@@ -1,0 +1,16 @@
+# Copia este fichero como datos/nombres_privados.txt (está en .gitignore) y pon
+# aquí los nombres o tokens de tu cartera que nunca deben salir del despacho.
+#
+# scripts/comprobar_privacidad.py los buscará en todo lo que vayas a subir, y
+# con --historial también en los commits ya hechos.
+#
+# Un nombre por línea. Se comparan como palabra completa, sin distinguir
+# mayúsculas. Usa el token distintivo, no la razón social entera:
+#   bien:  ALTATERRA          (encuentra "ALTATERRA GESTION S.L.")
+#   mal:   ALTATERRA GESTION S.L.   (no encuentra la variante sin el S.L.)
+#
+# Evita palabras genéricas como GESTION, CLUB o SERVICIOS: dispararían en
+# cualquier texto normal del plugin.
+
+# NOMBRE-DE-CLIENTE-UNO
+# NOMBRE-DE-CLIENTE-DOS

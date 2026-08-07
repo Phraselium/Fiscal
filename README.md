@@ -170,11 +170,19 @@ python3 scripts/comprobar_privacidad.py --staged   # lo que va a commit
 python3 scripts/comprobar_privacidad.py --historial # busca en todo el historial
 ```
 
-Para vigilar los nombres de tu cartera, crea `datos/nombres_privados.txt` (ignorado por
-git) con un nombre por línea. Sin él, la comprobación cubre identificadores y ficheros,
-pero no razones sociales.
+Para vigilar los nombres de tu cartera, copia `datos/nombres_privados.ejemplo.txt` a
+`datos/nombres_privados.txt` (ignorado por git) y pon un nombre por línea. Sin él, la
+comprobación cubre identificadores y ficheros, pero no razones sociales.
 
-Los ejemplos de `ejemplos/` usan NIF sintéticos y nombres inequívocamente ficticios.
+Los ejemplos de `ejemplos/` usan NIF sintéticos y nombres inequívocamente ficticios. Las
+pruebas generan sus identificadores en tiempo de ejecución, así que ningún NIF con letra
+de control válida aparece escrito en el repositorio.
+
+**Si algo privado llega a subirse**, no basta con corregirlo en un commit nuevo: hay que
+reescribir el historial y forzar el push. Y aun así, GitHub conserva los commits
+huérfanos accesibles por su SHA hasta que ejecuta su recolección de basura, y cualquier
+fork o caché previo mantiene la copia. Ante una fuga real de datos de cliente, reescribe,
+fuerza el push y abre un ticket a GitHub Support para que purguen los objetos.
 
 ## Pruebas
 
