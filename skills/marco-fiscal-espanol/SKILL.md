@@ -1,185 +1,108 @@
 ---
 name: marco-fiscal-espanol
-description: Reglas de trabajo transversales para cualquier tarea de asesoría fiscal española (AEAT, IRPF, IVA, IS, LGT). Úsala SIEMPRE al inicio de cualquier consulta fiscal, cálculo de impuestos, revisión de declaraciones, redacción de escritos a Hacienda o análisis de normativa tributaria española. Establece jerarquía de fuentes, obligación de citar artículos, prohibición de inventar cifras y formato de entregables del despacho.
+description: Reglas de trabajo transversales para cualquier tarea de asesoría fiscal española (AEAT, IRPF, IVA, IS, LGT). Úsala SIEMPRE al inicio de cualquier consulta fiscal, cálculo de impuestos, revisión de declaraciones, redacción de escritos a Hacienda o análisis de normativa tributaria. Establece la jerarquía de fuentes, la prohibición de inventar cifras, cómo consultar los parámetros y el formato de los entregables.
 ---
 
 # Marco de trabajo fiscal
 
-Esta skill es el **contrato base**. Se aplica a toda tarea fiscal, por encima de
-cualquier otra skill del plugin.
+Contrato base. Se aplica por encima de cualquier otra skill.
 
-## 0. Antes de responder
+## 1. Las tres reglas que no se saltan
 
-1. Lee `config/configuracion.md` (criterios internos, CCAA de referencia).
-2. Lee `config/parametros-fiscales.md` si la tarea implica **cualquier cifra**.
-3. Identifica el **ejercicio fiscal** al que se refiere la consulta. Si no está
-   claro, pregúntalo: la respuesta cambia de un año a otro.
-4. Identifica el **territorio**: territorio común, foral (Álava, Bizkaia, Gipuzkoa,
-   Navarra), Canarias (IGIC), Ceuta/Melilla (IPSI). Si es foral, avisa de que la
-   normativa estatal **no** aplica y no la uses.
+### No memorices cifras: consúltalas
+```bash
+python3 scripts/parametros.py buscar iva          # tipos, umbrales, límites
+python3 scripts/parametros.py ver is.tipo.microempresa
+python3 scripts/parametros.py revisar             # qué NO es fiable
+```
+Si el parámetro sale como `volatil` o `sin_verificar`, **no lo uses en un entregable sin
+contrastarlo**. Escribe `⚠️ SIN VERIFICAR — contrastar en <fuente>` junto al dato. Nunca
+presentes como verificado algo que no lo está.
 
-## 1. Jerarquía de fuentes
+Datos que **siempre** cambian: tipos del IS de microempresa y ERD, límites de módulos,
+interés de demora, tramos del RETA, deducciones y escalas autonómicas, tipos temporales de
+IVA, calendario de VeriFactu, umbrales de Intrastat.
 
-Cita siempre en este orden y **con el artículo concreto**:
+### No inventes referencias
+Cita el **artículo concreto**. Si no estás seguro del número de una consulta de la DGT o
+del ECLI de una sentencia, describe el criterio sin numerarlo y márcalo como pendiente de
+localizar. Una referencia inventada es peor que ninguna.
 
-1. **Norma legal**: Ley 58/2003 (LGT), Ley 35/2006 (LIRPF), Ley 37/1992 (LIVA),
-   Ley 27/2014 (LIS), RDLeg 5/2004 (TRLIRNR), Ley 29/1987 (ISD),
-   RDLeg 1/1993 (ITPAJD), Ley 19/1991 (IP), RDLeg 2/2004 (TRLHL).
-2. **Reglamento**: RD 439/2007 (RIRPF), RD 1624/1992 (RIVA), RD 634/2015 (RIS),
-   RD 1065/2007 (RGAT), RD 2063/2004 (RGRST), RD 520/2005 (RRVA),
-   RD 939/2005 (RGR), RD 1619/2012 (facturación), RD 1007/2023 (VeriFactu).
-3. **Doctrina administrativa vinculante**: consultas de la DGT (V-xxxx-xx),
-   resoluciones del TEAC (vinculan a la Administración, art. 239.8 LGT).
-4. **Jurisprudencia**: TS (casación), AN, TSJ, TJUE (prevalece en IVA).
-5. **Criterios internos del despacho** (`config/configuracion.md`).
+### No leas el control entero
+Para cualquier pregunta sobre varios clientes usa `scripts/control.py` (skill
+`control-de-cartera`). Volcar la matriz al contexto cuesta ~15.000 tokens y no hace falta.
 
-Normativa autonómica: en ISD, ITP y AJD, IP y en el tramo autonómico del IRPF,
-la norma de la CCAA **desplaza** a la estatal en lo que haya asumido. Nunca
-resuelvas un ISD o un ITP sin identificar la CCAA competente y su punto de conexión.
+## 2. Antes de responder
 
-## 2. Prohibiciones absolutas
+1. **Ejercicio fiscal**. Si no está claro, pregúntalo: la respuesta cambia cada año.
+2. **Territorio**: común, foral (Álava, Bizkaia, Gipuzkoa, Navarra), Canarias (IGIC),
+   Ceuta/Melilla (IPSI). En foral **no** aplica la normativa estatal: avisa y detente.
+3. **CCAA** si hay IRPF, ISD, ITP o IP de por medio.
+4. **Régimen del contribuyente** y cifra de negocios del año anterior.
 
-- ❌ **No inventes cifras.** Tipos, mínimos, umbrales, límites, coeficientes,
-  módulos e intereses de demora se toman de `config/parametros-fiscales.md` o de
-  fuente oficial verificada. Si no la tienes, escribe
-  `⚠️ [VERIFICAR: tipo aplicable ejercicio 20XX]` y sigue con el razonamiento.
-- ❌ **No inventes consultas de la DGT ni sentencias.** Si no estás seguro del
-  número de consulta o del ECLI, describe el criterio sin numerarlo y márcalo como
-  «pendiente de localizar la referencia».
-- ❌ **No presentes nada ante la AEAT.** El plugin genera borradores; la
-  presentación es siempre un acto humano con certificado del despacho.
-- ❌ **No propongas esquemas de simulación, ocultación de rentas, facturación
-  falsa, interposición societaria artificiosa ni testaferros.** La planificación
-  fiscal legítima (economía de opción) sí; el fraude no.
-- ❌ **No trates una respuesta como definitiva sin revisión del titular del
-  expediente.**
+## 3. Jerarquía de fuentes
 
-## 3. Método de análisis (aplícalo en este orden)
+Ley → Reglamento → doctrina vinculante (DGT, TEAC art. 239.8 LGT) → jurisprudencia (TS,
+TJUE, que prevalece en IVA) → criterios internos (`config/configuracion.md`).
+
+En ISD, ITP-AJD, IP y en el tramo autonómico del IRPF, la norma de la **CCAA desplaza** a
+la estatal en lo que haya asumido.
+
+Normas base: LGT 58/2003 · LIRPF 35/2006 y RIRPF 439/2007 · LIVA 37/1992 y RIVA 1624/1992 ·
+LIS 27/2014 y RIS 634/2015 · RGAT 1065/2007 · TRLIRNR 5/2004 · ISD 29/1987 · ITPAJD 1/1993 ·
+IP 19/1991 · facturación RD 1619/2012 · VeriFactu RD 1007/2023.
+
+## 4. Método
 
 ```
-1. HECHOS      → qué ha pasado, quién, cuándo, importes, documentación disponible
-2. CALIFICACIÓN→ qué tipo de renta / operación es (trabajo, actividad económica,
-                 capital, ganancia; entrega de bienes o prestación de servicios)
-3. SUJECIÓN    → ¿está sujeto? ¿no sujeto? ¿exento?
-4. DEVENGO     → cuándo nace la obligación; ejercicio/periodo de imputación
-5. BASE        → cuantificación; gastos deducibles; reglas de valoración
-6. TIPO/CUOTA  → tipo aplicable; deducciones y bonificaciones
-7. OBLIGACIONES→ modelo, plazo, forma de presentación, obligaciones formales
-8. RIESGO      → contingencia si la AEAT discrepa: cuota + recargo/sanción + intereses
-9. RECOMENDACIÓN
+HECHOS → CALIFICACIÓN → SUJECIÓN → DEVENGO → BASE → TIPO/CUOTA
+      → OBLIGACIONES (modelo, plazo, forma) → RIESGO → RECOMENDACIÓN
 ```
 
-## 4. Cuantificación del riesgo
+Ante una posición discutible, cuantifica siempre: cuota + recargo o sanción + intereses =
+exposición total, y la probabilidad de comprobación con su motivo.
 
-Siempre que exista una posición discutible, cuantifica:
+## 5. Prohibiciones
 
-| Concepto | Importe |
+- No presentes nada ante la AEAT. El plugin **prepara**; presenta una persona con
+  certificado, desde Sage o desde la sede.
+- No propongas simulación, ocultación de rentas, facturación falsa ni interposición
+  societaria artificiosa. Economía de opción sí; fraude no.
+- No trates ninguna salida como definitiva sin revisión humana.
+- No escribas en el Control.xlsx sin `--simular` primero y confirmación del usuario.
+
+## 6. Entregables
+
+**Nota interna**: `ANTECEDENTES · NORMATIVA · ANÁLISIS · CONCLUSIÓN · RIESGOS ·
+ACCIONES Y PLAZOS`.
+
+**A cliente**: empieza por la conclusión y la acción con su fecha límite. Lenguaje llano.
+Importes `1.234,56 €`. Cierra con el aviso legal de `config/configuracion.md`.
+
+**A la Administración**: `HECHOS` numerados → `FUNDAMENTOS DE DERECHO` → `SOLICITA` →
+documentos que se acompañan. Ver agente `redactor-fiscal`.
+
+## 7. Convenciones
+
+Fechas `DD/MM/AAAA`. Importes con `.` de miles y `,` decimal. Modelo + periodo + ejercicio
+(«303, 2T/2025»). Distingue días **hábiles** de naturales; los plazos por meses van de
+fecha a fecha (art. 30.4 Ley 39/2015). Valida los NIF antes de usarlos
+(`scripts/lib/validaciones.py`).
+
+## 8. Datos de clientes
+
+Alta sensibilidad económica. No los reproduzcas fuera del expediente; anonimiza en
+plantillas y ejemplos. El despacho es sujeto obligado de la Ley 10/2010: ante indicios de
+operativa sospechosa, escálalo al responsable de cumplimiento, no lo resuelvas como un
+problema técnico.
+
+## 9. Herramientas
+
+| Necesidad | Herramienta |
 |---|---|
-| Cuota en discusión | |
-| Recargo (art. 27 LGT) o sanción (arts. 191 ss. LGT) | |
-| Intereses de demora estimados | |
-| **Exposición total** | |
-| Probabilidad de comprobación (alta/media/baja) y por qué | |
-
-## 5. Formato de los entregables
-
-### Nota interna (para el expediente)
-```
-EXPEDIENTE: <cliente> — <NIF>
-ASUNTO:
-FECHA:
-EJERCICIO(S):
-
-1. ANTECEDENTES DE HECHO
-2. NORMATIVA APLICABLE
-3. ANÁLISIS
-4. CONCLUSIÓN
-5. RIESGOS Y ALTERNATIVAS
-6. ACCIONES Y PLAZOS
-```
-
-### Comunicación a cliente
-- Lenguaje llano, sin jerga innecesaria. Nada de latinajos.
-- Empieza por la conclusión y la acción que debe realizar el cliente.
-- Cifras redondeadas al euro, formato español: `1.234,56 €`.
-- Cierra siempre con el aviso legal estándar de `config/configuracion.md`.
-
-### Escrito dirigido a la Administración
-- Encabezado con órgano destinatario, nº de expediente/CSV y datos del obligado.
-- `HECHOS` numerados → `FUNDAMENTOS DE DERECHO` numerados → `SOLICITA`.
-- Relación de documentos que se acompañan.
-- Firma del representante y referencia al apoderamiento.
-
-## 6. Convenciones de datos
-
-- Fechas: `DD/MM/AAAA`. Importes: separador de miles `.`, decimales `,`, 2 decimales.
-- NIF/NIE: valida la letra antes de usarlo en un escrito.
-- Al citar un modelo, indica siempre **modelo + periodo + ejercicio**
-  (p. ej. «modelo 303, 2T/2025»).
-- Plazos: distingue **días naturales** de **días hábiles** (sábados, domingos y
-  festivos no son hábiles, art. 30.2 Ley 39/2015). Los plazos por meses se cuentan
-  de fecha a fecha (art. 30.4).
-
-## 7. Protección de datos y prevención de blanqueo
-
-- Los datos de clientes son categoría ordinaria pero de alta sensibilidad económica:
-  no los incluyas en ejemplos, ni los reproduzcas fuera del expediente.
-- Anonimiza (`CLIENTE A`, `NIF ***1234A`) cuando el entregable sea una plantilla o
-  un ejemplo reutilizable.
-- Los despachos de asesoría fiscal son sujetos obligados de la Ley 10/2010 (PBC/FT):
-  si detectas indicios de operativa sospechosa, **no la analices como un problema
-  técnico**: señálala al responsable de cumplimiento del despacho.
-
-## 8. Cuándo parar y preguntar
-
-Detente y pregunta al usuario si falta alguno de estos datos y la respuesta cambia
-según el valor:
-
-- Ejercicio fiscal.
-- CCAA de residencia habitual / punto de conexión.
-- Régimen del contribuyente (estimación directa, simplificada, módulos; general de
-  IVA, simplificado, recargo de equivalencia, REAGP, RECC).
-- Cifra de negocios del año anterior (determina ERD, microempresa, SII, módulos).
-- Situación familiar y de discapacidad (IRPF).
-- Existencia de vinculación entre las partes (art. 18 LIS).
-
-## 9. Verificación de normativa vigente (obligatoria)
-
-El conocimiento del modelo tiene fecha de corte; la normativa tributaria cambia varias
-veces al año. **Antes de dar por buena cualquier cifra, plazo, tipo o umbral en un
-entregable**, verifícalo con las herramientas disponibles:
-
-1. Si dispones de `WebFetch` / `WebSearch`, consulta la fuente oficial:
-   - BOE consolidado de la norma: `https://www.boe.es/buscar/act.php?id=BOE-A-...`
-   - Sede AEAT, ficha del modelo: `https://sede.agenciatributaria.gob.es`
-   - Manual práctico del ejercicio (Renta, Sociedades, IVA)
-   - Orden anual de módulos, Orden del diseño de registro del modelo
-   - Normativa autonómica en el boletín de la CCAA
-2. Deja constancia en el entregable: `Verificado en <fuente> el <fecha>`.
-3. Si **no** puedes verificar, escribe literalmente
-   `⚠️ SIN VERIFICAR — contrastar en <fuente> antes de presentar` junto al dato.
-   Nunca presentes un dato no verificado como si lo estuviera.
-
-Datos que **siempre** exigen verificación en el ejercicio concreto:
-tipos de gravamen del IS (calendario decreciente de microempresa y ERD), límites de
-módulos (prorrogados año a año), interés de demora y legal del dinero, tarifas de
-cotización del RETA, mínimo exento y bonificaciones autonómicas de IP, deducciones
-autonómicas de IRPF, tipos reducidos temporales de IVA, calendario de VeriFactu y de
-la factura electrónica B2B, umbrales de Intrastat y diseños de registro de las
-informativas.
-
-## 10. Alcance real en la presentación de declaraciones
-
-El plugin **prepara y genera**, no presenta. Concretamente:
-
-| Puede | No puede |
-|---|---|
-| Calcular y cuadrar cualquier modelo | Acceder a la sede electrónica de la AEAT |
-| Generar el **fichero** en el diseño de registro oficial (informativas, Intrastat) | Firmar con certificado o Cl@ve |
-| Generar CSV/JSON de importación para el software del despacho | Presentar la declaración |
-| Producir el borrador del escrito o de la declaración | Domiciliar el pago |
-| Validar el fichero antes de subirlo | Sustituir la revisión del profesional |
-
-El flujo correcto es: **datos → cálculo → fichero → validación → revisión humana →
-importación y presentación en la sede con certificado**. Dilo así al usuario; no
-afirmes nunca que «se ha presentado» un modelo.
+| Estado de la cartera, qué falta, qué vence | `scripts/control.py` |
+| Tipos, umbrales, límites | `scripts/parametros.py` |
+| Plazos, recargos del art. 27 y 28 | `scripts/calcular_plazos.py` |
+| Validar NIF, NIE, CIF, NIF-IVA, IBAN, NC8 | `scripts/lib/validaciones.py` |
+| Intrastat | `scripts/generar_intrastat.py` |
+| Ficheros de informativas fuera de Sage | `scripts/generar_informativa.py` |

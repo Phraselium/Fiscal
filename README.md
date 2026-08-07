@@ -1,9 +1,9 @@
 # asesoria-fiscal-es
 
 Plugin de Claude Code para el trabajo diario de un despacho de asesoría fiscal en España.
-Cubre los modelos de la AEAT, el análisis normativo con cita de artículos, los
-procedimientos tributarios, Intrastat, y la **generación de ficheros en los diseños de
-registro oficiales listos para importar en la sede electrónica**.
+Cubre el control de la cartera, el análisis normativo con cita de artículos, los
+procedimientos tributarios, Intrastat y la generación de ficheros para la sede
+electrónica. Diseñado para usarse con ~85 clientes sin quemar contexto ni inventar cifras.
 
 ## Instalación
 
@@ -12,21 +12,38 @@ registro oficiales listos para importar en la sede electrónica**.
 /plugin install asesoria-fiscal-es@asesoria-fiscal-es
 ```
 
-Después, completa `config/configuracion.md` con los datos del despacho y revisa
-`config/parametros-fiscales.md`.
+Después: completa `config/configuracion.md`, ejecuta `python3 scripts/parametros.py revisar`
+para ver qué cifras hay que contrastar, e instala `openpyxl` si vas a usar el control de
+cartera (`pip install openpyxl`).
+
+## Contexto de uso
+
+Despacho con ~85 clientes, control en **Control.xlsx** (matriz cliente × modelo) y
+software **Sage Despachos Connected** (migración desde ContaPlus). Los clientes entregan
+por cuatro canales: contabilidad en Sage, Excel, papel y PDF escaneado.
 
 ## Qué hace y qué no
 
 | Hace | No hace |
 |---|---|
-| Calcula y cuadra cualquier modelo | Accede a la sede electrónica de la AEAT |
-| Genera el fichero en el diseño de registro oficial | Firma con certificado o Cl@ve |
-| Valida el fichero antes de subirlo | **Presenta** declaraciones |
-| Redacta escritos, alegaciones y recursos | Domicilia pagos |
-| Analiza normativa citando artículos | Sustituye la revisión del profesional |
+| Responde sobre la cartera sin leer el Excel entero | Accede a la sede de la AEAT |
+| Cuadra modelos entre sí y con la contabilidad | Firma con certificado o Cl@ve |
+| Consulta parámetros y avisa de los no fiables | **Presenta** declaraciones |
+| Normaliza documentación de clientes | Sustituye a Sage en lo que Sage ya hace |
+| Redacta escritos, alegaciones y recursos | Sustituye la revisión del profesional |
 
-El flujo es: **datos → cálculo → fichero → validación → revisión humana → importación y
-presentación en la sede con certificado**. Todo lo que produce el plugin es un borrador.
+**Sage genera y presenta los modelos.** El plugin no compite con eso: prepara los datos de
+entrada, cuadra lo que Sage saca y cubre lo que Sage no cubre (Intrastat, 720, 232, 210,
+escritos y procedimientos).
+
+## Tres reglas de diseño
+
+1. **Las cifras no se memorizan, se consultan.** `scripts/parametros.py` marca cada dato
+   como `estable`, `verificado`, `sin_verificar` o `volatil`, con su fuente y su fecha.
+   Lo que no es fiable sale marcado como tal en el entregable.
+2. **El control no se lee entero.** `scripts/control.py` devuelve colas filtradas: un
+   `resumen` cuesta ~600 tokens frente a los ~15.000 de volcar la matriz.
+3. **Nada se presenta automáticamente.** Todo es borrador hasta que lo revisa una persona.
 
 ## Comandos
 
@@ -44,12 +61,17 @@ presentación en la sede con certificado**. Todo lo que produce el plugin es un 
 | `/intrastat` | Declaración Intrastat de un periodo |
 | `/verificar-normativa` | Contrasta y actualiza los parámetros fiscales |
 | `/verificar-diseno` | Contrasta un diseño de registro con la orden oficial |
+| `/cartera` | Estado de la cartera: pendientes, vencimientos, revisiones |
 
 ## Skills
 
+**Operativas del despacho**: `control-de-cartera` (el Control.xlsx),
+`sage-despachos` (migración y reparto de tareas con Sage),
+`documentacion-de-clientes` (los cuatro canales de entrada).
+
 **Transversales**: `marco-fiscal-espanol` (reglas de trabajo, jerarquía de fuentes,
-prohibición de inventar cifras), `catalogo-modelos-aeat` (todos los modelos, quién los
-presenta y cuándo), `calendario-fiscal`, `gestion-de-despacho`, `generacion-de-ficheros`.
+prohibición de inventar cifras), `catalogo-modelos-aeat`, `calendario-fiscal`,
+`gestion-de-despacho`, `generacion-de-ficheros`.
 
 **Por impuesto**: `irpf`, `iva`, `impuesto-sociedades`, `retenciones-y-censos`,
 `autonomos-y-modulos`, `informativas-y-facturacion`,
@@ -70,6 +92,16 @@ presenta y cuándo), `calendario-fiscal`, `gestion-de-despacho`, `generacion-de-
 ## Scripts
 
 ```bash
+# Estado de la cartera (NO leas el Excel entero)
+python3 scripts/control.py --fichero Control.xlsx resumen
+python3 scripts/control.py --fichero Control.xlsx cola --estado Revisar
+python3 scripts/control.py --fichero Control.xlsx cliente "EJEMPLO CLIENTE SL"
+python3 scripts/control.py --fichero Control.xlsx huecos
+
+# Parámetros fiscales, con aviso de los que no son fiables
+python3 scripts/parametros.py ver verifactu.fecha_obligatoriedad
+python3 scripts/parametros.py revisar
+
 # Fichero de una informativa en diseño de registro
 python3 scripts/generar_informativa.py --modelo 190 --ejercicio 2025 \
   --declarante ejemplos/declarante.json --detalle ejemplos/perceptores_190.csv \
@@ -109,14 +141,27 @@ Para ponerlos en producción: `/verificar-diseno <modelo>` y `disenos/README.md`
 
 ## Verificación de la normativa
 
-El conocimiento del modelo tiene fecha de corte y la normativa tributaria cambia varias
-veces al año. `config/parametros-fiscales.md` es una **referencia de trabajo**, no una
-fuente oficial. Los datos que exigen verificación en cada ejercicio están marcados, y el
-comando `/verificar-normativa` los contrasta contra el BOE, la sede de la AEAT y los
-boletines autonómicos.
+El conocimiento del modelo tiene fecha de corte y la normativa cambia varias veces al año.
+`datos/parametros.json` marca cada dato con su estado y su fuente:
 
-Cuando el plugin no puede verificar un dato, lo señala con
-`⚠️ SIN VERIFICAR — contrastar en <fuente>` en vez de darlo por bueno.
+```
+python3 scripts/parametros.py revisar
+!!  VOLATILES (13)        cambian cada ejercicio — verificar SIEMPRE
+?   SIN VERIFICAR (9)     del conocimiento del modelo — contrastar
+    Fiables sin reverificar: 87/118
+```
+
+Dos errores reales detectados al construir esto, que ilustran por qué existe el mecanismo:
+
+- **VeriFactu**: el RD-ley 15/2025 aplazó la obligación a **2027** (1 de enero para
+  contribuyentes del IS, 1 de julio para el resto). Cualquier fuente que diga 2025 o 2026
+  está desactualizada.
+- **Tipos del IS de microempresa y ERD**: están en calendario transitorio decreciente y
+  ninguna cifra de memoria es fiable. El parámetro sale sin valor y obliga a consultar el
+  manual práctico del ejercicio.
+
+`/verificar-normativa` contrasta los volátiles contra el BOE, la sede de la AEAT y los
+boletines autonómicos, y actualiza el JSON con la fecha de verificación.
 
 ## Estructura
 
