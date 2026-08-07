@@ -1,6 +1,6 @@
 ---
 name: informativas-y-facturacion
-description: Declaraciones informativas (modelos 347, 349, 720, 721, 232, 190, 180, 193, 184, 172/173) y obligaciones de facturación y registro — contenido obligatorio de la factura, facturas simplificadas y rectificativas, plazos de expedición, libros registro, SII, VeriFactu y sistemas informáticos de facturación, factura electrónica B2B, y limitación de pagos en efectivo. Úsala para preparar o cuadrar informativas anuales, resolver dudas de facturación o implantar VeriFactu/SII en un cliente.
+description: Declaraciones informativas y obligaciones de facturación: umbrales de cada modelo, requisitos de la factura, libros registro, SII, VeriFactu y pagos en efectivo.
 ---
 
 # Informativas y facturacion

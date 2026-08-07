@@ -1,6 +1,6 @@
 ---
 name: modelo-123-193
-description: Modelos 123 y 193, retenciones sobre rendimientos del capital mobiliario y su resumen anual — dividendos, intereses de préstamos de socios, propiedad intelectual e industrial, arrendamiento de bienes muebles y negocios, tipo del 19 %, momento del devengo, distribución de dividendos y reparto de reservas, y generación del fichero. Úsala para retenciones de dividendos e intereses.
+description: Modelos 123 y 193, retenciones de dividendos e intereses: momento del devengo, reparto de dividendos, préstamos de socios y resumen anual.
 ---
 
 # Modelos 123 y 193 — Retenciones del capital mobiliario

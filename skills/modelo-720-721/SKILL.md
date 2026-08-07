@@ -1,6 +1,6 @@
 ---
 name: modelo-720-721
-description: Modelos 720 y 721, declaración informativa de bienes y derechos situados en el extranjero y de monedas virtuales en el extranjero — umbral de 50.000 € por bloque, obligación de repetir por incremento de 20.000 €, contenido de cada bloque, régimen sancionador tras la STJUE C-788/19, tributación de las rentas asociadas en IRPF y coordinación con el modelo 714. Úsala cuando un cliente tenga cuentas, valores, inmuebles o criptomonedas fuera de España.
+description: Modelos 720 y 721, bienes y criptomonedas en el extranjero: umbral por bloque, cuándo hay que repetir la declaración, régimen sancionador tras la STJUE y tributación de las rentas asociadas.
 ---
 
 # Modelos 720 y 721 — Bienes en el extranjero

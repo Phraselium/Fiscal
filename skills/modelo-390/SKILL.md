@@ -1,6 +1,6 @@
 ---
 name: modelo-390
-description: Modelo 390, declaración resumen anual del IVA — contenido, quién está exonerado, desglose por actividades y tipos, prorrata, regularización de bienes de inversión, operaciones específicas, cuadre con los modelos 303 del ejercicio y con el 347 y el 349. Úsala en el cierre anual de IVA, en enero, y cuando haya que explicar un descuadre entre los 303 y el resumen anual.
+description: Modelo 390, resumen anual del IVA: contenido, quién está exonerado, cuadre con los modelos 303 del ejercicio y explicación de los descuadres típicos.
 ---
 
 # Modelo 390 — Resumen anual de IVA

@@ -1,6 +1,6 @@
 ---
 name: modelo-303
-description: Modelo 303, autoliquidación periódica del IVA — casillas del régimen general, régimen simplificado, adquisiciones intracomunitarias, inversión del sujeto pasivo, importaciones, prorrata, bienes de inversión, rectificaciones, compensación y devolución, exoneración del 390, plazos y domiciliación. Úsala para preparar, revisar o cuadrar cualquier autoliquidación de IVA trimestral o mensual.
+description: Modelo 303, autoliquidación del IVA: casillas de devengado y deducible, adquisiciones intracomunitarias, inversión del sujeto pasivo, prorrata, compensación y devolución.
 ---
 
 # Modelo 303 — Autoliquidación de IVA

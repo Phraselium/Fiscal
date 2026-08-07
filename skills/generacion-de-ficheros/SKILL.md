@@ -1,6 +1,6 @@
 ---
 name: generacion-de-ficheros
-description: Generación de ficheros de declaraciones listos para importar en la sede electrónica de la AEAT — informativas en diseño de registro de 250 posiciones (190, 347, 349, 180, 193 y cualquier otro modelo cuyo diseño se defina), validación estructural previa, y cálculo de plazos y recargos. Úsala cuando haya que producir el fichero de una declaración, convertir datos de contabilidad o de nóminas al formato de la AEAT, validar un fichero antes de subirlo, o añadir el diseño de un modelo nuevo.
+description: Generar ficheros de declaraciones en el diseño de registro oficial de la AEAT, listos para importar en la sede, y validarlos antes de subirlos.
 ---
 
 # Generación de ficheros para la AEAT

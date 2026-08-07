@@ -1,6 +1,6 @@
 ---
 name: modelo-202
-description: Modelo 202, pago fraccionado del Impuesto sobre Sociedades — modalidades del artículo 40.2 y 40.3 LIS, elección y comunicación de la opción, cálculo, pago mínimo para grandes empresas, casos en los que no hay obligación de presentar, plazos de abril, octubre y diciembre. Úsala para calcular o revisar un pago fraccionado del IS.
+description: Modelo 202, pago fraccionado del Impuesto sobre Sociedades: modalidades del artículo 40.2 y 40.3, cuál elegir, pago mínimo y plazos de abril, octubre y diciembre.
 ---
 
 # Modelo 202 — Pago fraccionado del Impuesto sobre Sociedades

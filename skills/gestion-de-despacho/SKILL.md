@@ -1,6 +1,6 @@
 ---
 name: gestion-de-despacho
-description: Gestión interna del despacho de asesoría fiscal — alta y onboarding de clientes, hoja de encargo y alcance del servicio, apoderamientos y certificados, control de documentación pendiente, comunicación con el cliente, obligaciones del despacho como sujeto obligado de prevención del blanqueo (Ley 10/2010), protección de datos, conservación de expedientes y responsabilidad profesional. Úsala para dar de alta un cliente, definir el alcance de un encargo o revisar los controles internos del despacho.
+description: Gestión interna del despacho: alta de clientes, hoja de encargo, apoderamientos, prevención del blanqueo, protección de datos y conservación de expedientes.
 ---
 
 # Gestion del despacho

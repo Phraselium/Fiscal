@@ -1,6 +1,6 @@
 ---
 name: irpf
-description: Impuesto sobre la Renta de las Personas Físicas — cálculo, revisión de borradores y declaraciones (modelo 100), calificación de rentas, rendimientos del trabajo, capital inmobiliario y mobiliario, actividades económicas, ganancias y pérdidas patrimoniales, reducciones, mínimos, deducciones estatales y autonómicas, tributación individual o conjunta, retenciones y pagos fraccionados (modelos 130/131), declaraciones complementarias y rectificativas. Úsala para cualquier consulta de renta de una persona física residente.
+description: IRPF: cálculo y revisión de la renta de personas físicas residentes. Rendimientos del trabajo, alquileres, actividades económicas, ganancias, reducciones, mínimos y deducciones autonómicas.
 ---
 
 # IRPF — Ley 35/2006

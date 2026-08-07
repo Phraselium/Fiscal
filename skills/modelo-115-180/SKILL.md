@@ -1,6 +1,6 @@
 ---
 name: modelo-115-180
-description: Modelos 115 y 180, retenciones por arrendamiento de inmuebles urbanos y su resumen anual — quién retiene, tipo del 19 %, supuestos excluidos de retención, certificado del grupo 861 del IAE, referencia catastral, plazos, cuadre y generación del fichero del 180. Úsala para preparar o revisar retenciones de alquileres de local.
+description: Modelos 115 y 180, retenciones por alquiler de local: quién retiene, tipo del 19 %, supuestos excluidos, referencia catastral y resumen anual.
 ---
 
 # Modelos 115 y 180 — Retenciones por arrendamiento de inmuebles urbanos

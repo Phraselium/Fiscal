@@ -1,6 +1,6 @@
 ---
 name: catalogo-modelos-aeat
-description: Catálogo completo de los modelos y declaraciones de la AEAT y de las Administraciones autonómicas y locales — qué es cada modelo, quién lo presenta, periodicidad, plazo y modelo relacionado. Úsala para identificar qué modelo corresponde a una situación, resolver "¿qué modelo tengo que presentar?", enumerar las obligaciones de un cliente, o localizar la skill específica de un modelo concreto.
+description: Qué modelo hay que presentar. Catálogo de todos los modelos de la AEAT, autonómicos y locales, con quién los presenta y en qué plazo. Úsala para «¿qué modelo me toca?» o para listar las obligaciones de un cliente.
 ---
 
 # Catalogo de modelos

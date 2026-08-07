@@ -1,6 +1,6 @@
 ---
 name: modelo-100
-description: Modelo 100, declaración anual del IRPF (campaña de Renta) — obligación de declarar, datos fiscales, apartados del modelo, tributación individual o conjunta, fraccionamiento del pago, borrador y Renta Web, declaración rectificativa y complementaria, y checklist de revisión antes de presentar. Úsala en campaña de Renta o para revisar una declaración de IRPF ya presentada.
+description: Modelo 100, declaración anual del IRPF: obligación de declarar, apartados, tributación individual o conjunta, fraccionamiento y checklist de revisión de campaña de Renta.
 ---
 
 # Modelo 100 — Declaración anual del IRPF

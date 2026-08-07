@@ -1,6 +1,6 @@
 ---
 name: control-de-cartera
-description: Gestión de la cartera completa del despacho desde el fichero Control.xlsx — qué está pendiente, qué vence, qué hay que revisar, ficha de un cliente, estado de un modelo en toda la cartera, control de facturación de alquileres, auditoría de coherencia del propio control y marcado de estados. Úsala SIEMPRE que la pregunta sea sobre varios clientes, sobre "qué falta", "qué toca", "cómo vamos" o sobre el estado de una presentación.
+description: Control de cartera sobre el Control.xlsx: qué está pendiente, qué vence, qué hay que revisar y ficha de cada cliente. Úsala siempre que la pregunta sea sobre varios clientes o sobre «qué falta».
 ---
 
 # Control de cartera

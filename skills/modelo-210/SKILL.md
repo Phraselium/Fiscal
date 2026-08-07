@@ -1,6 +1,6 @@
 ---
 name: modelo-210
-description: Modelo 210, Impuesto sobre la Renta de No Residentes sin establecimiento permanente — imputación de rentas inmobiliarias, alquileres, ganancias por transmisión de inmuebles, dividendos e intereses, tipos del 19 % y 24 %, deducción de gastos solo para residentes en la UE y EEE, convenios de doble imposición, certificado de residencia fiscal, modelo 211 y plazos. Úsala para clientes no residentes con bienes o rentas en España.
+description: Modelo 210, IRNR de no residentes sin establecimiento permanente: imputación de rentas inmobiliarias, alquileres, venta de inmuebles, convenios y certificado de residencia.
 ---
 
 # Modelo 210 — IRNR sin establecimiento permanente

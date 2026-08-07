@@ -1,6 +1,6 @@
 ---
 name: modelo-714-718
-description: Modelos 714 (Impuesto sobre el Patrimonio) y 718 (Impuesto Temporal de Solidaridad de las Grandes Fortunas) — obligación de declarar, mínimo exento estatal y autonómico, exención de la vivienda habitual y de la empresa familiar, reglas de valoración de cada tipo de bien, límite conjunto con el IRPF, bonificaciones autonómicas y coordinación entre ambos impuestos. Úsala en campaña de Renta para patrimonios altos y en planificación patrimonial.
+description: Modelos 714 y 718, Patrimonio y Grandes Fortunas: obligación de declarar, mínimo exento, reglas de valoración, exención de empresa familiar y límite conjunto con el IRPF.
 ---
 
 # Modelos 714 y 718 — Patrimonio y Grandes Fortunas

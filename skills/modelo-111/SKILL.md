@@ -1,6 +1,6 @@
 ---
 name: modelo-111
-description: Modelo 111, autoliquidación de retenciones e ingresos a cuenta del IRPF sobre rendimientos del trabajo, actividades económicas, premios y determinadas imputaciones. Casillas, claves de percepción, tipos aplicables, presentación negativa, plazos, inaplazabilidad de la deuda y cuadre con el resumen anual 190. Úsala para preparar o revisar el 111 de cualquier periodo.
+description: Modelo 111, retenciones del trabajo y de actividades económicas: casillas, tipos aplicables, presentación negativa, inaplazabilidad de la deuda y cuadre con el 190.
 ---
 
 # Modelo 111 — Retenciones del trabajo y de actividades económicas

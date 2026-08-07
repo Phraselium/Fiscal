@@ -1,6 +1,6 @@
 ---
 name: modelo-200
-description: Modelo 200, declaración anual del Impuesto sobre Sociedades — páginas y bloques del modelo, correcciones al resultado contable, detalle de ajustes, compensación de bases imponibles negativas, deducciones pendientes, información de la memoria, balance y cuenta de pérdidas y ganancias, plazos y presentación. Úsala para preparar, revisar o cuadrar la declaración del Impuesto sobre Sociedades de una entidad.
+description: Modelo 200, declaración anual del Impuesto sobre Sociedades: bloques del modelo, cadena de liquidación, ajustes, compensación de BIN y checklist antes de presentar.
 ---
 
 # Modelo 200 — Impuesto sobre Sociedades

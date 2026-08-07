@@ -1,6 +1,6 @@
 ---
 name: sage-despachos
-description: Trabajo con Sage Despachos Connected como software del despacho — migración desde ContaPlus, contabilidad y enlace fiscal, generación y presentación telemática de modelos desde Sage, importación de asientos y facturas, plan de cuentas, y qué hacer cuando Sage no cubre un caso. Úsala para cualquier tarea que implique el software del despacho, importar datos o presentar desde Sage.
+description: Sage Despachos: migración desde ContaPlus, reparto de tareas con el enlace fiscal, preparación de datos para importar y qué obligaciones no cubre Sage.
 ---
 
 # Sage Despachos

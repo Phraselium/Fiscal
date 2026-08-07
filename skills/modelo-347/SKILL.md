@@ -1,6 +1,6 @@
 ---
 name: modelo-347
-description: Modelo 347, declaración anual de operaciones con terceras personas — umbral de 3.005,06 €, claves de operación, desglose trimestral, operaciones excluidas, arrendamientos de local de negocio, cobros en efectivo, criterio de caja, exonerados por SII, discrepancias con la contraparte y generación del fichero. Úsala en febrero para preparar, cuadrar o generar el 347.
+description: Modelo 347, operaciones con terceros: umbral de 3.005,06 €, claves de operación, desglose trimestral, exonerados por SII y discrepancias con la contraparte.
 ---
 
 # Modelo 347 — Operaciones con terceras personas

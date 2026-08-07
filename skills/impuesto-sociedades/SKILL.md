@@ -1,6 +1,6 @@
 ---
 name: impuesto-sociedades
-description: Impuesto sobre Sociedades — ajustes extracontables del resultado contable a la base imponible, amortizaciones, deterioros, provisiones, gastos no deducibles, operaciones vinculadas, compensación de bases imponibles negativas, tipos de gravamen, deducciones y bonificaciones, reserva de capitalización y nivelación, regímenes especiales (ERD, microempresa, entidades sin fines lucrativos, consolidación fiscal), modelo 200, pagos fraccionados modelo 202 y cierre contable-fiscal. Úsala para cualquier consulta de tributación de sociedades o revisión del modelo 200.
+description: Impuesto sobre Sociedades: ajustes extracontables del resultado a la base imponible, amortizaciones, deterioros, operaciones vinculadas, BIN, tipos, reservas y deducciones.
 ---
 
 # Impuesto sobre Sociedades — Ley 27/2014

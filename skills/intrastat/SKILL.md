@@ -1,6 +1,6 @@
 ---
 name: intrastat
-description: Declaración Intrastat de intercambios de bienes intracomunitarios — obligación y umbrales, flujos de introducción y expedición, datos de cada línea (código NC8, naturaleza de la transacción, condiciones de entrega, modalidad de transporte, país de origen, NIF-IVA de la contraparte, masa neta, unidades suplementarias, valor facturado y estadístico), plazos, rectificaciones, relación con el modelo 349 y generación del fichero CSV listo para subir al portal de Aduanas. Úsala para preparar, revisar o generar cualquier declaración Intrastat.
+description: Intrastat: obligación y umbrales por flujo, datos de cada línea, código NC8, plazos y generación del fichero para el portal de Aduanas.
 ---
 
 # Intrastat

@@ -1,6 +1,6 @@
 ---
 name: modelo-190
-description: Modelo 190, resumen anual de retenciones e ingresos a cuenta del IRPF — claves y subclaves de percepción, datos por perceptor, situación familiar, dietas exentas con clave L, ejercicio de devengo, cuadre con los modelos 111 y generación del fichero en diseño de registro listo para importar. Úsala en enero para preparar, cuadrar o generar el 190 de un cliente.
+description: Modelo 190, resumen anual de retenciones: claves y subclaves de percepción, dietas exentas con clave L, cuadre con los modelos 111 y generación del fichero.
 ---
 
 # Modelo 190 — Resumen anual de retenciones

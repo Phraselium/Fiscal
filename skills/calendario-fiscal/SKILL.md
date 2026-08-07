@@ -1,6 +1,6 @@
 ---
 name: calendario-fiscal
-description: Calendario del contribuyente y planificación del trabajo del despacho — obligaciones mes a mes, campañas trimestrales y anuales, plazos de presentación y domiciliación, obligaciones mercantiles y registrales, y generación del calendario personalizado de un cliente según sus modelos. Úsala para saber qué toca presentar, planificar el trimestre o construir el calendario de obligaciones de un cliente.
+description: Calendario fiscal del despacho: qué toca cada mes, plazos de presentación y de domiciliación, y obligaciones mercantiles. Úsala para planificar el trimestre o construir el calendario de un cliente.
 ---
 
 # Calendario fiscal y planificación del despacho

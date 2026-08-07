@@ -1,6 +1,6 @@
 ---
 name: procedimientos-tributarios
-description: Procedimientos frente a la AEAT — contestación a requerimientos, propuestas de liquidación, verificación de datos, comprobación limitada, inspección, procedimiento sancionador, recurso de reposición, reclamación económico-administrativa (TEAR/TEAC), suspensión de la ejecución, aplazamientos y fraccionamientos (modelo de solicitud), devolución de ingresos indebidos, rectificación de autoliquidaciones, prescripción, recargos e intereses. Úsala cuando llegue una notificación de Hacienda, haya que recurrir un acto tributario o calcular plazos y recargos.
+description: Procedimientos frente a Hacienda: contestación a requerimientos, comprobaciones, inspección, sanciones, recursos, aplazamientos, plazos y recargos. Úsala cuando llegue una notificación.
 ---
 
 # Procedimientos tributarios — LGT 58/2003

@@ -57,21 +57,22 @@ escritos y procedimientos).
 
 ## Comandos
 
-| Comando | Para qué |
-|---|---|
-| `/modelo <n>` | Prepara, revisa o genera cualquier modelo |
-| `/cierre-trimestre` | Cierre trimestral completo de un cliente |
-| `/cierre-fiscal` | Cierre contable y fiscal del ejercicio (ajustes del IS) |
-| `/campana-renta` | Prepara o revisa una declaración de IRPF |
-| `/requerimiento` | Analiza una notificación de Hacienda y prepara la contestación |
-| `/consulta-fiscal` | Resuelve una consulta con nota para el expediente |
-| `/alta-cliente` | Onboarding con diagnóstico y calendario |
-| `/calendario` | Obligaciones y plazos, generales o de un cliente |
-| `/generar-fichero` | Fichero de una declaración listo para importar |
-| `/intrastat` | Declaración Intrastat de un periodo |
-| `/verificar-normativa` | Contrasta y actualiza los parámetros fiscales |
-| `/verificar-diseno` | Contrasta un diseño de registro con la orden oficial |
-| `/cartera` | Estado de la cartera: pendientes, vencimientos, revisiones |
+Escribe `/` en Claude Code y los verás todos con su descripción. `/fiscal` es el índice.
+
+**Día a día** — `/cartera` · `/cierre-trimestre` · `/cuadrar` · `/calendario` · `/documentacion`
+
+**Por impuesto** — `/iva` · `/irpf` · `/sociedades` · `/retenciones` · `/autonomos` ·
+`/informativas` · `/patrimonio`
+
+**Modelos** — `/modelo <n>` sirve para cualquiera · `/campana-renta` · `/cierre-fiscal` ·
+`/intrastat` · `/generar-fichero`
+
+**Hacienda y clientes** — `/requerimiento` · `/procedimientos` · `/consulta-fiscal` ·
+`/alta-cliente` · `/despacho`
+
+**Mantenimiento** — `/verificar-normativa` · `/verificar-diseno` · `/sage` · `/privacidad`
+
+No hace falta usarlos: preguntando en lenguaje normal se carga solo lo que haga falta.
 
 ## Skills
 

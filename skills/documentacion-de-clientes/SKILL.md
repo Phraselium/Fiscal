@@ -1,6 +1,6 @@
 ---
 name: documentacion-de-clientes
-description: Entrada y tratamiento de la documentación que envían los clientes por sus distintos canales — contabilidad llevada en Sage, Excel del cliente, papel y PDF escaneado de facturas. Normalización a un formato importable, extracción de datos de facturas, control de lo que falta, reclamación al cliente y trazabilidad. Úsala al recibir documentación, al preparar un trimestre o cuando falte documentación para cerrar.
+description: Documentación que envían los clientes por sus cuatro canales: contabilidad en Sage, Excel, papel y PDF escaneado. Normalización, control de lo que falta y reclamación.
 ---
 
 # Entrada de documentación

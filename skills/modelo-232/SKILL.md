@@ -1,6 +1,6 @@
 ---
 name: modelo-232
-description: Modelo 232, declaración informativa de operaciones vinculadas y de operaciones con paraísos fiscales — umbrales de 250.000 € y 100.000 €, operaciones específicas, obligación de documentación de precios de transferencia, métodos de valoración, puerto seguro de sociedades profesionales, casos habituales de socio y sociedad, y plazo de noviembre. Úsala en el cierre del Impuesto sobre Sociedades y siempre que haya operaciones entre partes vinculadas.
+description: Modelo 232, operaciones vinculadas: umbrales, quién es parte vinculada, casos habituales de socio y sociedad, puerto seguro de sociedades profesionales y documentación de precios de transferencia.
 ---
 
 # Modelo 232 — Operaciones vinculadas

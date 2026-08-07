@@ -1,6 +1,6 @@
 ---
 name: modelo-036-037
-description: Modelos 036 y 037, declaración censal de alta, modificación y baja — cuándo usar cada uno, páginas y casillas clave, alta de actividad, epígrafes IAE, opciones y renuncias de regímenes de IVA e IRPF, alta en el ROI, obligaciones de retener, cambio de domicilio fiscal, baja de actividad y errores censales que generan requerimientos. Úsala para dar de alta, modificar o dar de baja a un cliente en Hacienda.
+description: Modelo 036 y 037, declaración censal: alta y baja de actividad, epígrafes IAE, regímenes de IVA e IRPF, alta en el ROI, obligaciones de retener y cambio de domicilio fiscal.
 ---
 
 # Modelos 036 y 037 — Declaración censal

@@ -1,6 +1,6 @@
 ---
 name: modelo-349
-description: Modelo 349, declaración recapitulativa de operaciones intracomunitarias — claves de operación, periodicidad mensual o trimestral, alta en el ROI y consulta en VIES, requisitos de la exención del artículo 25 LIVA, rectificaciones de periodos anteriores, acuerdos de venta en consigna y generación del fichero. Úsala para preparar, revisar o generar el 349 y para resolver dudas de operaciones intracomunitarias.
+description: Modelo 349, operaciones intracomunitarias: claves de operación, periodicidad, alta en el ROI, comprobación del NIF-IVA en VIES y requisitos de la exención del artículo 25 LIVA.
 ---
 
 # Modelo 349 — Operaciones intracomunitarias

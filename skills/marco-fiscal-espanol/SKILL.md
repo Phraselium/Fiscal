@@ -1,6 +1,6 @@
 ---
 name: marco-fiscal-espanol
-description: Reglas de trabajo transversales para cualquier tarea de asesoría fiscal española (AEAT, IRPF, IVA, IS, LGT). Úsala SIEMPRE al inicio de cualquier consulta fiscal, cálculo de impuestos, revisión de declaraciones, redacción de escritos a Hacienda o análisis de normativa tributaria. Establece la jerarquía de fuentes, la prohibición de inventar cifras, cómo consultar los parámetros y el formato de los entregables.
+description: Reglas de trabajo del despacho: jerarquía de fuentes, prohibición de inventar cifras, cómo consultar los parámetros y formato de los entregables. Úsala SIEMPRE al empezar cualquier tarea fiscal.
 ---
 
 # Marco de trabajo fiscal

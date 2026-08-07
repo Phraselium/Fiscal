@@ -1,6 +1,6 @@
 ---
 name: retenciones-y-censos
-description: Retenciones e ingresos a cuenta (modelos 111, 115, 123, 216 y resúmenes anuales 190, 180, 193, 296) y obligaciones censales (modelos 036 y 037, alta y baja de actividad, IAE modelos 840/848, epígrafes, obligaciones periódicas, NIF, apoderamientos y domicilio fiscal). Úsala para calcular o revisar retenciones, dar de alta o baja a un cliente, modificar sus obligaciones censales o cuadrar resúmenes anuales con las autoliquidaciones periódicas.
+description: Retenciones e ingresos a cuenta y obligaciones censales: quién retiene, a qué tipo, y altas, modificaciones y bajas en Hacienda.
 ---
 
 # Retenciones y censos

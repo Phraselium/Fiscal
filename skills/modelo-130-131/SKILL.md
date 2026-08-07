@@ -1,6 +1,6 @@
 ---
 name: modelo-130-131
-description: Modelos 130 y 131, pagos fraccionados del IRPF de actividades económicas — cálculo en estimación directa y en estimación objetiva, porcentajes, gastos deducibles del periodo, exoneración por el 70 % de ingresos con retención, minoración por rendimientos bajos, actividades agrícolas, arrastre de resultados negativos y plazos. Úsala para calcular o revisar el pago fraccionado trimestral de un autónomo.
+description: Modelos 130 y 131, pagos fraccionados del IRPF: cálculo acumulado en estimación directa y por módulos, exoneración por el 70 % de ingresos con retención y arrastre de negativos.
 ---
 
 # Modelos 130 y 131 — Pagos fraccionados del IRPF

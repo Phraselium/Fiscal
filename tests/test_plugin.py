@@ -377,6 +377,36 @@ class TestEstructuraDelPlugin(unittest.TestCase):
             with self.subTest(fichero=ruta.name):
                 self.assertIn("description:", ruta.read_text(encoding="utf-8").split("---\n")[1])
 
+    def test_comandos_legibles_en_el_menu(self):
+        """El menu de / muestra la description: debe caber y estar en castellano."""
+        import re
+        for ruta in sorted((RAIZ / "commands").glob("*.md")):
+            fm = ruta.read_text(encoding="utf-8").split("---\n")[1]
+            desc = re.search(r"^description: (.+)$", fm, re.M)
+            hint = re.search(r"^argument-hint: (.+)$", fm, re.M)
+            with self.subTest(comando=ruta.stem):
+                self.assertIsNotNone(desc)
+                self.assertIsNotNone(hint, "sin argument-hint el usuario no sabe que teclear")
+                self.assertLessEqual(len(desc.group(1)), 110,
+                                     "se trunca en el menu; acortala")
+                self.assertNotRegex(desc.group(1), r"^(Use|Run|Generate|Check|Prepare)\b",
+                                    "la descripcion debe estar en castellano")
+
+    def test_skills_con_descripcion_legible(self):
+        """La description de una skill se muestra: primero etiqueta humana, no jerga."""
+        import re
+        for ruta in sorted((RAIZ / "skills").glob("*/SKILL.md")):
+            fm = ruta.read_text(encoding="utf-8").split("---\n")[1]
+            desc = re.search(r"^description: (.+)$", fm, re.M).group(1)
+            with self.subTest(skill=ruta.parent.name):
+                self.assertLessEqual(len(desc), 320, "demasiado larga para leerse de un vistazo")
+                self.assertGreaterEqual(len(desc), 80, "demasiado corta para disparar bien")
+                self.assertTrue(desc[0].isupper(), "empieza en mayuscula")
+                # Lo primero que se lee tiene que decir DE QUE va, no como usarla.
+                self.assertNotIn("Úsala", desc[:70],
+                                 "los primeros caracteres son la etiqueta visible: "
+                                 "describe el tema antes de dar instrucciones al modelo")
+
     def test_sin_referencias_a_scripts_inexistentes(self):
         """Regresion: cuadrar.py estuvo referenciado sin existir."""
         import re

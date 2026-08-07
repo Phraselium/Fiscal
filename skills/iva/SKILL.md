@@ -1,6 +1,6 @@
 ---
 name: iva
-description: Impuesto sobre el Valor Añadido — sujeción, exenciones, localización del hecho imponible, devengo, base imponible, tipos, deducibilidad y prorrata, regímenes especiales (simplificado, recargo de equivalencia, REBU, RECC, agencias de viajes, REAGP, OSS/IOSS), inversión del sujeto pasivo, operaciones intracomunitarias y exportaciones, modelos 303, 390, 349, 309, 368, SII, rectificación de facturas y recuperación de IVA de impagados. Úsala para cualquier consulta de IVA o revisión de autoliquidaciones.
+description: IVA: sujeción, localización del hecho imponible, exenciones, devengo, deducibilidad, prorrata, inversión del sujeto pasivo y regímenes especiales.
 ---
 
 # IVA — Ley 37/1992

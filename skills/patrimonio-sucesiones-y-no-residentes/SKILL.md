@@ -1,6 +1,6 @@
 ---
 name: patrimonio-sucesiones-y-no-residentes
-description: Tributos patrimoniales y no residentes — Impuesto sobre el Patrimonio e Impuesto Temporal de Solidaridad de las Grandes Fortunas, Impuesto sobre Sucesiones y Donaciones (modelos 650, 651, 655), Impuesto sobre Transmisiones Patrimoniales y Actos Jurídicos Documentados (modelo 600), plusvalía municipal (IIVTNU), e Impuesto sobre la Renta de No Residentes (modelos 210, 211, 216, 296). Úsala para herencias, donaciones, compraventas de inmuebles, empresa familiar y clientes no residentes.
+description: Tributos patrimoniales y no residentes: Impuesto sobre el Patrimonio, herencias y donaciones, transmisiones patrimoniales, plusvalía municipal e IRNR. Todos cedidos a las CCAA.
 ---
 
 # Patrimonio, sucesiones, transmisiones y no residentes

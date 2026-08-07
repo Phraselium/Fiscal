@@ -1,6 +1,6 @@
 ---
 name: autonomos-y-modulos
-description: Fiscalidad del trabajador autónomo y de la pequeña empresa — alta y baja en Hacienda y RETA, cotización por ingresos reales, tarifa plana, estimación directa simplificada, gastos deducibles del autónomo (vehículo, suministros de la vivienda, dietas, local), estimación objetiva o módulos (límites, exclusión, renuncia, cálculo), régimen simplificado de IVA y recargo de equivalencia, y comparativa autónomo vs. sociedad. Úsala para consultas de autónomos, altas de actividad y decisiones sobre régimen de tributación.
+description: Fiscalidad del autónomo: alta en Hacienda y RETA, gastos deducibles (vehículo, suministros, dietas), estimación objetiva o módulos, recargo de equivalencia y comparativa autónomo vs. sociedad.
 ---
 
 # Autonomos y modulos
