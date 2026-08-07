@@ -96,13 +96,31 @@ plantillas y ejemplos. El despacho es sujeto obligado de la Ley 10/2010: ante in
 operativa sospechosa, escálalo al responsable de cumplimiento, no lo resuelvas como un
 problema técnico.
 
-## 9. Herramientas
+## 9. Dónde está cada cosa
 
-| Necesidad | Herramienta |
+Regla única, y no la olvides al ejecutar nada:
+
+| Qué | Dónde | Cómo se referencia |
+|---|---|---|
+| **Ficheros del plugin**: scripts, `datos/`, `disenos/`, `config/`, `ejemplos/` | Dentro del plugin instalado | `"${CLAUDE_PLUGIN_ROOT:-.}"/…` |
+| **Ficheros del despacho**: `Control.xlsx`, expedientes, salidas | Directorio de trabajo del usuario | Ruta relativa normal |
+
+Cuando en este plugin leas `config/configuracion.md` o `datos/parametros.json`, se refiere
+al fichero **dentro del plugin**: ábrelo como
+`"${CLAUDE_PLUGIN_ROOT:-.}"/config/configuracion.md`. Si el despacho tiene su propia
+configuración rellena en el directorio de trabajo, esa manda.
+
+## 10. Herramientas
+
+Todas se invocan como `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/<script>.py`:
+
+| Necesidad | Script |
 |---|---|
-| Estado de la cartera, qué falta, qué vence | `scripts/control.py` |
-| Tipos, umbrales, límites | `scripts/parametros.py` |
-| Plazos, recargos del art. 27 y 28 | `scripts/calcular_plazos.py` |
-| Validar NIF, NIE, CIF, NIF-IVA, IBAN, NC8 | `scripts/lib/validaciones.py` |
-| Intrastat | `scripts/generar_intrastat.py` |
-| Ficheros de informativas fuera de Sage | `scripts/generar_informativa.py` |
+| Estado de la cartera, qué falta, qué vence | `control.py` |
+| Tipos, umbrales, límites | `parametros.py` |
+| Cuadrar modelos entre sí y con la contabilidad | `cuadrar.py` |
+| Plazos, recargos del art. 27 y 28 | `calcular_plazos.py` |
+| Validar NIF, NIE, CIF, NIF-IVA, IBAN, NC8 | `lib/validaciones.py` |
+| Intrastat | `generar_intrastat.py` |
+| Ficheros de informativas fuera de Sage | `generar_informativa.py` |
+| Comprobar que no se filtran datos de clientes | `comprobar_privacidad.py` |

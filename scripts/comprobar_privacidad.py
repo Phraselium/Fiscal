@@ -77,12 +77,40 @@ class Hallazgo:
         return f"  {self.tipo:<22} {self.fichero}:{self.linea}  «{self.valor}»{d}"
 
 
+def hay_git() -> bool:
+    try:
+        r = subprocess.run(["git", "rev-parse", "--is-inside-work-tree"],
+                           cwd=RAIZ, capture_output=True, text=True)
+        return r.returncode == 0 and r.stdout.strip() == "true"
+    except (OSError, FileNotFoundError):
+        return False
+
+
+def ficheros_del_arbol() -> list[str]:
+    """Recorre el directorio cuando no hay git (plugin instalado, copia suelta)."""
+    ignorar = {".git", "__pycache__", ".venv", "venv", ".pytest_cache", "node_modules"}
+    salida = []
+    for ruta in RAIZ.rglob("*"):
+        if not ruta.is_file():
+            continue
+        if any(parte in ignorar for parte in ruta.parts):
+            continue
+        salida.append(str(ruta.relative_to(RAIZ)))
+    return sorted(salida)
+
+
 def ficheros_versionados(staged: bool) -> list[str]:
+    if not hay_git():
+        if staged:
+            print("No hay repositorio git: no existe 'staging' que comprobar.", file=sys.stderr)
+            raise SystemExit(2)
+        print("Sin repositorio git: se revisa el contenido del directorio.\n")
+        return ficheros_del_arbol()
     cmd = ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"] if staged \
         else ["git", "ls-files"]
     r = subprocess.run(cmd, cwd=RAIZ, capture_output=True, text=True)
     if r.returncode != 0:
-        print("No es un repositorio git o git no esta disponible.", file=sys.stderr)
+        print(f"git ha fallado: {r.stderr.strip()}", file=sys.stderr)
         raise SystemExit(2)
     return [f for f in r.stdout.split("\n") if f.strip()]
 
@@ -181,6 +209,9 @@ def revisar(ficheros: list[str]) -> list[Hallazgo]:
 
 
 def revisar_historial() -> list[Hallazgo]:
+    if not hay_git():
+        print("No hay repositorio git: no hay historial que revisar.", file=sys.stderr)
+        raise SystemExit(2)
     denylist = nombres_privados()
     if not denylist:
         print("Para revisar el historial hace falta datos/nombres_privados.txt "
