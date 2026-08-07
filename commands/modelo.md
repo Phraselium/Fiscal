@@ -1,28 +1,21 @@
 ---
-description: Prepara, revisa o genera cualquier modelo tributario español
-argument-hint: <número de modelo> [ejercicio/periodo] [cliente]
+description: Prepara, revisa o cuadra cualquier modelo tributario
+argument-hint: <número de modelo> [periodo/ejercicio] [cliente]
 ---
 
-Prepara el modelo indicado: **$ARGUMENTS**
+**$ARGUMENTS**
 
-Procedimiento:
+Carga `modelos-aeat` y el fichero de referencia del modelo. Si no tiene uno propio, usa
+`references/catalogo.md`.
 
-1. Carga la skill `marco-fiscal-espanol`. Consulta las cifras con
-   `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py buscar <ámbito>`, nunca de memoria.
-2. Identifica el modelo en la skill `catalogo-modelos-aeat`. Si existe una skill
-   específica (`modelo-303`, `modelo-190`, `modelo-200`…), úsala como referencia
-   principal.
-3. Confirma con el usuario los datos que falten y que cambien el resultado: ejercicio,
-   periodo, régimen del contribuyente, CCAA, cifra de negocios del año anterior.
-4. Localiza la documentación de partida en el expediente del cliente. Si no la
-   encuentras, pídela explícitamente antes de calcular.
-5. Calcula el modelo casilla a casilla, mostrando el detalle del cálculo.
-6. **Cuadra** contra los modelos relacionados (periódicos ↔ resumen anual ↔ contabilidad).
-   Si algo no cuadra, para y explica la diferencia antes de continuar.
-7. Si el modelo admite fichero, ofrece generarlo con `scripts/generar_informativa.py` y
-   validarlo con `scripts/validar_fichero.py`.
-8. Indica el plazo de presentación, el de domiciliación y la fecha límite interna
+1. Confirma ejercicio, periodo, régimen del contribuyente y CCAA si aplica.
+2. Localiza la documentación de partida. Si no está, pídela antes de calcular.
+3. Calcula casilla a casilla, mostrando el detalle.
+4. **Cuadra** contra los modelos relacionados con
+   `python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/cuadrar.py`. Si algo no cuadra, para y
+   explica la diferencia antes de seguir.
+5. Indica plazo de presentación, plazo de **domiciliación** y fecha límite interna
    (vencimiento − 5 días hábiles).
 
-Recuerda al final que el resultado es un **borrador** que requiere revisión humana y que
-la presentación se hace en la sede electrónica con certificado.
+Si hay que producir el fichero o un Excel, sigue con `/entregable`. Recuerda que el
+resultado es un borrador: presentar es un acto humano.

@@ -5,7 +5,7 @@ Hay dos formas de usar esto, según dónde trabajes.
 | | Claude Code | claude.ai (web, escritorio, móvil) |
 |---|---|---|
 | Cómo se instala | Marketplace | Subiendo un `.zip` |
-| Comandos `/` | ✅ los 27 | ❌ no existen en claude.ai |
+| Comandos `/` | ✅ los 10 | ❌ no existen en claude.ai |
 | Subagentes | ✅ revisor y redactor | ❌ se aplican como procedimiento |
 | Conocimiento fiscal | ✅ | ✅ |
 | Scripts (parámetros, plazos, cuadres, ficheros) | ✅ | ✅ |
@@ -51,8 +51,8 @@ cliente», «prepara la contestación a este requerimiento», «cuadra estos mod
 ```
 asesoria-fiscal-es/
 ├── SKILL.md          enrutador: qué hay y dónde está
-├── referencias/      34 ficheros — el conocimiento, uno por materia y por modelo
-├── flujos/           26 ficheros — los comandos convertidos en procedimientos
+├── referencias/      8 materias, con el detalle en subcarpetas
+├── flujos/           9 ficheros — los comandos convertidos en procedimientos
 ├── revision/          2 ficheros — revisor y redactor como procedimientos
 ├── scripts/          herramientas en Python
 ├── datos/            parametros.json

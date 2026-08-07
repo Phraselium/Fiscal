@@ -63,41 +63,37 @@ escritos y procedimientos).
 
 ## Comandos
 
-Escribe `/` en Claude Code y los verás todos con su descripción. `/fiscal` es el índice.
+Escribe `/` y los verás todos. `/fiscal` es el índice.
 
-**Día a día** — `/cartera` · `/cierre-trimestre` · `/cuadrar` · `/calendario` · `/documentacion`
-
-**Por impuesto** — `/iva` · `/irpf` · `/sociedades` · `/retenciones` · `/autonomos` ·
-`/informativas` · `/patrimonio`
-
-**Modelos** — `/modelo <n>` sirve para cualquiera · `/campana-renta` · `/cierre-fiscal` ·
-`/intrastat` · `/generar-fichero`
-
-**Hacienda y clientes** — `/requerimiento` · `/procedimientos` · `/consulta-fiscal` ·
-`/alta-cliente` · `/despacho`
-
-**Mantenimiento** — `/verificar-normativa` · `/verificar-diseno` · `/sage` · `/privacidad`
+| Comando | Para qué |
+|---|---|
+| `/consulta` | Resolver una duda fiscal, con la norma que la sostiene |
+| `/modelo` | Preparar, revisar o cuadrar cualquier modelo |
+| `/cartera` | Qué está pendiente, qué vence, qué hay que revisar |
+| `/documentos` | Procesar lo que manda un cliente: PDF, Excel, papel |
+| `/entregable` | Generar un fichero, un Excel, un informe o un escrito |
+| `/requerimiento` | Ha llegado algo de Hacienda: plazo, análisis y contestación |
+| `/cierre` | Cierre trimestral, anual o campaña de Renta |
+| `/cliente` | Alta de cliente, ficha, calendario y encargo |
+| `/verificar` | Contrastar normativa, diseños de registro y privacidad |
 
 No hace falta usarlos: preguntando en lenguaje normal se carga solo lo que haga falta.
 
 ## Skills
 
-**Operativas del despacho**: `control-de-cartera` (el Control.xlsx),
-`sage-despachos` (migración y reparto de tareas con Sage),
-`documentacion-de-clientes` (los cuatro canales de entrada).
+Ocho, organizadas por **el trabajo que hacéis**, no por la taxonomía del código
+tributario. Cada una carga solo la referencia que necesita.
 
-**Transversales**: `marco-fiscal-espanol` (reglas de trabajo, jerarquía de fuentes,
-prohibición de inventar cifras), `catalogo-modelos-aeat`, `calendario-fiscal`,
-`gestion-de-despacho`, `generacion-de-ficheros`.
-
-**Por impuesto**: `irpf`, `iva`, `impuesto-sociedades`, `retenciones-y-censos`,
-`autonomos-y-modulos`, `informativas-y-facturacion`,
-`patrimonio-sucesiones-y-no-residentes`, `procedimientos-tributarios`, `intrastat`.
-
-**Por modelo**: `modelo-036-037`, `modelo-100`, `modelo-111`, `modelo-115-180`,
-`modelo-123-193`, `modelo-130-131`, `modelo-190`, `modelo-200`, `modelo-202`,
-`modelo-210`, `modelo-232`, `modelo-303`, `modelo-347`, `modelo-349`, `modelo-390`,
-`modelo-714-718`, `modelo-720-721`.
+| Skill | Cubre |
+|---|---|
+| `asesoria-fiscal` | Reglas de trabajo. Se aplica siempre, antes que nada |
+| `consultas-por-impuesto` | IVA, IRPF, Sociedades, retenciones, autónomos, patrimonio |
+| `modelos-aeat` | 036, 100, 111, 115, 123, 130, 180, 190, 193, 200, 202, 210, 232, 303, 347, 349, 390, 714, 720, 721, Intrastat |
+| `control-de-cartera` | El Control.xlsx: pendientes, vencimientos, revisiones |
+| `entrada-de-documentos` | PDF escaneado, Excel, papel y Sage |
+| `generacion-de-entregables` | Ficheros AEAT, Excel, informes y escritos |
+| `procedimientos-y-plazos` | Requerimientos, recursos, sanciones, plazos, recargos |
+| `gestion-del-despacho` | Alta de clientes, encargo, calendario, blanqueo, conservación |
 
 ## Agentes
 
@@ -114,6 +110,10 @@ python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx res
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cola --estado Revisar
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cliente "EJEMPLO CLIENTE SL"
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx huecos
+
+# Excel con formato de despacho: informes, cuadres, listados
+python3 scripts/generar_excel.py --datos informe.json --salida informe.xlsx \
+  --titulo "Cierre 2T/2026" --totales base,cuota
 
 # Cuadre entre modelos antes de presentar
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/cuadrar.py --plantilla > cliente-2025.json

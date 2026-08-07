@@ -40,14 +40,11 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 NOMBRE = "asesoria-fiscal-es"
 
-# Orden de presentacion en el enrutador. Lo que no aparezca aqui va al final.
+# Orden de presentacion en el enrutador: el marco primero, luego el flujo de trabajo.
 ORDEN_MATERIAS = [
-    "marco-fiscal-espanol", "catalogo-modelos-aeat", "calendario-fiscal",
-    "control-de-cartera", "documentacion-de-clientes", "sage-despachos",
-    "gestion-de-despacho", "generacion-de-ficheros",
-    "iva", "irpf", "impuesto-sociedades", "retenciones-y-censos",
-    "autonomos-y-modulos", "informativas-y-facturacion",
-    "patrimonio-sucesiones-y-no-residentes", "procedimientos-tributarios", "intrastat",
+    "asesoria-fiscal", "consultas-por-impuesto", "modelos-aeat", "control-de-cartera",
+    "entrada-de-documentos", "generacion-de-entregables", "procedimientos-y-plazos",
+    "gestion-del-despacho",
 ]
 
 
@@ -81,17 +78,18 @@ def construir(destino: Path) -> Path:
 
     # --- Materias: cuerpo de cada skill + su detalle, en un solo fichero ---
     materias: dict[str, str] = {}
-    modelos: dict[str, str] = {}
     for ruta in sorted(RAIZ.glob("skills/*/SKILL.md")):
         nombre = ruta.parent.name
         campos, cuerpo = sin_frontmatter(ruta.read_text(encoding="utf-8"))
-        partes = [rutas_relativas(cuerpo)]
+        (paquete / "referencias" / f"{nombre}.md").write_text(
+            rutas_relativas(cuerpo), encoding="utf-8")
+        # El detalle de cada materia conserva su propio fichero, para no cargarlo entero.
         for detalle in sorted(ruta.parent.glob("references/*.md")):
-            partes.append("\n\n---\n\n## Detalle ampliado\n\n"
-                          + rutas_relativas(detalle.read_text(encoding="utf-8")))
-        (paquete / "referencias" / f"{nombre}.md").write_text("".join(partes), encoding="utf-8")
-        destino_indice = modelos if nombre.startswith("modelo-") else materias
-        destino_indice[nombre] = campos.get("description", "")
+            sub = paquete / "referencias" / nombre
+            sub.mkdir(exist_ok=True)
+            (sub / detalle.name).write_text(
+                rutas_relativas(detalle.read_text(encoding="utf-8")), encoding="utf-8")
+        materias[nombre] = campos.get("description", "")
 
     # --- Comandos -> flujos de trabajo ---
     flujos: dict[str, str] = {}
@@ -129,11 +127,11 @@ def construir(destino: Path) -> Path:
         script.write_text(rutas_relativas(script.read_text(encoding="utf-8")), encoding="utf-8")
 
     (paquete / "SKILL.md").write_text(
-        enrutador(materias, modelos, flujos, revisiones), encoding="utf-8")
+        enrutador(materias, flujos, revisiones), encoding="utf-8")
     return paquete
 
 
-def enrutador(materias, modelos, flujos, revisiones) -> str:
+def enrutador(materias, flujos, revisiones) -> str:
     def filas(indice: dict[str, str], carpeta: str, orden: list[str] | None = None) -> str:
         claves = ([k for k in (orden or []) if k in indice]
                   + sorted(k for k in indice if k not in (orden or [])))
@@ -154,7 +152,7 @@ Todas las rutas de este documento son **relativas a la carpeta de esta skill**.
 
 ## Cómo usar esta skill
 
-1. **Lee siempre primero** `referencias/marco-fiscal-espanol.md`. Son las reglas de
+1. **Lee siempre primero** `referencias/asesoria-fiscal.md`. Son las reglas de
    trabajo: jerarquía de fuentes, prohibición de inventar cifras y formato de los
    entregables. Se aplican por encima de todo lo demás.
 2. Localiza la materia en las tablas de abajo y **lee solo el fichero que necesites**.
@@ -181,17 +179,15 @@ acto humano con certificado. Nunca digas que una declaración «se ha presentado
 
 ## Materias
 
+Cada materia tiene su fichero, y las más extensas una subcarpeta con el detalle. Lee
+solo lo que necesites: el conjunto son unas 300 KB.
+
 | Fichero | Contenido |
 |---|---|
 {filas(materias, 'referencias', ORDEN_MATERIAS)}
 
-## Modelos concretos
-
-| Fichero | Contenido |
-|---|---|
-{filas(modelos, 'referencias')}
-
-Para un modelo sin fichero propio, usa `referencias/catalogo-modelos-aeat.md`.
+`referencias/consultas-por-impuesto/` tiene un fichero por impuesto, y
+`referencias/modelos-aeat/` uno por modelo.
 
 ## Flujos de trabajo
 

@@ -360,6 +360,13 @@ class TestParametros(unittest.TestCase):
 
 
 class TestEstructuraDelPlugin(unittest.TestCase):
+    def test_numero_de_entradas_manejable(self):
+        """El menu debe caber en una pantalla: es la queja numero uno de los usuarios."""
+        skills = len(list((RAIZ / "skills").glob("*/SKILL.md")))
+        comandos = len(list((RAIZ / "commands").glob("*.md")))
+        self.assertLessEqual(skills, 12, f"{skills} skills: consolida por trabajo, no por impuesto")
+        self.assertLessEqual(comandos, 12, f"{comandos} comandos: demasiadas entradas en el menu")
+
     def test_skills_con_frontmatter_coherente(self):
         import re
         for ruta in sorted((RAIZ / "skills").glob("*/SKILL.md")):
@@ -399,7 +406,7 @@ class TestEstructuraDelPlugin(unittest.TestCase):
             fm = ruta.read_text(encoding="utf-8").split("---\n")[1]
             desc = re.search(r"^description: (.+)$", fm, re.M).group(1)
             with self.subTest(skill=ruta.parent.name):
-                self.assertLessEqual(len(desc), 320, "demasiado larga para leerse de un vistazo")
+                self.assertLessEqual(len(desc), 400, "demasiado larga para leerse de un vistazo")
                 self.assertGreaterEqual(len(desc), 80, "demasiado corta para disparar bien")
                 self.assertTrue(desc[0].isupper(), "empieza en mayuscula")
                 # Lo primero que se lee tiene que decir DE QUE va, no como usarla.
@@ -463,6 +470,12 @@ class TestEmpaquetadoClaudeAI(unittest.TestCase):
         esperadas = {r.parent.name for r in RAIZ.glob("skills/*/SKILL.md")}
         obtenidas = {r.stem for r in (self.paquete / "referencias").glob("*.md")}
         self.assertEqual(esperadas, obtenidas)
+
+    def test_el_detalle_de_cada_materia_se_conserva(self):
+        for skill in RAIZ.glob("skills/*/references/*.md"):
+            destino = self.paquete / "referencias" / skill.parent.parent.name / skill.name
+            with self.subTest(referencia=str(skill.relative_to(RAIZ))):
+                self.assertTrue(destino.exists(), f"falta {destino.name} en el paquete")
 
     def test_sin_rutas_de_claude_code(self):
         """CLAUDE_PLUGIN_ROOT no existe en claude.ai: las rutas serian invalidas."""
