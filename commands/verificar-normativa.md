@@ -5,11 +5,12 @@ argument-hint: [ejercicio] [ámbito, p. ej. IRPF, IVA, IS, módulos, CCAA]
 
 Verificación de normativa: **$ARGUMENTS**
 
-`config/parametros-fiscales.md` es una referencia de trabajo, no una fuente oficial. Este
-comando la contrasta y la actualiza.
+`datos/parametros.json` es una referencia de trabajo, no una fuente oficial. Este comando
+la contrasta y la actualiza.
 
-1. Lee `config/parametros-fiscales.md` e identifica los datos del ámbito solicitado,
-   priorizando los marcados como `PENDIENTE_COMPLETAR` o con aviso de verificación.
+1. Ejecuta `python3 scripts/parametros.py revisar` y quédate con los marcados `volatil` y
+   `sin_verificar` del ámbito solicitado. Añade `--caducados` para los verificados hace
+   más de 12 meses.
 
 2. **Verifica en fuente oficial** (usa WebFetch o WebSearch si están disponibles):
    - BOE consolidado de la norma
@@ -30,9 +31,9 @@ comando la contrasta y la actualiza.
    - Calendario de VeriFactu y de la factura electrónica B2B
    - Umbrales de Intrastat y diseños de registro de las informativas
 
-4. **Actualiza el fichero**: corrige los valores, anota la fuente y la fecha de
-   verificación en cada bloque, y actualiza «Última revisión manual» y «Ejercicio de
-   referencia» de la cabecera.
+4. **Actualiza `datos/parametros.json`**: corrige `valor`, pon `"estado": "verificado"`,
+   anota `verificado_el` con la fecha de hoy y `fuente` con la referencia exacta. Actualiza
+   `_meta.revisado_el` y `_meta.ejercicio_referencia`.
 
 5. **Informe final**: tabla con los datos revisados, valor anterior, valor verificado,
    fuente y fecha. Señala expresamente los que **no** has podido verificar, para que se

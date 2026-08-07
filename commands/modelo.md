@@ -7,7 +7,8 @@ Prepara el modelo indicado: **$ARGUMENTS**
 
 Procedimiento:
 
-1. Carga la skill `marco-fiscal-espanol` y `config/parametros-fiscales.md`.
+1. Carga la skill `marco-fiscal-espanol`. Consulta las cifras con
+   `python3 scripts/parametros.py buscar <ámbito>`, nunca de memoria.
 2. Identifica el modelo en la skill `catalogo-modelos-aeat`. Si existe una skill
    específica (`modelo-303`, `modelo-190`, `modelo-200`…), úsala como referencia
    principal.

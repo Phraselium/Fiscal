@@ -134,7 +134,7 @@ Límite conjunto de las deducciones del capítulo IV: 25 % de la cuota íntegra 
 
 ## 6. Tipos y tributación mínima
 
-Ver `config/parametros-fiscales.md`. Recuerda que los tipos de **microempresa**
+Ver `scripts/parametros.py`. Recuerda que los tipos de **microempresa**
 (INCN < 1 M€) y de **entidad de reducida dimensión** (INCN < 10 M€) están en calendario
 transitorio decreciente por la Ley 7/2024: confirma el tipo del ejercicio concreto.
 

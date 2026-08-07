@@ -35,7 +35,7 @@ geográfica y en trabajadores activos con discapacidad).
 
 **Reducciones (art. 20)**: reducción por obtención de rendimientos del trabajo, con
 tramos decrecientes — verifica los umbrales del ejercicio en
-`config/parametros-fiscales.md`.
+`scripts/parametros.py`.
 
 **Reducción del 30 % (art. 18.2)**: rendimientos con periodo de generación > 2 años o
 notoriamente irregulares (RD 439/2007 art. 11), sobre un máximo de 300.000 €. Ojo con
@@ -136,7 +136,7 @@ elemento en 1 año.
   judicial** (art. 55). Las anualidades a los hijos no reducen la base: aplican la
   regla especial del art. 64.
 - Tributación conjunta: 3.400 € (biparental) / 2.150 € (monoparental).
-- Mínimos personal y familiar: ver `config/parametros-fiscales.md`. Reglas: convivencia
+- Mínimos personal y familiar: ver `scripts/parametros.py`. Reglas: convivencia
   o dependencia económica, rentas del descendiente/ascendiente ≤ 8.000 €, y el
   descendiente no debe presentar declaración con rentas > 1.800 €.
 

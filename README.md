@@ -98,6 +98,10 @@ python3 scripts/control.py --fichero Control.xlsx cola --estado Revisar
 python3 scripts/control.py --fichero Control.xlsx cliente "EJEMPLO CLIENTE SL"
 python3 scripts/control.py --fichero Control.xlsx huecos
 
+# Cuadre entre modelos antes de presentar
+python3 scripts/cuadrar.py --plantilla > cliente-2025.json
+python3 scripts/cuadrar.py --datos cliente-2025.json
+
 # Parámetros fiscales, con aviso de los que no son fiables
 python3 scripts/parametros.py ver verifactu.fecha_obligatoriedad
 python3 scripts/parametros.py revisar
