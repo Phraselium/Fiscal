@@ -496,6 +496,25 @@ class TestEmpaquetadoClaudeAI(unittest.TestCase):
             with self.subTest(referencia=ref):
                 self.assertTrue((self.paquete / ref).exists(), f"{ref} no existe en el paquete")
 
+    def test_el_zip_publicado_no_esta_desfasado(self):
+        """El .zip de dist/ es un artefacto: no se regenera solo.
+
+        Es el fallo más fácil de cometer: tocas una skill, la subes, y quien use
+        claude.ai se descarga la versión anterior sin enterarse.
+        """
+        zip_ = RAIZ / "dist" / "asesoria-fiscal-es.zip"
+        if not zip_.exists():
+            self.skipTest("no hay paquete construido")
+        fuentes = [p for carpeta in ("skills", "commands", "agents", "scripts",
+                                     "datos", "disenos", "config")
+                   for p in (RAIZ / carpeta).rglob("*")
+                   if p.is_file() and "__pycache__" not in str(p)]
+        mas_nuevo = max(fuentes, key=lambda p: p.stat().st_mtime)
+        self.assertGreaterEqual(
+            zip_.stat().st_mtime, mas_nuevo.stat().st_mtime,
+            f"{mas_nuevo.relative_to(RAIZ)} es más reciente que el paquete. "
+            "Regenéralo con: python3 scripts/empaquetar_skill.py")
+
     def test_los_scripts_arrancan_desde_la_carpeta_de_la_skill(self):
         for orden in (["scripts/parametros.py", "ver", "iva.tipo.general"],
                       ["scripts/calcular_plazos.py", "ejecutivo", "--cuota", "100"],

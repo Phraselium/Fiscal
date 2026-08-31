@@ -72,9 +72,17 @@ Claude lee solo el fichero que necesita, no las 300 KB.
 - **Los datos de tus clientes viajan a la conversación** cuando adjuntas ficheros.
   Valóralo antes de subir un control con 85 clientes.
 
-### Actualizar
+### Actualizar — **no es automático**
 
-Vuelve a construir el `.zip` y súbelo otra vez; sustituye a la versión anterior.
+Una skill de claude.ai es una **copia**, no un enlace al repositorio. Aunque el repo
+cambie, tu skill se queda en la versión que subiste. Para actualizarla:
+
+```bash
+git pull
+python3 scripts/empaquetar_skill.py
+```
+
+y vuelve a subir el `.zip` en Ajustes → Capacidades → Skills. Sustituye a la anterior.
 
 ---
 
@@ -131,11 +139,22 @@ antes de usarlos en un entregable.
 
 ## Actualizar
 
+Claude Code refresca los marketplaces **en segundo plano**, así que acaba enterándose
+solo de los cambios del repositorio. Pero eso no es inmediato, y hasta que no reinicias
+sigues usando lo que se cargó al arrancar la sesión.
+
+Para forzarlo:
+
 ```
 /plugin marketplace update asesoria-fiscal-es
 ```
 
-Después de actualizar, vuelve a pasar `parametros.py revisar`.
+y **reinicia Claude Code**: las skills y los comandos se cargan al arrancar.
+
+Comprueba que ha entrado mirando si aparece lo nuevo en `/fiscal`.
+
+Después de actualizar, vuelve a pasar `parametros.py revisar`: los parámetros volátiles
+siguen necesitando verificación en cada ejercicio, la actualice quien la actualice.
 
 ---
 
