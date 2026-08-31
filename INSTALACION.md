@@ -5,7 +5,7 @@ Hay dos formas de usar esto, según dónde trabajes.
 | | Claude Code | claude.ai (web, escritorio, móvil) |
 |---|---|---|
 | Cómo se instala | Marketplace | Subiendo un `.zip` |
-| Comandos `/` | ✅ los 10 | ❌ no existen en claude.ai |
+| Comandos `/` | ✅ los 11 | ❌ no existen en claude.ai |
 | Subagentes | ✅ revisor y redactor | ❌ se aplican como procedimiento |
 | Conocimiento fiscal | ✅ | ✅ |
 | Scripts (parámetros, plazos, cuadres, ficheros) | ✅ | ✅ |
@@ -51,8 +51,8 @@ cliente», «prepara la contestación a este requerimiento», «cuadra estos mod
 ```
 asesoria-fiscal-es/
 ├── SKILL.md          enrutador: qué hay y dónde está
-├── referencias/      8 materias, con el detalle en subcarpetas
-├── flujos/           9 ficheros — los comandos convertidos en procedimientos
+├── referencias/      9 materias, con el detalle en subcarpetas
+├── flujos/          10 ficheros — los comandos convertidos en procedimientos
 ├── revision/          2 ficheros — revisor y redactor como procedimientos
 ├── scripts/          herramientas en Python
 ├── datos/            parametros.json
@@ -134,7 +134,7 @@ fichero a ningún repositorio público.**
 python3 "$CLAUDE_PLUGIN_ROOT/scripts/parametros.py" revisar
 ```
 
-Saca los parámetros `volatil` y `sin_verificar`. Contrástalos con `/verificar-normativa`
+Saca los parámetros `volatil` y `sin_verificar`. Contrástalos con `/verificar normativa`
 antes de usarlos en un entregable.
 
 ## Actualizar

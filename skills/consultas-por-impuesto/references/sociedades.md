@@ -52,15 +52,6 @@ invalida toda la liquidacion.
 `200` anual · `202` pago fraccionado · `220`/`222` consolidacion · `232` vinculadas ·
 `231` country-by-country. Ver `modelo-200`, `modelo-202`, `modelo-232`.
 
-## Detalle
-
-`references/detalle.md` — amortizaciones, deterioros y provisiones articulo a articulo,
-operaciones vinculadas y sus metodos, compensacion de BIN, reservas, tabla completa de
-deducciones, y checklist de cierre fiscal.
-
-
-
-
 ---
 
 # Impuesto sobre Sociedades — Ley 27/2014 y RD 634/2015

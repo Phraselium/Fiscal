@@ -7,7 +7,7 @@ electrónica. Diseñado para usarse con ~85 clientes sin quemar contexto ni inve
 
 ## Instalación
 
-**Claude Code** — todo: 27 comandos, 34 skills, 2 agentes y los scripts.
+**Claude Code** — todo: 11 comandos, 9 skills, 2 agentes y los scripts.
 ```
 /plugin marketplace add Phraselium/Fiscal
 /plugin install asesoria-fiscal-es@asesoria-fiscal-es
@@ -25,7 +25,7 @@ Después:
 ```bash
 pip install -r requirements.txt                        # openpyxl, solo para el control
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/comprobar_privacidad.py --instalar-hook # bloquea commits con datos privados
-python3 tests/test_plugin.py                            # 54 pruebas
+python3 tests/test_plugin.py                            # 71 pruebas
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py revisar                   # qué cifras hay que contrastar
 ```
 
@@ -82,7 +82,7 @@ No hace falta usarlos: preguntando en lenguaje normal se carga solo lo que haga 
 
 ## Skills
 
-Ocho, organizadas por **el trabajo que hacéis**, no por la taxonomía del código
+Nueve, organizadas por **el trabajo que hacéis**, no por la taxonomía del código
 tributario. Cada una carga solo la referencia que necesita.
 
 | Skill | Cubre |
@@ -164,7 +164,7 @@ Los diseños que se distribuyen son **borradores** (`"verificado": false`). El g
 Es intencionado: un diseño con posiciones erróneas produce ficheros que la AEAT rechaza,
 o peor, que acepta con los datos desplazados.
 
-Para ponerlos en producción: `/verificar-diseno <modelo>` y `disenos/README.md`.
+Para ponerlos en producción: `/verificar diseno <modelo>` y `disenos/README.md`.
 
 ## Privacidad
 
@@ -202,8 +202,9 @@ fuerza el push y abre un ticket a GitHub Support para que purguen los objetos.
 ## Pruebas
 
 ```bash
-python3 tests/test_plugin.py      # 54 pruebas, ~0,2 s
-python3 tests/test_plugin.py -v   # detalle
+python3 tests/test_plugin.py           # 71 pruebas del plugin
+python3 tests/test_bancos_contaplus.py  # 28 pruebas del flujo bancario
+python3 tests/test_plugin.py -v        # detalle
 ```
 
 Cubren lo que puede romperse en silencio y costar dinero: validación de NIF, NIE, CIF,
@@ -224,7 +225,7 @@ El conocimiento del modelo tiene fecha de corte y la normativa cambia varias vec
 
 ```
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/parametros.py revisar
-!!  VOLATILES (13)        cambian cada ejercicio — verificar SIEMPRE
+!!  VOLATILES (22)        cambian cada ejercicio — verificar SIEMPRE
 ?   SIN VERIFICAR (9)     del conocimiento del modelo — contrastar
     Fiables sin reverificar: 87/118
 ```
@@ -238,7 +239,7 @@ Dos errores reales detectados al construir esto, que ilustran por qué existe el
   ninguna cifra de memoria es fiable. El parámetro sale sin valor y obliga a consultar el
   manual práctico del ejercicio.
 
-`/verificar-normativa` contrasta los volátiles contra el BOE, la sede de la AEAT y los
+`/verificar normativa` contrasta los volátiles contra el BOE, la sede de la AEAT y los
 boletines autonómicos, y actualiza el JSON con la fecha de verificación.
 
 ## Estructura
@@ -246,14 +247,15 @@ boletines autonómicos, y actualiza el JSON con la fecha de verificación.
 ```
 .claude-plugin/    plugin.json y marketplace.json
 commands/          comandos de barra
-skills/            conocimiento por impuesto, por modelo y transversal
+skills/            9 skills, cada una con su carpeta references/
 agents/            revisor-fiscal y redactor-fiscal
 scripts/           generadores, validador y calculadora de plazos
   lib/             motor de diseño de registro y validaciones
 disenos/           diseños de registro en JSON, uno por modelo
 config/            configuración del despacho y parámetros fiscales
 ejemplos/          ficheros de muestra
-plantillas/        plantillas de documentos
+tests/             pruebas del plugin y del flujo bancario
+dist/              paquete .zip para claude.ai
 ```
 
 ## Aviso

@@ -52,15 +52,6 @@ Tras la STJUE C-127/12 y la STS de 19-2-2018, los no residentes aplican la norma
 **autonomica**. Si un cliente tributo por normativa estatal en los ultimos 4 anos, valora
 solicitar devolucion de ingresos indebidos.
 
-## Detalle
-
-`references/detalle.md` — IP y ITSGF con reglas de valoracion completas, ISD con grupos,
-reducciones y esquema de liquidacion, ITP-AJD y su incompatibilidad con el IVA, plusvalia
-municipal, e IRNR con y sin establecimiento permanente.
-
-
-
-
 ---
 
 # Patrimonio, sucesiones, transmisiones y no residentes

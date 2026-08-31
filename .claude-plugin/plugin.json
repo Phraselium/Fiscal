@@ -1,6 +1,6 @@
 {
   "name": "asesoria-fiscal-es",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Asesoría fiscal española de despacho: resuelve consultas con la norma que las sostiene, prepara y cuadra modelos de la AEAT, procesa lo que manda el cliente (PDF, Excel, papel, extractos bancarios), lleva el control de la cartera y genera entregables — informativas, Intrastat, escritos y Excel. No presenta: prepara y revisa.",
   "license": "MIT",
   "keywords": [

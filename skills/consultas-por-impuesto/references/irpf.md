@@ -3,7 +3,7 @@
 ## Determina primero (sin esto no hay respuesta correcta)
 
 1. **Residencia** (art. 9): >183 dias, nucleo de intereses economicos, o presuncion
-   familiar. Si no es residente -> **IRNR**, skill `modelo-210`.
+   familiar. Si no es residente -> **IRNR**, ver `patrimonio-sucesiones-no-residentes.md`.
 2. **CCAA de residencia habitual** (art. 72): determina escala autonomica, minimos y
    **deducciones autonomicas**. Sin la CCAA no se puede calcular una Renta.
 3. **Individual vs. conjunta**: calcula las dos y compara. Siempre.
@@ -42,16 +42,6 @@ comerciales, transporte y vigilancia. **No lo confundas con el 50 % del IVA.**
 `100` anual · `102` segundo plazo · `130`/`131` pagos fraccionados · `145` comunicacion al
 pagador · `140`/`143` abonos anticipados · `149`/`151` impatriados.
 
-## Detalle
-
-`references/detalle.md` — rendimientos del trabajo con sus exenciones del art. 7, capital
-inmobiliario, actividades economicas, ganancias y perdidas con coeficientes de abatimiento
-y reglas de no computo, integracion y compensacion, reducciones y minimos, deducciones
-estatales, y checklist completo de revision de una declaracion.
-
-
-
-
 ---
 
 # IRPF — Ley 35/2006 y RD 439/2007
@@ -60,7 +50,8 @@ estatales, y checklist completo de revision de una declaracion.
 
 1. **Residencia fiscal** (art. 9 LIRPF): >183 días en España, o núcleo principal de
    intereses económicos, o presunción por cónyuge e hijos menores residentes.
-   Si no es residente → **IRNR**, no IRPF (modelos 210/216, skill `no-residentes`).
+   Si no es residente → **IRNR**, no IRPF (modelos 210/216, ver
+   `references/patrimonio-sucesiones-no-residentes.md`).
 2. **CCAA de residencia habitual** (art. 72 LIRPF): donde haya permanecido más días
    en el periodo impositivo. Determina escala autonómica, mínimos autonómicos y
    deducciones autonómicas.
@@ -137,7 +128,7 @@ plurianual (salvo indemnizaciones por despido).
   5 %, máximo 2.000 €.
 - Estimación objetiva (módulos): solo actividades de la Orden anual, con límites de
   ingresos (actividades / agrícolas), de compras y por facturación a empresarios
-  sujeta a retención. Ver skill `autonomos-y-modulos`.
+  sujeta a retención. Ver `references/autonomos.md`.
 
 **Elemento clave — afectación (art. 29 LIRPF, art. 22 RIRPF)**:
 - Vehículos de turismo: **afectación total o nada** salvo las excepciones tasadas

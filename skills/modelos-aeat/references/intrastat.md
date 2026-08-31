@@ -57,14 +57,6 @@ Entregas de bienes del 349 ↔ Intrastat de expedicion. La diferencia debe expli
 servicios y por operaciones no sujetas a Intrastat. Si no se explica, hay un error en uno
 de los dos.
 
-## Detalle
-
-`references/detalle.md` — tabla completa de datos por linea, casuistica de que se incluye y
-que no, rectificaciones, regimen sancionador y checklist mensual.
-
-
-
-
 ---
 
 # Intrastat

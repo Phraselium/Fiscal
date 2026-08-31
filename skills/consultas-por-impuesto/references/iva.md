@@ -37,16 +37,6 @@ verifica el tipo vigente **a la fecha de devengo** de cada operacion, no el de h
 `369` OSS/IOSS · `380` asimiladas a la importacion · `322`/`353` grupo de entidades.
 Cada uno tiene su skill (`modelo-303`, `modelo-390`, `modelo-349`).
 
-## Detalle
-
-`references/detalle.md` — localizacion campo a campo, exenciones del art. 20 con su
-casuistica, prorrata general y especial, bienes de inversion, modificacion de la base
-imponible del art. 80, regimenes especiales (simplificado, recargo de equivalencia, REBU,
-RECC, agencias de viaje, REAGP) y checklist de revision del 303.
-
-
-
-
 ---
 
 # IVA — Ley 37/1992 y RD 1624/1992

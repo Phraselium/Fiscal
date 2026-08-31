@@ -17,7 +17,7 @@ presentado»: lo que existe es un fichero pendiente de importar.
 | Script | Para qué |
 |---|---|
 | `scripts/generar_informativa.py` | Cualquier informativa con diseño en `disenos/` |
-| `scripts/generar_intrastat.py` | Declaración Intrastat (ver skill `intrastat`) |
+| `scripts/generar_intrastat.py` | Declaración Intrastat (umbrales y NC8 en `modelos-aeat`) |
 | `scripts/validar_fichero.py` | Validar y descomponer campo a campo un fichero ya generado |
 | `scripts/calcular_plazos.py` | Vencimientos, periodo voluntario, recargos del art. 27 y 28 LGT |
 | `scripts/lib/validaciones.py` | NIF, NIE, CIF, NIF-IVA, IBAN, NC8, referencia catastral |

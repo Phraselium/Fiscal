@@ -53,15 +53,6 @@ Calcula siempre el coste de recurrir frente a las reducciones del art. 188 (65 %
 inadmite y la deuda entra en ejecutiva desde el dia siguiente al vencimiento. Es el error
 mas caro y mas frecuente.
 
-## Detalle
-
-`references/detalle.md` — metodo de contestacion a requerimientos, recursos y suspension,
-recargos del art. 27 y 28, aplazamientos, devolucion de ingresos indebidos, prescripcion y
-plantilla completa de escrito.
-
-
-
-
 ---
 
 # Procedimientos tributarios — LGT 58/2003

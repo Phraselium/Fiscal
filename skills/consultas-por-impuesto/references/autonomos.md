@@ -54,15 +54,6 @@ dinero (dividendo o nomina), coste de estructura, y si el beneficio se reinviert
 consume. Y advierte del art. 18 LIS: la sociedad sin medios propios es el foco principal
 de comprobacion.
 
-## Detalle
-
-`references/detalle.md` — cotizacion por ingresos reales y tarifa plana, calculo completo
-de modulos con indices y minoraciones, regimen simplificado de IVA, y el marco de decision
-autonomo/sociedad desarrollado.
-
-
-
-
 ---
 
 # Autónomos y estimación objetiva

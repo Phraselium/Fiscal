@@ -84,7 +84,7 @@ las claves del 111 contra las del 190.
 
 | Obligación | Dónde se hace |
 |---|---|
-| **Intrastat** | Portal de Aduanas. Ver skill `intrastat` y `scripts/generar_intrastat.py` |
+| **Intrastat** | Portal de Aduanas. Ver `modelos-aeat` y `scripts/generar_intrastat.py` |
 | **Modelo 720 / 721** | Formulario de la sede; datos que no están en la contabilidad |
 | **Modelo 232** | Requiere identificar vinculadas y valorar a mercado |
 | **Modelo 210** | Clientes no residentes, fuera de la contabilidad del despacho |

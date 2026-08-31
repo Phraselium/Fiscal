@@ -438,6 +438,63 @@ class TestEstructuraDelPlugin(unittest.TestCase):
             malas,
             "usa python3 \"${CLAUDE_PLUGIN_ROOT:-.}\"/scripts/... en:\n  " + "\n  ".join(malas))
 
+    def test_toda_referencia_citada_existe(self):
+        """Un puntero a un fichero que no existe es peor que no ponerlo.
+
+        Claude intenta abrirlo, no lo encuentra, y el hueco lo rellena de memoria:
+        justo lo que este plugin evita. Paso: la reestructuracion dejo 11 ficheros
+        apuntando a un `references/detalle.md` que ya no existia.
+        """
+        import re
+        cita = re.compile(r"`(references/[\w./-]+\.md)`")
+        rotas = []
+        for skill in RAIZ.glob("skills/*/"):
+            for ruta in skill.rglob("*.md"):
+                texto = ruta.read_text(encoding="utf-8")
+                for numero, linea in enumerate(texto.splitlines(), 1):
+                    for ref in cita.findall(linea):
+                        if not (skill / ref).exists():
+                            rotas.append(f"{ruta.relative_to(RAIZ)}:{numero} -> {ref}")
+        self.assertFalse(rotas, "referencias que no existen:\n  " + "\n  ".join(rotas))
+
+    def test_toda_skill_citada_existe(self):
+        """Al pasar de 34 skills a 9 quedaron punteros a nombres que ya no existen.
+
+        `intrastat`, `modelo-190`, `modelo-210`, `no-residentes`,
+        `autonomos-y-modulos`: Claude los buscaba y no los encontraba.
+        """
+        import re
+        existentes = {p.parent.name for p in RAIZ.glob("skills/*/SKILL.md")}
+        cita = re.compile(r"skills?\s+[`«\"]([a-z0-9][a-z0-9-]+)[`»\"]")
+        rotas = []
+        for carpeta in ("skills", "commands", "agents"):
+            for ruta in (RAIZ / carpeta).rglob("*.md"):
+                for numero, linea in enumerate(
+                        ruta.read_text(encoding="utf-8").splitlines(), 1):
+                    for nombre in cita.findall(linea):
+                        if nombre not in existentes:
+                            rotas.append(f"{ruta.relative_to(RAIZ)}:{numero} -> {nombre}")
+        self.assertFalse(rotas, "skills citadas que no existen:\n  " + "\n  ".join(rotas))
+
+    def test_todo_comando_citado_existe(self):
+        """Igual con los comandos: `/verificar-normativa` y `/verificar-diseno`
+        sobrevivieron en el README a la fusion en `/verificar`."""
+        import re
+        existentes = {p.stem for p in RAIZ.glob("commands/*.md")}
+        cita = re.compile(r"`(/[a-z][a-z-]*)")
+        rotas = []
+        for ruta in ([RAIZ / "README.md", RAIZ / "INSTALACION.md"]
+                     + list((RAIZ / "commands").rglob("*.md"))
+                     + list((RAIZ / "skills").rglob("*.md"))
+                     + list((RAIZ / "agents").rglob("*.md"))):
+            if not ruta.exists():
+                continue
+            for numero, linea in enumerate(ruta.read_text(encoding="utf-8").splitlines(), 1):
+                for nombre in cita.findall(linea):
+                    if nombre[1:] not in existentes and nombre != "/plugin":
+                        rotas.append(f"{ruta.relative_to(RAIZ)}:{numero} -> {nombre}")
+        self.assertFalse(rotas, "comandos citados que no existen:\n  " + "\n  ".join(rotas))
+
     def test_plugin_json_valido(self):
         datos = json.loads((RAIZ / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
         for campo in ("name", "version", "description"):
@@ -535,19 +592,27 @@ class TestEmpaquetadoClaudeAI(unittest.TestCase):
 
         Es el fallo más fácil de cometer: tocas una skill, la subes, y quien use
         claude.ai se descarga la versión anterior sin enterarse.
+
+        Se compara el contenido, no la fecha: en un clon reciente todos los
+        ficheros nacen con la misma hora y una comparación de fechas falla sola.
         """
+        import zipfile
         zip_ = RAIZ / "dist" / "asesoria-fiscal-es.zip"
         if not zip_.exists():
             self.skipTest("no hay paquete construido")
-        fuentes = [p for carpeta in ("skills", "commands", "agents", "scripts",
-                                     "datos", "disenos", "config")
-                   for p in (RAIZ / carpeta).rglob("*")
-                   if p.is_file() and "__pycache__" not in str(p)]
-        mas_nuevo = max(fuentes, key=lambda p: p.stat().st_mtime)
-        self.assertGreaterEqual(
-            zip_.stat().st_mtime, mas_nuevo.stat().st_mtime,
-            f"{mas_nuevo.relative_to(RAIZ)} es más reciente que el paquete. "
-            "Regenéralo con: python3 scripts/empaquetar_skill.py")
+
+        recien = {str(p.relative_to(self.paquete.parent)): p.read_bytes()
+                  for p in self.paquete.rglob("*") if p.is_file()}
+        with zipfile.ZipFile(zip_) as z:
+            publicado = {n: z.read(n) for n in z.namelist() if not n.endswith("/")}
+
+        aviso = "Regenéralo con: python3 scripts/empaquetar_skill.py"
+        faltan = sorted(set(recien) - set(publicado))
+        sobran = sorted(set(publicado) - set(recien))
+        self.assertFalse(faltan, f"el .zip no lleva {faltan}. {aviso}")
+        self.assertFalse(sobran, f"el .zip lleva de más {sobran}. {aviso}")
+        distintos = sorted(n for n in recien if recien[n] != publicado[n])
+        self.assertFalse(distintos, f"el .zip tiene una versión vieja de {distintos}. {aviso}")
 
     def test_los_scripts_arrancan_desde_la_carpeta_de_la_skill(self):
         for orden in (["scripts/parametros.py", "ver", "iva.tipo.general"],

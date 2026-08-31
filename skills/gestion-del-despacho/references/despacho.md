@@ -48,14 +48,6 @@ comprobacion. Pero puede incurrir en **responsabilidad solidaria** si colabora e
 infraccion (art. 42.1.a LGT): razon practica para no aceptar instrucciones de simular
 operaciones. Documenta por escrito las advertencias desatendidas.
 
-## Detalle
-
-`references/detalle.md` — checklist completo de onboarding, control de documentacion
-pendiente, protecion de datos, comunicacion con el cliente y responsabilidad profesional.
-
-
-
-
 ---
 
 # Gestión del despacho

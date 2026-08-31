@@ -173,7 +173,7 @@ def cmd_revisar(datos: dict, args) -> int:
     fiables = sum(1 for k, v in datos.items() if not k.startswith("_") and v.get("estado") in ("estable", "verificado"))
     total = sum(1 for k in datos if not k.startswith("_"))
     print(f"\n  Fiables sin reverificar: {fiables}/{total}")
-    print("  Usa /verificar-normativa para contrastar los volatiles y sin verificar.")
+    print("  Usa /verificar normativa para contrastar los volatiles y sin verificar.")
     return 0
 
 

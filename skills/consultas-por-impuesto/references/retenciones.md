@@ -46,15 +46,6 @@ cada cliente. Las celdas «No aplica» que deberian estar en flujo (y al reves) 
 `111`/`190` · `115`/`180` · `123`/`193` · `216`/`296` · `036`/`037` · `840`/`848`.
 Cada uno tiene su skill.
 
-## Detalle
-
-`references/detalle.md` — tabla completa de tipos, calculo de la retencion del trabajo,
-excepciones del 115, cuadre de resumenes anuales, contenido del 036 pagina a pagina, IAE,
-apoderamientos y notificaciones.
-
-
-
-
 ---
 
 # Retenciones y obligaciones censales

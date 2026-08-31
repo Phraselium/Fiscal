@@ -58,15 +58,6 @@ OPERACION
 **Domiciliacion**: cierra el dia 15 (25 de enero para el 4T; 20 de julio para el 200). Es
 la causa numero uno de presentaciones fuera de plazo evitables.
 
-## Detalle
-
-`references/detalle.md` — catalogo completo con todos los modelos estatales, autonomicos,
-locales, de impuestos especiales y medioambientales, mas las obligaciones mercantiles y
-registrales con sus plazos.
-
-
-
-
 ---
 
 # Catálogo de modelos

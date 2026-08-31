@@ -82,8 +82,7 @@ obligación censal.
 ## 7. Relación con el 190
 
 El 190 es el detalle por perceptor de lo declarado agregado en los 111. Para generar el
-fichero del 190 con este plugin, ver la skill `modelo-190` y
-`scripts/generar_informativa.py`.
+fichero del 190 con este plugin, ver `scripts/generar_informativa.py`.
 
 
 # Modelo 190 — Resumen anual de retenciones

@@ -49,15 +49,6 @@ La obligacion es **del cliente que emite facturas**, no del despacho. Lo util ah
 inventariar que software usa cada cliente y pedirle al proveedor la declaracion responsable
 de cumplimiento del RD 1007/2023.
 
-## Detalle
-
-`references/detalle.md` — mapa completo de informativas, reglas del 347 y sus
-discrepancias, libros registro, SII, guion de implantacion de VeriFactu, factura
-electronica B2B y limite de pagos en efectivo.
-
-
-
-
 ---
 
 # Informativas, facturación y registro
