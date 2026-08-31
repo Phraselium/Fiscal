@@ -1,7 +1,7 @@
 {
   "name": "asesoria-fiscal-es",
-  "version": "1.0.0",
-  "description": "Asesoría fiscal española de despacho: todos los modelos de la AEAT, cálculo y revisión de IRPF, IVA, Sociedades, retenciones e informativas, procedimientos tributarios, Intrastat y generación de ficheros en los diseños de registro oficiales listos para importar en la sede electrónica.",
+  "version": "2.0.0",
+  "description": "Asesoría fiscal española de despacho: resuelve consultas con la norma que las sostiene, prepara y cuadra modelos de la AEAT, procesa lo que manda el cliente (PDF, Excel, papel, extractos bancarios), lleva el control de la cartera y genera entregables — informativas, Intrastat, escritos y Excel. No presenta: prepara y revisa.",
   "license": "MIT",
   "keywords": [
     "fiscal",

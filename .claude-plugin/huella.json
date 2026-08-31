@@ -1,0 +1,28 @@
+{
+  "_comentario": "Huella del conjunto de skills y comandos publicado con la version indicada. Si anades, quitas o renombras algo, sube la version en plugin.json y actualiza esta huella: Claude Code decide si recarga el plugin mirando la version, no el contenido.",
+  "version": "2.0.0",
+  "skills": [
+    "asesoria-fiscal",
+    "bancos-a-contaplus",
+    "consultas-por-impuesto",
+    "control-de-cartera",
+    "entrada-de-documentos",
+    "generacion-de-entregables",
+    "gestion-del-despacho",
+    "modelos-aeat",
+    "procedimientos-y-plazos"
+  ],
+  "commands": [
+    "bancos",
+    "cartera",
+    "cierre",
+    "cliente",
+    "consulta",
+    "documentos",
+    "entregable",
+    "fiscal",
+    "modelo",
+    "requerimiento",
+    "verificar"
+  ]
+}

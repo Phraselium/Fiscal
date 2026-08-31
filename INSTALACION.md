@@ -151,7 +151,21 @@ Para forzarlo:
 
 y **reinicia Claude Code**: las skills y los comandos se cargan al arrancar.
 
-Comprueba que ha entrado mirando si aparece lo nuevo en `/fiscal`.
+**Comprueba que ha entrado por la versión, no por lo que recuerdes.** Abre `/plugin` y mira
+la que tienes instalada:
+
+| Versión | Qué verás |
+|---|---|
+| `1.0.0` | La estructura vieja: 34 skills, una por modelo. No entró la actualización. |
+| `2.0.0` | La actual: 9 skills por tipo de trabajo y 11 comandos, con `/bancos`. |
+
+Si sigue en `1.0.0` después de reiniciar, desinstala y vuelve a instalar:
+
+```
+/plugin uninstall asesoria-fiscal-es@asesoria-fiscal-es
+/plugin marketplace update asesoria-fiscal-es
+/plugin install asesoria-fiscal-es@asesoria-fiscal-es
+```
 
 Después de actualizar, vuelve a pasar `parametros.py revisar`: los parámetros volátiles
 siguen necesitando verificación en cada ejercicio, la actualice quien la actualice.
@@ -185,10 +199,14 @@ vigilar también las razones sociales de tu cartera:
 cp datos/nombres_privados.ejemplo.txt datos/nombres_privados.txt
 ```
 
-**Después de cambiar skills o comandos**, regenera el paquete de claude.ai:
+**Después de cambiar skills o comandos**, tres cosas que no se hacen solas:
 
 ```bash
-python3 scripts/empaquetar_skill.py
+# 1. sube la version en .claude-plugin/plugin.json y en marketplace.json
+# 2. actualiza el inventario en .claude-plugin/huella.json
+python3 scripts/empaquetar_skill.py   # 3. regenera el .zip de claude.ai
 ```
 
-El `.zip` versionado en `dist/` no se actualiza solo.
+La versión es lo único que mira Claude Code para decidir si recarga el plugin: si cambias
+las skills y no la subes, nadie del despacho verá el cambio aunque el repositorio esté
+bien. `tests/test_plugin.py` falla si te lo saltas.

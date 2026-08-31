@@ -443,6 +443,40 @@ class TestEstructuraDelPlugin(unittest.TestCase):
         for campo in ("name", "version", "description"):
             self.assertIn(campo, datos)
 
+    def test_las_dos_versiones_coinciden(self):
+        """plugin.json y marketplace.json se leen en momentos distintos.
+
+        Si discrepan, el marketplace anuncia una version y el plugin instala otra.
+        """
+        plugin = json.loads((RAIZ / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        mercado = json.loads(
+            (RAIZ / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
+        self.assertEqual(plugin["version"], mercado["metadata"]["version"])
+
+    def test_cambiar_las_skills_obliga_a_subir_la_version(self):
+        """El fallo que dejo a todo el despacho con la estructura antigua.
+
+        Se paso de 34 skills a 8 sin tocar la version, y Claude Code decide si
+        recarga un plugin mirando la version: nadie vio el cambio.
+        """
+        huella = json.loads((RAIZ / ".claude-plugin" / "huella.json").read_text(encoding="utf-8"))
+        version = json.loads(
+            (RAIZ / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"]
+        actual = {
+            "skills": sorted(r.parent.name for r in RAIZ.glob("skills/*/SKILL.md")),
+            "commands": sorted(r.stem for r in RAIZ.glob("commands/*.md")),
+        }
+        for clave, valor in actual.items():
+            if valor != sorted(huella[clave]):
+                self.assertNotEqual(
+                    version, huella["version"],
+                    f"cambio el conjunto de {clave} y la version sigue en {version}: "
+                    "subela en plugin.json y en marketplace.json, y actualiza "
+                    ".claude-plugin/huella.json")
+                self.fail(
+                    f"la version ya subio a {version}, pero .claude-plugin/huella.json "
+                    f"sigue describiendo las de {huella['version']}: actualizala")
+
 
 class TestEmpaquetadoClaudeAI(unittest.TestCase):
     """El paquete para claude.ai debe ser autonomo: sin rutas de Claude Code."""

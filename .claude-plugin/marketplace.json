@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Plugin de asesoría fiscal española",
-    "version": "1.0.0"
+    "version": "2.0.0"
   },
   "plugins": [
     {
       "name": "asesoria-fiscal-es",
       "source": "./",
-      "description": "Asesoría fiscal española de despacho: todos los modelos AEAT, cálculo y revisión de impuestos, procedimientos tributarios, Intrastat y generación de ficheros en los diseños de registro oficiales."
+      "description": "Asesoría fiscal española de despacho: consultas con norma, preparación y cuadre de modelos AEAT, entrada de documentos del cliente, extractos bancarios a ContaPlus, control de cartera y generación de entregables."
     }
   ]
 }
