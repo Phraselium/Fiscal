@@ -71,6 +71,7 @@ Escribe `/` y los verás todos. `/fiscal` es el índice.
 | `/modelo` | Preparar, revisar o cuadrar cualquier modelo |
 | `/cartera` | Qué está pendiente, qué vence, qué hay que revisar |
 | `/documentos` | Procesar lo que manda un cliente: PDF, Excel, papel |
+| `/bancos` | Extractos bancarios → XDIARIO.DBF para importar en ContaPlus |
 | `/entregable` | Generar un fichero, un Excel, un informe o un escrito |
 | `/requerimiento` | Ha llegado algo de Hacienda: plazo, análisis y contestación |
 | `/cierre` | Cierre trimestral, anual o campaña de Renta |
@@ -91,6 +92,7 @@ tributario. Cada una carga solo la referencia que necesita.
 | `modelos-aeat` | 036, 100, 111, 115, 123, 130, 180, 190, 193, 200, 202, 210, 232, 303, 347, 349, 390, 714, 720, 721, Intrastat |
 | `control-de-cartera` | El Control.xlsx: pendientes, vencimientos, revisiones |
 | `entrada-de-documentos` | PDF escaneado, Excel, papel y Sage |
+| `bancos-a-contaplus` | Extractos bancarios → XDIARIO.DBF, con los criterios del histórico del cliente |
 | `generacion-de-entregables` | Ficheros AEAT, Excel, informes y escritos |
 | `procedimientos-y-plazos` | Requerimientos, recursos, sanciones, plazos, recargos |
 | `gestion-del-despacho` | Alta de clientes, encargo, calendario, blanqueo, conservación |
@@ -110,6 +112,10 @@ python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx res
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cola --estado Revisar
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cliente "EJEMPLO CLIENTE SL"
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx huecos
+
+# Extractos bancarios a ContaPlus (flujo completo en la skill)
+python3 scripts/bancos/leer_extractos.py extractos/ --json mov.json
+python3 scripts/bancos/diccionario_diario.py XDIARIO_2025.dbf --json dicc.json
 
 # Excel con formato de despacho: informes, cuadres, listados
 python3 scripts/generar_excel.py --datos informe.json --salida informe.xlsx \

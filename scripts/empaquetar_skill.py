@@ -43,7 +43,7 @@ NOMBRE = "asesoria-fiscal-es"
 # Orden de presentacion en el enrutador: el marco primero, luego el flujo de trabajo.
 ORDEN_MATERIAS = [
     "asesoria-fiscal", "consultas-por-impuesto", "modelos-aeat", "control-de-cartera",
-    "entrada-de-documentos", "generacion-de-entregables", "procedimientos-y-plazos",
+    "entrada-de-documentos", "bancos-a-contaplus", "generacion-de-entregables", "procedimientos-y-plazos",
     "gestion-del-despacho",
 ]
 
