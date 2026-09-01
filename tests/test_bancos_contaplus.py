@@ -33,6 +33,7 @@ import clasificar_movimientos as cm  # noqa: E402
 import generar_xdiario as gx  # noqa: E402
 import verificar_xdiario as vx  # noqa: E402
 import leer_extractos as le  # noqa: E402
+import informe_revision as ir  # noqa: E402
 
 CAMPOS = [
     ("ASIEN", "N", 6, 0), ("FECHA", "D", 8, 0), ("SUBCTA", "C", 12, 0),
@@ -292,6 +293,90 @@ class TestBancosAContaplus(unittest.TestCase):
                             {**self.dicc.bancos, BANCO_NUEVO: 0.0}, saldos_final,
                             self.dicc.subcuentas,
                             (date(2026, 1, 1), date(2026, 12, 31)))
+
+    # --- El README que acompaña al DBF ------------------------------------
+
+    def _readme(self) -> str:
+        return ir.readme(
+            [c.como_dict() for c in self.clasificados],
+            {"bancos": {"BancoUno": BANCO_A, "BancoDos": BANCO_B,
+                        "BancoNuevo": BANCO_NUEVO},
+             "puente": PUENTE},
+            self._informe().como_dict(),
+            {**self.dicc.bancos, BANCO_NUEVO: 0.0},
+            saldos_final={},
+            asientos=11, titulo="Cliente de prueba", fichero="XDIARIO.DBF")
+
+    def test_el_readme_avisa_de_que_no_esta_contabilizado(self):
+        texto = self._readme()
+        self.assertIn("pendiente de revisar e importar", texto)
+        self.assertIn("No está contabilizado", texto)
+
+    def test_el_readme_lleva_el_cuadre_descompuesto(self):
+        """Sin fórmulas de Excel, el cuadre se tiene que poder rehacer a ojo."""
+        texto = self._readme()
+        for columna in ("Saldo inicial", "Cargos", "Abonos", "Saldo calculado",
+                        "Diferencia"):
+            with self.subTest(columna=columna):
+                self.assertIn(columna, texto)
+
+    def test_el_readme_nombra_la_cuenta_que_hay_que_dar_de_alta(self):
+        cabeza = self._readme().split("## Cuadre por banco")[0]
+        self.assertIn(BANCO_NUEVO, cabeza,
+                      "la cuenta nueva sale en los pasos previos a importar")
+
+    def test_el_readme_da_el_texto_original_de_lo_que_va_a_la_puente(self):
+        seccion = self._readme().split("## Movimientos a revisar")[1]
+        self.assertIn("FERRETERIA VALENCIA", seccion,
+                      "el texto original permite localizar el movimiento en el banco")
+
+    def test_el_readme_recoge_el_otro_lado_del_traspaso(self):
+        texto = self._readme()
+        self.assertIn("no generan asiento propio", texto)
+        self.assertIn("TRASPASO DESDE CUENTA PROPIA", texto)
+
+    def test_el_readme_dice_el_porcentaje_sin_identificar(self):
+        self.assertRegex(self._readme(), r"\d+ \(\d+\.\d % del total\)")
+
+    def test_el_readme_distingue_descuadre_de_saldo_desconocido(self):
+        """Que falte el saldo del extracto no es un descuadre: es una comprobación menos."""
+        clas = [{"banco": "B", "importe": -100.0, "regla": "17-sin-identificar",
+                 "contrapartida": PUENTE, "concepto": "X", "texto": "X",
+                 "fecha": "2026-03-01", "subcuenta_banco": BANCO_A}]
+        cuentas = {"bancos": {"B": BANCO_A}, "puente": PUENTE}
+
+        sin_saldo = "\n".join(ir.seccion_cuadre(clas, cuentas, {BANCO_A: 500.0}, {}))
+        self.assertIn("No se ha podido comprobar el cuadre", sin_saldo)
+        self.assertNotIn("La diferencia no es cero", sin_saldo)
+
+        cuadra = "\n".join(ir.seccion_cuadre(clas, cuentas, {BANCO_A: 500.0},
+                                             {BANCO_A: 400.0}))
+        self.assertIn("La diferencia es cero", cuadra)
+
+        descuadra = "\n".join(ir.seccion_cuadre(clas, cuentas, {BANCO_A: 500.0},
+                                                {BANCO_A: 999.0}))
+        self.assertIn("La diferencia no es cero", descuadra)
+        self.assertIn("No importes el fichero", descuadra)
+
+    def test_los_pasos_previos_concuerdan_en_numero(self):
+        """El README lo lee una persona: «Reimputar 1 el movimiento» no se entrega."""
+        texto = self._readme()
+        for chapuza in ("1 el ", "1 los ", "(s)", "1 subcuentas"):
+            with self.subTest(chapuza=chapuza):
+                self.assertNotIn(chapuza, texto)
+
+    def test_las_barras_del_texto_no_parten_la_tabla(self):
+        fila = ir.tabla(["A", "B"], [["con | barra", "x"]])[2]
+        self.assertIn("con \\| barra", fila, "la barra del contenido va escapada")
+        # Descontadas las escapadas, solo quedan los tres separadores de dos celdas.
+        self.assertEqual(fila.replace("\\|", "").count("|"), 3)
+
+    def test_el_entregable_ya_no_es_excel_ni_correo(self):
+        fuente = (RAIZ / "scripts" / "bancos" / "informe_revision.py").read_text(
+            encoding="utf-8")
+        for rastro in ("openpyxl", "--correo", ".xlsx"):
+            with self.subTest(rastro=rastro):
+                self.assertNotIn(rastro, fuente)
 
     def test_las_diez_verificaciones_pasan(self):
         inf = self._informe()

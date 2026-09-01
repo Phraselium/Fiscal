@@ -114,6 +114,7 @@ python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cli
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx huecos
 
 # Extractos bancarios a ContaPlus (flujo completo en la skill)
+# Entrega dos ficheros: el XDIARIO.DBF y un README.md al lado.
 python3 scripts/bancos/leer_extractos.py extractos/ --json mov.json
 python3 scripts/bancos/diccionario_diario.py XDIARIO_2025.dbf --json dicc.json
 
@@ -203,7 +204,7 @@ fuerza el push y abre un ticket a GitHub Support para que purguen los objetos.
 
 ```bash
 python3 tests/test_plugin.py           # 71 pruebas del plugin
-python3 tests/test_bancos_contaplus.py  # 28 pruebas del flujo bancario
+python3 tests/test_bancos_contaplus.py  # 38 pruebas del flujo bancario
 python3 tests/test_plugin.py -v        # detalle
 ```
 

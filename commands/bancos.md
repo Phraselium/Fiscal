@@ -36,7 +36,7 @@ python3 $P/verificar_xdiario.py salidas/XDIARIO.DBF --muestra MUESTRA.DBF \
     --diccionario dicc.json --extractos mov.json --cuentas cuentas.json --json verif.json
 python3 $P/informe_revision.py --clasificado clasificado.json --cuentas cuentas.json \
     --diccionario dicc.json --extractos mov.json --verificacion verif.json \
-    --salida salidas/revision.xlsx --correo salidas/correo.md
+    --salida salidas/README.md
 ```
 
 Entre el paso 1 y el 3, **enseña la tabla de identificación de cuentas** (banco, cuenta
@@ -49,6 +49,13 @@ movimientos.
 La verificación es **obligatoria** y tiene diez comprobaciones. Si falla una sola, no se
 entrega. Después, lanza el agente `revisor-fiscal` con el informe y los movimientos de
 mayor importe.
+
+## Qué se entrega
+
+Dos ficheros y nada más: **`XDIARIO.DBF`** y un **`README.md`** al lado. Sin Excel y sin
+borrador de correo: el README ya lleva los pasos previos a importar, el cuadre por banco,
+la verificación, la cuenta puente desglosada y los movimientos a revisar con el texto
+original del extracto.
 
 ## Al informar
 

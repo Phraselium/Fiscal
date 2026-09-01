@@ -110,15 +110,30 @@ al céntimo, es la que de verdad importa.
 Después, lanza el agente **`revisor-fiscal`** con el informe y una muestra de los
 movimientos de mayor importe.
 
-### 8 · Entregables
+### 8 · Entregables — dos ficheros, ni uno más
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/bancos/informe_revision.py \
     --clasificado clasificado.json --cuentas cuentas.json --diccionario dicc.json \
     --extractos mov.json --verificacion verif.json \
-    --salida salidas/revision.xlsx --correo salidas/correo.md
+    --salida salidas/README.md --titulo "CLIENTE SL — bancos 1T/2026"
 ```
-XDIARIO.DBF · Excel de cuatro hojas (Resumen con fórmulas vivas, Notas y avisos,
-A revisar, Todos los asientos) · borrador de correo para quien va a importar.
+
+| Fichero | Qué es |
+|---|---|
+| `XDIARIO.DBF` | El fichero listo para importar en ContaPlus |
+| `README.md` | Todo lo que quien lo importa necesita saber |
+
+**No se entrega Excel ni borrador de correo.** El README los sustituye: lleva los pasos
+previos a importar, el cuadre por banco, el resultado de la verificación, el desglose de
+la cuenta puente, los movimientos a revisar con el texto original del extracto al lado, y
+las decisiones de criterio pendientes.
+
+El cuadre va **descompuesto** —saldo inicial, cargos, abonos, saldo calculado, saldo del
+extracto y diferencia— para que se pueda rehacer la suma a ojo: es lo que sustituye a las
+fórmulas vivas del Excel. Si falta el saldo final de un extracto, el README lo dice como
+comprobación que falta, **no** como descuadre.
+
+Todas las cifras salen del propio mapeo. Ninguna se escribe a mano.
 
 ## Reglas de prudencia
 
