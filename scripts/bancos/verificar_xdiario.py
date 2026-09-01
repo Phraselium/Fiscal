@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Verifica el XDIARIO generado. Obligatorio antes de entregar nada.
+"""Verifica el documento de importacion generado. Obligatorio antes de entregar.
+
+Vale para los dos formatos -XDIARIO.DBF de ContaPlus y CSV de Sage 50- porque
+los dos se releen como registros canonicos. Las comprobaciones son las mismas.
 
 Diez comprobaciones. Si falla una sola, el fichero NO se entrega.
 
-     1  La estructura es identica a la del fichero muestra
+     1  El formato es identico al del fichero muestra
      2  Todos los asientos tienen exactamente dos apuntes consecutivos
      3  Cada asiento tiene uno al debe y otro al haber
      4  Ningun importe negativo en EURODEBE, EUROHABER, PTADEBE ni PTAHABER
@@ -12,13 +15,16 @@ Diez comprobaciones. Si falla una sola, el fichero NO se entrega.
      7  Numeracion correlativa, sin huecos ni repeticiones
      8  Fechas dentro del periodo, conceptos no vacios y de 25 caracteres o menos
      9  Cuadre por banco: saldo de cierre historico + apuntes = saldo final del extracto
-    10  Relectura del fichero para confirmar que ContaPlus podra leerlo
+    10  Relectura del fichero para confirmar que el programa podra leerlo
 
 Uso
 ---
     python3 scripts/bancos/verificar_xdiario.py salidas/XDIARIO.DBF \\
-        --muestra XDIARIO_MUESTRA.DBF --diccionario dicc.json \\
+        --muestra MUESTRA.DBF --diccionario dicc.json \\
         --extractos movimientos.json --periodo 2026-01-01:2026-12-31
+
+    python3 scripts/bancos/verificar_xdiario.py salidas/XDIARIO.csv \\
+        --muestra MUESTRA_SAGE.csv --diccionario dicc.json
 """
 
 from __future__ import annotations
@@ -31,7 +37,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib_dbf import leer, leer_estructura  # noqa: E402
+import lib_documento as ld  # noqa: E402
 
 TOLERANCIA = 0.005
 
@@ -73,8 +79,8 @@ def verificar(ruta: Path, muestra: Path | None = None,
 
     # 10 · Relectura (se hace primero: si no se puede leer, no hay nada que verificar)
     try:
-        registros = list(leer(ruta))
-        estructura = leer_estructura(ruta)
+        registros = list(ld.leer(ruta))
+        formato = ld.leer_formato(ruta)
         inf.comprobar("10 · El fichero se relee correctamente", True)
     except Exception as exc:
         inf.comprobar("10 · El fichero se relee correctamente", False, str(exc))
@@ -84,9 +90,14 @@ def verificar(ruta: Path, muestra: Path | None = None,
     # antes incluso de mirar si hay registros: un fichero con la estructura mal
     # es inservible aunque venga vacío.
     if muestra and muestra.exists():
-        diferencias = estructura.coincide_con(leer_estructura(muestra))
-        inf.comprobar("1 · Estructura idéntica al fichero muestra", not diferencias,
-                      "; ".join(diferencias[:6]))
+        if ld.es_csv(muestra) != ld.es_csv(ruta):
+            inf.comprobar("1 · Estructura idéntica al fichero muestra", False,
+                          f"la muestra es {ld.nombre_formato(muestra)} y el fichero "
+                          f"generado {ld.nombre_formato(ruta)}")
+        else:
+            diferencias = formato.coincide_con(ld.leer_formato(muestra))
+            inf.comprobar("1 · Estructura idéntica al fichero muestra", not diferencias,
+                          "; ".join(diferencias[:6]))
     else:
         inf.avisos.append("Sin fichero muestra: no se ha podido comparar la estructura")
 

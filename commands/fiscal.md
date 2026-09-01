@@ -16,7 +16,7 @@ este índice tal cual:
 | `/modelo` | Preparar, revisar o cuadrar cualquier modelo |
 | `/cartera` | Qué está pendiente, qué vence, qué hay que revisar |
 | `/documentos` | Procesar lo que ha mandado un cliente: PDF, Excel, papel |
-| `/bancos` | Extractos bancarios → XDIARIO.DBF para importar en ContaPlus |
+| `/bancos` | Extractos bancarios → documento para importar en ContaPlus (DBF) o Sage 50 (CSV) |
 | `/entregable` | Generar un fichero, un Excel, un informe o un escrito |
 | `/requerimiento` | Ha llegado algo de Hacienda: plazo, análisis y contestación |
 | `/cierre` | Cierre trimestral, anual o campaña de Renta |

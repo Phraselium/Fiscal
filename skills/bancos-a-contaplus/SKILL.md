@@ -1,6 +1,6 @@
 ---
 name: bancos-a-contaplus
-description: Convierte los extractos bancarios de un cliente en un fichero XDIARIO.DBF listo para importar en ContaPlus, deduciendo la contrapartida de cada movimiento del diario contable del ejercicio anterior del propio cliente. Úsala cuando haya que contabilizar bancos, pasar extractos a contabilidad o preparar un fichero de importación para ContaPlus.
+description: Convierte los extractos bancarios de un cliente en un documento listo para importar -XDIARIO.DBF de ContaPlus o CSV de Sage 50-, deduciendo la contrapartida de cada movimiento del diario del ejercicio anterior del propio cliente. Úsala para contabilizar bancos, pasar extractos a contabilidad o preparar un fichero de importación para ContaPlus o Sage.
 ---
 
 # Bancos a ContaPlus
@@ -11,27 +11,59 @@ nada se da por contabilizado sin revisión humana.
 ## Qué hace y qué no hace
 
 **Hace**: leer los extractos, deducir la contrapartida de cada movimiento a partir del
-histórico del cliente, generar el DBF, verificarlo y entregar un informe de revisión.
+histórico del cliente, generar el documento de importación, verificarlo y entregar un
+Excel de revisión.
 
-**No hace**: importar en ContaPlus, ni dar por contabilizado nada.
+**No hace**: importar en ContaPlus ni en Sage, ni dar por contabilizado nada.
 
 ```
-extractos + XDIARIO del ejercicio anterior + fichero muestra de importación
+extractos + diario del ejercicio anterior (que hace de muestra)
   → identificación de cuentas → diccionario de contrapartidas → clasificación
-  → XDIARIO.DBF + informe de revisión → REVISIÓN HUMANA → importación en ContaPlus
+  → documento de importación + Excel de revisión
+  → REVISIÓN HUMANA → importación
 ```
 
 Di siempre en qué paso estás. El fichero entregado está **pendiente de revisar e
 importar**, nunca «contabilizado».
+
+## Dos formatos de salida, un solo criterio
+
+| Programa | Documento que se genera | De dónde sale el formato |
+|---|---|---|
+| ContaPlus | `XDIARIO.DBF` | Del fichero muestra `.dbf` |
+| Sage 50 | `XDIARIO.csv` | Del fichero muestra `.csv` |
+
+**El formato lo manda siempre la muestra del cliente**, nunca una especificación escrita
+en esta skill. No hay ninguna «especificación de Sage 50» en el código, porque no habría
+forma de verificarla: la única fuente fiable es el fichero que el cliente ya importa cada
+año. `generar_xdiario.py` decide por la extensión de `--muestra` y replica delimitador,
+codificación, orden y nombre de columnas, formato de fecha y separadores decimales.
+
+Del CSV muestra se deduce además:
+
+- **Qué columna es cada campo**, por el nombre de la cabecera (`Cuenta` → SUBCTA,
+  `Contrapartida` → CONTRA…). La comparación es exacta sobre el nombre normalizado: si
+  fuese por subcadena, «Contrapartida» se llevaría por delante a «Cuenta».
+- La variante de **una sola columna de importe** más un indicador `D/H`, además de la de
+  columnas `Debe` y `Haber` separadas.
+- Las **columnas constantes** de la muestra (el diario, la empresa, la moneda), que se
+  copian tal cual. Las que vienen siempre vacías se dejan vacías.
+
+Enseña siempre al usuario el mapeo detectado antes de generar: lo imprime el propio
+script. Si a la muestra le falta algún campo, **no se genera nada** y se dice cuál falta.
 
 ## Qué pedir antes de empezar
 
 | Fichero | Para qué | ¿Obligatorio? |
 |---|---|---|
 | Extractos bancarios (xlsx, xls o csv), uno por cuenta | Los movimientos a contabilizar | Sí |
-| XDIARIO del ejercicio anterior del cliente (`.dbf`) | De aquí salen **todos** los criterios | Sí |
-| Fichero muestra de importación (`.dbf`) | De aquí sale la estructura exacta a generar | Sí |
+| Diario del ejercicio anterior del cliente (`.dbf` o `.csv`) | De aquí salen **todos** los criterios **y** el formato de salida | Sí |
+| Fichero muestra de importación, si es distinto del diario | El formato exacto a generar | Solo si difiere |
 | Plan de subcuentas | Nombres de cuenta para el informe | No |
+
+Lo normal es que el fichero del año pasado sirva para las dos cosas: de él salen el mapeo
+y el formato. Pídelo una vez y úsalo como `--muestra` y como histórico. Si el cliente
+manda además una muestra de importación distinta, esa manda para el formato.
 
 Y estas decisiones, con `AskUserQuestion`, todas con recomendación:
 
@@ -91,47 +123,56 @@ Se resuelven en una **pasada global** sobre todos los movimientos ya clasificado
 uno a uno durante la clasificación: si no, se duplican o se pierden apuntes y los bancos
 dejan de cuadrar. Ya lo hace `clasificar_movimientos.py`.
 
-### 6 · Generar el fichero
+### 6 · Generar el documento de importación
 ```bash
+# ContaPlus
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/bancos/generar_xdiario.py \
     --clasificado clasificado.json --muestra MUESTRA.DBF --salida salidas/XDIARIO.DBF
+
+# Sage 50
+python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/bancos/generar_xdiario.py \
+    --clasificado clasificado.json --muestra MUESTRA_SAGE.csv --salida salidas/XDIARIO.csv
 ```
-**No se codifica la estructura**: se lee del fichero muestra y se replica byte a byte.
-Detalle del formato en `references/estructura-xdiario.md`.
+**No se codifica el formato**: se lee del fichero muestra y se replica —byte a byte en el
+DBF, columna a columna en el CSV. El script imprime lo que ha deducido de la muestra:
+**enséñaselo al usuario antes de seguir**. Detalle en `references/estructura-xdiario.md`.
 
 ### 7 · Verificar — obligatorio
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/bancos/verificar_xdiario.py salidas/XDIARIO.DBF \
     --muestra MUESTRA.DBF --diccionario dicc.json --extractos mov.json --cuentas cuentas.json
 ```
-Diez comprobaciones. **Si falla una sola, no se entrega.** La novena, el cuadre por banco
+Las mismas diez comprobaciones valen para el DBF y para el CSV: los dos se releen como
+registros canónicos. **Si falla una sola, no se entrega.** La novena, el cuadre por banco
 al céntimo, es la que de verdad importa.
 
 Después, lanza el agente **`revisor-fiscal`** con el informe y una muestra de los
 movimientos de mayor importe.
 
-### 8 · Entregables — dos ficheros, ni uno más
+### 8 · Entregables — dos ficheros
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/bancos/informe_revision.py \
     --clasificado clasificado.json --cuentas cuentas.json --diccionario dicc.json \
-    --extractos mov.json --verificacion verif.json \
-    --salida salidas/README.md --titulo "CLIENTE SL — bancos 1T/2026"
+    --extractos mov.json --verificacion verif.json --salida salidas/revision.xlsx
 ```
 
 | Fichero | Qué es |
 |---|---|
-| `XDIARIO.DBF` | El fichero listo para importar en ContaPlus |
-| `README.md` | Todo lo que quien lo importa necesita saber |
+| `XDIARIO.DBF` o `XDIARIO.csv` | El documento listo para importar |
+| `revision.xlsx` | El Excel de revisión, en cuatro hojas |
 
-**No se entrega Excel ni borrador de correo.** El README los sustituye: lleva los pasos
-previos a importar, el cuadre por banco, el resultado de la verificación, el desglose de
-la cuenta puente, los movimientos a revisar con el texto original del extracto al lado, y
-las decisiones de criterio pendientes.
+Las cuatro hojas del Excel:
 
-El cuadre va **descompuesto** —saldo inicial, cargos, abonos, saldo calculado, saldo del
-extracto y diferencia— para que se pueda rehacer la suma a ojo: es lo que sustituye a las
-fórmulas vivas del Excel. Si falta el saldo final de un extracto, el README lo dice como
-comprobación que falta, **no** como descuadre.
+| Hoja | Qué lleva |
+|---|---|
+| `Resumen` | Cuadre por banco **con fórmulas vivas**, no con números calculados en Python, y recuento por regla aplicada |
+| `Notas y avisos` | Qué contiene el fichero, cuentas a dar de alta, comercios de tarjeta identificados, decisiones de criterio pendientes, desglose de la cuenta puente por motivo y partidas sueltas |
+| `A revisar` | Lo que va a la puente y lo marcado, con el texto original del extracto al lado para poder localizarlo |
+| `Todos los asientos` | La traza completa movimiento → asiento, con filtros y panel fijo |
+
+Tipografía Arial e importes con formato `#,##0.00;(#,##0.00);-`. Si la sesión tiene
+disponible una skill de hojas de cálculo, recalcula las fórmulas antes de entregar: el
+cuadre del Resumen son fórmulas vivas y hay que verlas resueltas.
 
 Todas las cifras salen del propio mapeo. Ninguna se escribe a mano.
 

@@ -10,6 +10,7 @@ Trampas incluidas a proposito:
   · una cuenta bancaria nueva que no esta en el historico
   · un movimiento de importe cero (no genera asiento)
   · un comercio que solo casa por el nombre del municipio (debe ir a la puente)
+  · el mismo flujo contra una muestra CSV de Sage 50, no solo contra el DBF
 
     python3 tests/test_bancos_contaplus.py
 """
@@ -28,12 +29,13 @@ sys.path.insert(0, str(RAIZ / "scripts"))
 sys.path.insert(0, str(RAIZ / "scripts" / "bancos"))
 
 from lib_dbf import crear_estructura, escribir, leer, leer_estructura  # noqa: E402
+import lib_csv  # noqa: E402
+import lib_documento as ld  # noqa: E402
 import diccionario_diario as dd  # noqa: E402
 import clasificar_movimientos as cm  # noqa: E402
 import generar_xdiario as gx  # noqa: E402
 import verificar_xdiario as vx  # noqa: E402
 import leer_extractos as le  # noqa: E402
-import informe_revision as ir  # noqa: E402
 
 CAMPOS = [
     ("ASIEN", "N", 6, 0), ("FECHA", "D", 8, 0), ("SUBCTA", "C", 12, 0),
@@ -294,90 +296,6 @@ class TestBancosAContaplus(unittest.TestCase):
                             self.dicc.subcuentas,
                             (date(2026, 1, 1), date(2026, 12, 31)))
 
-    # --- El README que acompaña al DBF ------------------------------------
-
-    def _readme(self) -> str:
-        return ir.readme(
-            [c.como_dict() for c in self.clasificados],
-            {"bancos": {"BancoUno": BANCO_A, "BancoDos": BANCO_B,
-                        "BancoNuevo": BANCO_NUEVO},
-             "puente": PUENTE},
-            self._informe().como_dict(),
-            {**self.dicc.bancos, BANCO_NUEVO: 0.0},
-            saldos_final={},
-            asientos=11, titulo="Cliente de prueba", fichero="XDIARIO.DBF")
-
-    def test_el_readme_avisa_de_que_no_esta_contabilizado(self):
-        texto = self._readme()
-        self.assertIn("pendiente de revisar e importar", texto)
-        self.assertIn("No está contabilizado", texto)
-
-    def test_el_readme_lleva_el_cuadre_descompuesto(self):
-        """Sin fórmulas de Excel, el cuadre se tiene que poder rehacer a ojo."""
-        texto = self._readme()
-        for columna in ("Saldo inicial", "Cargos", "Abonos", "Saldo calculado",
-                        "Diferencia"):
-            with self.subTest(columna=columna):
-                self.assertIn(columna, texto)
-
-    def test_el_readme_nombra_la_cuenta_que_hay_que_dar_de_alta(self):
-        cabeza = self._readme().split("## Cuadre por banco")[0]
-        self.assertIn(BANCO_NUEVO, cabeza,
-                      "la cuenta nueva sale en los pasos previos a importar")
-
-    def test_el_readme_da_el_texto_original_de_lo_que_va_a_la_puente(self):
-        seccion = self._readme().split("## Movimientos a revisar")[1]
-        self.assertIn("FERRETERIA VALENCIA", seccion,
-                      "el texto original permite localizar el movimiento en el banco")
-
-    def test_el_readme_recoge_el_otro_lado_del_traspaso(self):
-        texto = self._readme()
-        self.assertIn("no generan asiento propio", texto)
-        self.assertIn("TRASPASO DESDE CUENTA PROPIA", texto)
-
-    def test_el_readme_dice_el_porcentaje_sin_identificar(self):
-        self.assertRegex(self._readme(), r"\d+ \(\d+\.\d % del total\)")
-
-    def test_el_readme_distingue_descuadre_de_saldo_desconocido(self):
-        """Que falte el saldo del extracto no es un descuadre: es una comprobación menos."""
-        clas = [{"banco": "B", "importe": -100.0, "regla": "17-sin-identificar",
-                 "contrapartida": PUENTE, "concepto": "X", "texto": "X",
-                 "fecha": "2026-03-01", "subcuenta_banco": BANCO_A}]
-        cuentas = {"bancos": {"B": BANCO_A}, "puente": PUENTE}
-
-        sin_saldo = "\n".join(ir.seccion_cuadre(clas, cuentas, {BANCO_A: 500.0}, {}))
-        self.assertIn("No se ha podido comprobar el cuadre", sin_saldo)
-        self.assertNotIn("La diferencia no es cero", sin_saldo)
-
-        cuadra = "\n".join(ir.seccion_cuadre(clas, cuentas, {BANCO_A: 500.0},
-                                             {BANCO_A: 400.0}))
-        self.assertIn("La diferencia es cero", cuadra)
-
-        descuadra = "\n".join(ir.seccion_cuadre(clas, cuentas, {BANCO_A: 500.0},
-                                                {BANCO_A: 999.0}))
-        self.assertIn("La diferencia no es cero", descuadra)
-        self.assertIn("No importes el fichero", descuadra)
-
-    def test_los_pasos_previos_concuerdan_en_numero(self):
-        """El README lo lee una persona: «Reimputar 1 el movimiento» no se entrega."""
-        texto = self._readme()
-        for chapuza in ("1 el ", "1 los ", "(s)", "1 subcuentas"):
-            with self.subTest(chapuza=chapuza):
-                self.assertNotIn(chapuza, texto)
-
-    def test_las_barras_del_texto_no_parten_la_tabla(self):
-        fila = ir.tabla(["A", "B"], [["con | barra", "x"]])[2]
-        self.assertIn("con \\| barra", fila, "la barra del contenido va escapada")
-        # Descontadas las escapadas, solo quedan los tres separadores de dos celdas.
-        self.assertEqual(fila.replace("\\|", "").count("|"), 3)
-
-    def test_el_entregable_ya_no_es_excel_ni_correo(self):
-        fuente = (RAIZ / "scripts" / "bancos" / "informe_revision.py").read_text(
-            encoding="utf-8")
-        for rastro in ("openpyxl", "--correo", ".xlsx"):
-            with self.subTest(rastro=rastro):
-                self.assertNotIn(rastro, fuente)
-
     def test_las_diez_verificaciones_pasan(self):
         inf = self._informe()
         self.assertTrue(inf.correcto,
@@ -462,6 +380,202 @@ class TestBancosAContaplus(unittest.TestCase):
                 with self.subTest(texto=c.texto[:40]):
                     self.assertTrue(c.revisar, "todo lo que va a la puente se revisa")
                     self.assertTrue(c.motivo_revision, "y dice por qué")
+
+
+class FormatoCsvDeSage(unittest.TestCase):
+    """El documento de importacion tambien puede ser un CSV. El formato sale de la
+    muestra del cliente: aqui no hay ninguna especificacion de Sage escrita a mano."""
+
+    # Muestra con las trampas que traen los CSV reales: delimitador ';', fechas
+    # dd/mm/aaaa, decimales con coma y miles con punto, cabecera en castellano,
+    # una columna constante que hay que copiar y otra que no nos toca.
+    MUESTRA = (
+        "Asiento;Fecha;Cuenta;Contrapartida;Concepto;Debe;Haber;Diario;Documento\r\n"
+        "1;02/01/2025;6280000;5720001;SUMINISTROS ENERO;1.234,56;0,00;1;\r\n"
+        "1;02/01/2025;5720001;6280000;SUMINISTROS ENERO;0,00;1.234,56;1;\r\n"
+    )
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self.tmp.name)
+        self.muestra = self.dir / "MUESTRA_SAGE.csv"
+        self.muestra.write_text(self.MUESTRA, encoding="cp1252", newline="")
+        self.formato = lib_csv.leer_formato(self.muestra)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    # --- Lo que se deduce de la muestra -----------------------------------
+
+    def test_deduce_el_formato_de_la_muestra(self):
+        self.assertEqual(self.formato.delimitador, ";")
+        self.assertEqual(self.formato.formato_fecha, "%d/%m/%Y")
+        self.assertEqual(self.formato.decimal, ",")
+        self.assertEqual(self.formato.miles, ".")
+        self.assertTrue(self.formato.cabecera)
+
+    def test_reconoce_las_columnas_por_su_nombre_en_castellano(self):
+        mapa = {c.nombre: c.campo for c in self.formato.columnas}
+        self.assertEqual(mapa["Asiento"], "ASIEN")
+        self.assertEqual(mapa["Fecha"], "FECHA")
+        self.assertEqual(mapa["Cuenta"], "SUBCTA")
+        self.assertEqual(mapa["Concepto"], "CONCEPTO")
+        self.assertEqual(mapa["Debe"], "EURODEBE")
+        self.assertEqual(mapa["Haber"], "EUROHABER")
+
+    def test_contrapartida_no_se_confunde_con_cuenta(self):
+        """Sin comparacion exacta del nombre, una de las dos columnas se llevaria
+        la otra por delante y todos los apuntes saldrian contra la cuenta mala."""
+        mapa = {c.nombre: c.campo for c in self.formato.columnas}
+        self.assertEqual(mapa["Contrapartida"], "CONTRA")
+        self.assertEqual(mapa["Cuenta"], "SUBCTA")
+
+    def test_copia_las_columnas_constantes_y_deja_vacias_las_demas(self):
+        self.assertEqual(self.formato.constantes.get("Diario"), "1")
+        self.assertNotIn("Documento", self.formato.constantes)
+
+    def test_no_faltan_campos(self):
+        self.assertEqual(lib_csv.campos_que_faltan(self.formato), [])
+
+    # --- Ida y vuelta ------------------------------------------------------
+
+    def _clasificado(self, **cambios):
+        base = {"banco": "BancoUno", "fecha": "2026-03-02", "importe": -342.50,
+                "subcuenta_banco": "5720001", "contrapartida": "6280000",
+                "concepto": "P/S.FRA.ELECTRICA", "texto": "x", "fila": 1,
+                "regla": "15-proveedor"}
+        base.update(cambios)
+        return base
+
+    def test_genera_un_csv_con_el_mismo_formato_que_la_muestra(self):
+        clasificados = [
+            self._clasificado(),
+            self._clasificado(fecha="2026-03-06", importe=2400.00, fila=2,
+                              contrapartida="5700000", concepto="ABONO REMESA TPV"),
+        ]
+        registros, ceros = gx.construir_asientos(clasificados, self.formato,
+                                                 asiento_inicial=1)
+        salida = self.dir / "XDIARIO.csv"
+        ld.escribir(salida, self.formato, registros)
+
+        self.assertEqual(ceros, [])
+        # El formato del fichero generado tiene que ser el de la muestra.
+        self.assertEqual(lib_csv.leer_formato(salida).coincide_con(self.formato), [])
+
+        crudo = salida.read_text(encoding="cp1252")
+        self.assertTrue(crudo.startswith("Asiento;Fecha;Cuenta;"))
+        self.assertIn("02/03/2026", crudo, "la fecha sale en el formato de la muestra")
+        self.assertIn("342,50", crudo, "los decimales salen con coma")
+        self.assertIn("2.400,00", crudo, "los miles salen con punto")
+        self.assertIn(";1;", crudo, "la columna constante se copia de la muestra")
+
+    def test_las_diez_comprobaciones_valen_para_el_csv(self):
+        registros, _ = gx.construir_asientos([self._clasificado()], self.formato)
+        salida = self.dir / "XDIARIO.csv"
+        ld.escribir(salida, self.formato, registros)
+
+        inf = vx.verificar(salida, self.muestra,
+                           {"5720001": 1000.0}, {"5720001": 657.50},
+                           {"5720001", "6280000"},
+                           (date(2026, 1, 1), date(2026, 12, 31)))
+        self.assertTrue(inf.correcto,
+                        "fallan: " + "; ".join(f"{t} - {d}" for t, d in inf.fallos))
+        for numero in range(1, 11):
+            with self.subTest(comprobacion=numero):
+                self.assertTrue(any(t.startswith(f"{numero} ") or t.startswith(f"{numero}b")
+                                    for t in inf.ok))
+
+    def test_no_deja_mezclar_una_muestra_dbf_con_una_salida_csv(self):
+        muestra_dbf = self.dir / "MUESTRA.DBF"
+        escribir(muestra_dbf, crear_estructura(CAMPOS), [])
+        inf = vx.verificar(self.muestra, muestra_dbf)
+        fallos = " ".join(f"{t} {d}" for t, d in inf.fallos)
+        self.assertIn("Estructura", fallos)
+
+    # --- La variante de una sola columna de importe ------------------------
+
+    def test_soporta_importe_unico_con_indicador_de_debe_o_haber(self):
+        muestra = self.dir / "SAGE_DH.csv"
+        muestra.write_text(
+            "Asiento;Fecha;Cuenta;Contrapartida;Concepto;Importe;D/H\n"
+            "1;02/01/2025;6280000;5720001;SUMINISTROS;1234,56;D\n"
+            "1;02/01/2025;5720001;6280000;SUMINISTROS;1234,56;H\n",
+            encoding="utf-8")
+        formato = lib_csv.leer_formato(muestra)
+        self.assertEqual(formato.modo_importe, "importe-dh")
+        self.assertEqual(lib_csv.campos_que_faltan(formato), [])
+
+        registros, _ = gx.construir_asientos([self._clasificado(importe=-100.0)], formato)
+        salida = self.dir / "salida_dh.csv"
+        ld.escribir(salida, formato, registros)
+
+        leidos = list(lib_csv.leer(salida))
+        self.assertEqual(len(leidos), 2)
+        self.assertEqual(leidos[0]["EURODEBE"], 100.0)
+        self.assertEqual(leidos[0]["EUROHABER"], 0.0)
+        self.assertEqual(leidos[1]["EUROHABER"], 100.0)
+        self.assertEqual(leidos[1]["EURODEBE"], 0.0)
+
+    # --- Negativas: lo que no se puede deducir, se dice -------------------
+
+    def test_una_muestra_sin_cabecera_se_rechaza(self):
+        muestra = self.dir / "sin_cabecera.csv"
+        muestra.write_text("1;02/01/2025;6280000;5720001;X;100,00;0,00\n",
+                           encoding="utf-8")
+        with self.assertRaises(lib_csv.ErrorCSV) as fallo:
+            lib_csv.leer_formato(muestra)
+        self.assertIn("cabecera", str(fallo.exception))
+
+    def test_dice_que_campos_le_faltan_a_una_muestra_corta(self):
+        muestra = self.dir / "corta.csv"
+        muestra.write_text("Asiento;Fecha;Cuenta;Concepto\n1;02/01/2025;6280000;X\n",
+                           encoding="utf-8")
+        faltan = lib_csv.campos_que_faltan(lib_csv.leer_formato(muestra))
+        self.assertIn("CONTRA", faltan)
+        self.assertIn("EURODEBE", faltan)
+
+    def test_un_importe_ilegible_no_vale_cero(self):
+        """Leer 0,00 en silencio produce un fichero que cuadra en el papel y esta mal."""
+        muestra = self.dir / "roto.csv"
+        muestra.write_text(
+            "Asiento;Fecha;Cuenta;Contrapartida;Concepto;Debe;Haber\n"
+            "1;02/01/2025;6280000;5720001;X;1.234,56;0,00\n"
+            "1;02/01/2025;5720001;6280000;X;0,00;1 234.56\n",
+            encoding="utf-8")
+        with self.assertRaises(lib_csv.ErrorCSV) as fallo:
+            list(lib_csv.leer(muestra))
+        self.assertIn("1 234.56", str(fallo.exception))
+
+    def test_el_separador_de_miles_se_detecta_aunque_sea_minoria(self):
+        """Un solo importe agrupado entre muchos sin agrupar manda: si no, se lee mal."""
+        muestra = self.dir / "mezcla.csv"
+        muestra.write_text(
+            "Asiento;Fecha;Cuenta;Contrapartida;Concepto;Debe;Haber\n"
+            "1;02/01/2025;6280000;5720001;X;342,50;0,00\n"
+            "2;03/01/2025;6280000;5720001;X;18,00;0,00\n"
+            "3;04/01/2025;6280000;5720001;X;1.210,00;0,00\n",
+            encoding="utf-8")
+        formato = lib_csv.leer_formato(muestra)
+        self.assertEqual((formato.decimal, formato.miles), (",", "."))
+        self.assertEqual([r["EURODEBE"] for r in lib_csv.leer(muestra)],
+                         [342.50, 18.00, 1210.00])
+
+    def test_el_diccionario_se_puede_deducir_de_un_diario_en_csv(self):
+        """El fichero del ano pasado sirve para las dos cosas: mapeo y formato."""
+        diario = self.dir / "DIARIO_2025.csv"
+        diario.write_text(
+            "Asiento;Fecha;Cuenta;Contrapartida;Concepto;Debe;Haber\n"
+            "1;02/01/2025;6280000;;P/S.FRA.ELECTRICA DEL SUR;342,50;0,00\n"
+            "1;02/01/2025;5720001;;P/S.FRA.ELECTRICA DEL SUR;0,00;342,50\n"
+            "2;03/01/2025;4000011;;P/S.FRA.NORTE MAQUINARIA;1.210,00;0,00\n"
+            "2;03/01/2025;5720001;;P/S.FRA.NORTE MAQUINARIA;0,00;1.210,00\n",
+            encoding="utf-8")
+        d = dd.construir(diario)
+        self.assertEqual(d.longitud_subcuenta, 7)
+        self.assertIn("5720001", d.bancos)
+        self.assertEqual(d.bancos["5720001"], -1552.50)
+        self.assertEqual(d.concepto_a_contrapartida["P/S.FRA.ELECTRICA DEL SUR"],
+                         "6280000")
 
 
 if __name__ == "__main__":

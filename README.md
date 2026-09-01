@@ -71,7 +71,7 @@ Escribe `/` y los verás todos. `/fiscal` es el índice.
 | `/modelo` | Preparar, revisar o cuadrar cualquier modelo |
 | `/cartera` | Qué está pendiente, qué vence, qué hay que revisar |
 | `/documentos` | Procesar lo que manda un cliente: PDF, Excel, papel |
-| `/bancos` | Extractos bancarios → XDIARIO.DBF para importar en ContaPlus |
+| `/bancos` | Extractos bancarios → documento para importar en ContaPlus (DBF) o Sage 50 (CSV) |
 | `/entregable` | Generar un fichero, un Excel, un informe o un escrito |
 | `/requerimiento` | Ha llegado algo de Hacienda: plazo, análisis y contestación |
 | `/cierre` | Cierre trimestral, anual o campaña de Renta |
@@ -92,7 +92,7 @@ tributario. Cada una carga solo la referencia que necesita.
 | `modelos-aeat` | 036, 100, 111, 115, 123, 130, 180, 190, 193, 200, 202, 210, 232, 303, 347, 349, 390, 714, 720, 721, Intrastat |
 | `control-de-cartera` | El Control.xlsx: pendientes, vencimientos, revisiones |
 | `entrada-de-documentos` | PDF escaneado, Excel, papel y Sage |
-| `bancos-a-contaplus` | Extractos bancarios → XDIARIO.DBF, con los criterios del histórico del cliente |
+| `bancos-a-contaplus` | Extractos bancarios → DBF de ContaPlus o CSV de Sage 50, con los criterios del histórico del cliente |
 | `generacion-de-entregables` | Ficheros AEAT, Excel, informes y escritos |
 | `procedimientos-y-plazos` | Requerimientos, recursos, sanciones, plazos, recargos |
 | `gestion-del-despacho` | Alta de clientes, encargo, calendario, blanqueo, conservación |
@@ -113,10 +113,10 @@ python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx col
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx cliente "EJEMPLO CLIENTE SL"
 python3 "${CLAUDE_PLUGIN_ROOT:-.}"/scripts/control.py --fichero Control.xlsx huecos
 
-# Extractos bancarios a ContaPlus (flujo completo en la skill)
-# Entrega dos ficheros: el XDIARIO.DBF y un README.md al lado.
+# Extractos bancarios a contabilidad (flujo completo en la skill)
+# El formato de salida lo manda la muestra: .dbf → ContaPlus, .csv → Sage 50.
 python3 scripts/bancos/leer_extractos.py extractos/ --json mov.json
-python3 scripts/bancos/diccionario_diario.py XDIARIO_2025.dbf --json dicc.json
+python3 scripts/bancos/diccionario_diario.py DIARIO_2025.dbf --json dicc.json
 
 # Excel con formato de despacho: informes, cuadres, listados
 python3 scripts/generar_excel.py --datos informe.json --salida informe.xlsx \
@@ -204,7 +204,7 @@ fuerza el push y abre un ticket a GitHub Support para que purguen los objetos.
 
 ```bash
 python3 tests/test_plugin.py           # 71 pruebas del plugin
-python3 tests/test_bancos_contaplus.py  # 38 pruebas del flujo bancario
+python3 tests/test_bancos_contaplus.py  # 42 pruebas del flujo bancario
 python3 tests/test_plugin.py -v        # detalle
 ```
 

@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
-"""Genera el XDIARIO.DBF a partir de los movimientos ya clasificados.
+"""Genera el documento de importacion a partir de los movimientos ya clasificados.
 
-REGLA DE ORO: la estructura NO se codifica aqui. Se lee del fichero muestra de
-importacion del cliente y se replica byte a byte. El XDIARIO ronda los 98 campos
-y cambia entre versiones de ContaPlus; cualquier estructura escrita a mano
-acabaria produciendo un fichero que ContaPlus rechaza o, peor, lee mal.
+Dos formatos, un solo criterio: **el formato sale del fichero muestra**.
+
+    muestra .dbf  →  XDIARIO.DBF   para ContaPlus
+    muestra .csv  →  XDIARIO.csv   para Sage 50 y similares
+
+REGLA DE ORO: el formato NO se codifica aqui. Se lee del fichero muestra de
+importacion del cliente y se replica. El XDIARIO ronda los 98 campos y cambia
+entre versiones de ContaPlus; el CSV cambia de columnas, delimitador y formato
+de fecha entre instalaciones de Sage. Cualquier formato escrito a mano acabaria
+produciendo un fichero que el programa rechaza o, peor, lee mal.
 
 Como se arma cada asiento
 -------------------------
@@ -22,8 +28,12 @@ Como se arma cada asiento
 Uso
 ---
     python3 scripts/bancos/generar_xdiario.py \\
-        --clasificado clasificado.json --muestra XDIARIO_MUESTRA.DBF \\
+        --clasificado clasificado.json --muestra MUESTRA.DBF \\
         --salida salidas/XDIARIO.DBF --asiento-inicial 1
+
+    python3 scripts/bancos/generar_xdiario.py \\
+        --clasificado clasificado.json --muestra MUESTRA_SAGE.csv \\
+        --salida salidas/XDIARIO.csv --asiento-inicial 1
 """
 
 from __future__ import annotations
@@ -36,7 +46,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib_dbf import Estructura, escribir, leer_estructura, valor_por_defecto  # noqa: E402
+import lib_documento as ld  # noqa: E402
 
 CAMPOS_QUE_SE_RELLENAN = (
     "ASIEN", "FECHA", "SUBCTA", "CONTRA", "CONCEPTO",
@@ -61,10 +71,13 @@ def ajustar_subcuenta(cuenta: str, longitud: int) -> str:
     return cuenta[:longitud]
 
 
-def apunte(estructura: Estructura, asiento: int, fecha, subcta: str, contra: str,
+def apunte(formato, asiento: int, fecha, subcta: str, contra: str,
            concepto: str, debe: float, haber: float) -> dict:
-    """Un registro completo: los campos que se rellenan y el resto a su valor neutro."""
-    registro = {c.nombre: valor_por_defecto(c) for c in estructura.campos}
+    """Un registro completo: los campos que se rellenan y el resto a su valor neutro.
+
+    Vale para los dos formatos: la plantilla la da la muestra, no este fichero.
+    """
+    registro = ld.plantilla(formato)
     registro.update({
         "ASIEN": asiento,
         "FECHA": fecha,
@@ -78,13 +91,13 @@ def apunte(estructura: Estructura, asiento: int, fecha, subcta: str, contra: str
         "MONEDAUSO": "2",
         "NIC": "E",
     })
-    return {k: v for k, v in registro.items() if k in estructura.nombres}
+    return {k: v for k, v in registro.items() if k in formato.nombres}
 
 
-def construir_asientos(clasificados: list[dict], estructura: Estructura,
+def construir_asientos(clasificados: list[dict], formato,
                        asiento_inicial: int = 1,
                        longitud_subcuenta: int = 0) -> tuple[list[dict], list[dict]]:
-    """Devuelve (registros del DBF, movimientos descartados por importe cero)."""
+    """Devuelve (registros del documento, movimientos descartados por importe cero)."""
     vivos, ceros = [], []
     for c in clasificados:
         if c.get("contabilizado_en_otro"):
@@ -117,9 +130,9 @@ def construir_asientos(clasificados: list[dict], estructura: Estructura,
         else:                            # abono: entra dinero en el banco
             debe_cta, haber_cta = banco, contra
 
-        registros.append(apunte(estructura, numero, fecha, debe_cta, haber_cta,
+        registros.append(apunte(formato, numero, fecha, debe_cta, haber_cta,
                                 concepto, importe, 0))
-        registros.append(apunte(estructura, numero, fecha, haber_cta, debe_cta,
+        registros.append(apunte(formato, numero, fecha, haber_cta, debe_cta,
                                 concepto, 0, importe))
         numero += 1
 
@@ -131,7 +144,8 @@ def main() -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--clasificado", required=True, type=Path)
     ap.add_argument("--muestra", required=True, type=Path,
-                    help="Fichero muestra de importacion: de aqui sale la estructura")
+                    help="Fichero muestra de importacion (.dbf o .csv): de aquí sale "
+                         "el formato")
     ap.add_argument("--salida", required=True, type=Path)
     ap.add_argument("--asiento-inicial", type=int, default=1)
     ap.add_argument("--longitud-subcuenta", type=int, default=0,
@@ -143,29 +157,44 @@ def main() -> int:
             print(f"No existe {ruta}", file=sys.stderr)
             return 2
 
-    estructura = leer_estructura(args.muestra)
-    faltan = [c for c in CAMPOS_QUE_SE_RELLENAN if not estructura.campo(c)]
+    try:
+        formato = ld.leer_formato(args.muestra)
+    except Exception as exc:
+        print(f"No se ha podido leer el formato de {args.muestra}: {exc}", file=sys.stderr)
+        return 2
+
+    faltan = ld.campos_que_faltan(formato, CAMPOS_QUE_SE_RELLENAN)
     if faltan:
         print(f"El fichero muestra no tiene los campos {', '.join(faltan)}.",
               file=sys.stderr)
-        print("¿Seguro que es un XDIARIO de ContaPlus?", file=sys.stderr)
+        print(f"Formato detectado: {ld.nombre_formato(args.muestra)}", file=sys.stderr)
+        print(ld.descripcion(formato, args.muestra), file=sys.stderr)
+        print("\nNo se genera nada: sin esos campos el fichero no se puede importar.",
+              file=sys.stderr)
         return 2
 
     clasificados = json.loads(args.clasificado.read_text(encoding="utf-8"))
     registros, ceros = construir_asientos(
-        clasificados, estructura, args.asiento_inicial, args.longitud_subcuenta)
+        clasificados, formato, args.asiento_inicial, args.longitud_subcuenta)
 
     if not registros:
         print("No hay ningún movimiento que contabilizar", file=sys.stderr)
         return 1
 
-    escritos = escribir(args.salida, estructura, registros)
+    if ld.es_csv(args.muestra) != ld.es_csv(args.salida):
+        print(f"La muestra es {ld.nombre_formato(args.muestra)} y la salida "
+              f"{ld.nombre_formato(args.salida)}: no coinciden.", file=sys.stderr)
+        print(f"Usa --salida {ld.salida_por_defecto(args.muestra)}", file=sys.stderr)
+        return 2
+
+    escritos = ld.escribir(args.salida, formato, registros)
     asientos = escritos // 2
     total = sum(r["EURODEBE"] for r in registros)
 
     print(f"Fichero generado: {args.salida}")
-    print(f"  Estructura:  {len(estructura.campos)} campos, "
-          f"{estructura.longitud_registro} bytes por registro (del fichero muestra)")
+    print(f"  Formato:     {ld.nombre_formato(args.muestra)}, tomado del fichero muestra")
+    for linea in ld.descripcion(formato, args.muestra).splitlines():
+        print(f"    {linea}")
     print(f"  Asientos:    {asientos}  ({escritos} apuntes)")
     print(f"  Numeración:  {args.asiento_inicial} a {args.asiento_inicial + asientos - 1}")
     print(f"  Total debe:  {total:,.2f} €".replace(",", "@").replace(".", ",").replace("@", "."))

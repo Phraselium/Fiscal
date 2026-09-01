@@ -1,316 +1,306 @@
 #!/usr/bin/env python3
-"""README de revision que acompaña al XDIARIO.DBF.
+"""Excel de revision que acompana al documento de importacion.
 
-Un solo fichero de texto al lado del DBF. Quien lo recibe tiene que poder, sin
-abrir nada más:
+Cuatro hojas:
 
-    · saber que el fichero NO esta contabilizado y que falta revisarlo,
-    · comprobar el cuadre de cada banco sumando a mano las cifras que se le dan,
-    · ver que subcuentas hay que dar de alta antes de importar,
-    · localizar en su extracto cada movimiento que hay que mirar,
-    · y saber que decisiones de criterio quedan pendientes.
+    Resumen           cuadre por banco y recuento por regla aplicada. El cuadre
+                      lleva FORMULAS, no numeros calculados en Python: quien
+                      revise tiene que poder ver de donde sale cada cifra.
+    Notas y avisos    que contiene el fichero, cuentas a dar de alta, comercios
+                      de tarjeta identificados, decisiones pendientes, desglose
+                      de la cuenta puente por motivo y partidas sueltas.
+    A revisar         lo que va a la puente y lo marcado, con el texto original
+                      del extracto al lado para poder localizarlo.
+    Todos los asientos  la traza completa movimiento → asiento.
 
-Todas las cifras salen del propio mapeo. Ninguna se escribe a mano. El cuadre se
-publica descompuesto —saldo inicial, cargos, abonos, saldo calculado, saldo del
-extracto y diferencia— para que la suma se pueda rehacer con los ojos.
+Todas las cifras salen del propio mapeo. Ninguna se escribe a mano.
 
 Uso
 ---
     python3 scripts/bancos/informe_revision.py --clasificado clasificado.json \\
         --diccionario dicc.json --cuentas cuentas.json --extractos movimientos.json \\
-        --verificacion verificacion.json --salida salidas/README.md
+        --verificacion verificacion.json --salida salidas/revision.xlsx
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-from collections import defaultdict
+import sys
+from collections import Counter, defaultdict
+from datetime import datetime
 from pathlib import Path
 
-PUENTE_POR_DEFECTO = "5550000"
+try:
+    import openpyxl
+    from openpyxl.styles import Alignment, Font, PatternFill
+    from openpyxl.utils import get_column_letter
+except ImportError:  # pragma: no cover
+    print("Falta openpyxl. Instalalo con: pip install openpyxl", file=sys.stderr)
+    raise SystemExit(2)
 
-DECISIONES = (
-    "¿Las compras con tarjeta van a compras (600) o a gastos? Cargarlas contra la "
-    "cuenta del proveedor descuadra su saldo si no hay factura detrás.",
-    "Confirmar el periodo de las liquidaciones de Seguridad Social: se ha deducido "
-    "de la fecha de cargo.",
-    "Confirmar el tratamiento de las operaciones de valores e inversiones.",
-    "Revisar los cobros imputados contra cuentas de proveedor: pueden ser rappels, "
-    "devoluciones o clientes distintos.",
-)
-
-COMO_SE_HA_HECHO = (
-    "Los criterios de imputación salen del XDIARIO del ejercicio anterior del propio "
-    "cliente: concepto → contrapartida emparejando por importe dentro de cada asiento, "
-    "y nombre de tercero → subcuenta a partir de las líneas 400*/410*.",
-    "Lo que no tiene respaldo en ese histórico va a la cuenta puente. No se ha "
-    "inventado ninguna cuenta ni ningún importe.",
-    "Los traspasos entre cuentas propias se han emparejado en una pasada global por "
-    "importe contrario, cuentas distintas y fecha dentro de ±5 días. Solo generan un "
-    "asiento, el del lado del pago.",
-    "Las compras con tarjeta solo se imputan a un proveedor si el comercio está en la "
-    "lista blanca validada. El resto va a la puente.",
-)
+AZUL = "1F4E79"
+GRIS = "F2F2F2"
+AMBAR = "FFF2CC"
+FUENTE = "Arial"
+FORMATO_IMPORTE = "#,##0.00;(#,##0.00);-"
 
 
-# --- formato -------------------------------------------------------------
-
-def eur(valor: float | None) -> str:
-    """Importe en formato español. None se marca, no se disfraza de cero."""
-    if valor is None:
-        return "—"
-    entero = f"{abs(valor):,.2f}".replace(",", "\x00").replace(".", ",").replace("\x00", ".")
-    return f"-{entero}" if valor < 0 else entero
+def titulo(ws, fila: int, texto: str) -> int:
+    c = ws.cell(fila, 1, texto)
+    c.font = Font(name=FUENTE, bold=True, size=12, color=AZUL)
+    return fila + 2
 
 
-def plural(n: int, singular: str, plural_: str) -> str:
-    return f"{n} {singular if n == 1 else plural_}"
+def cabecera(ws, fila: int, columnas: list[str]) -> int:
+    for i, nombre in enumerate(columnas, start=1):
+        c = ws.cell(fila, i, nombre)
+        c.font = Font(name=FUENTE, bold=True, color="FFFFFF")
+        c.fill = PatternFill("solid", fgColor=AZUL)
+        c.alignment = Alignment(horizontal="center", wrap_text=True)
+    return fila + 1
 
 
-def celda(texto) -> str:
-    """La barra vertical parte una tabla markdown: se escapa."""
-    return str(texto).replace("|", "\\|").replace("\n", " ").strip()
+def ajustar(ws, anchos: dict[int, int]) -> None:
+    for col, ancho in anchos.items():
+        ws.column_dimensions[get_column_letter(col)].width = ancho
+    for fila in ws.iter_rows():
+        for c in fila:
+            if c.font is None or c.font.name != FUENTE:
+                c.font = Font(name=FUENTE, size=c.font.size or 11,
+                              bold=c.font.bold, color=c.font.color)
 
 
-def tabla(columnas: list[str], filas: list[list], derecha: set[int] = frozenset()) -> list[str]:
-    if not filas:
-        return ["_Ninguno._", ""]
-    sep = ["---:" if i in derecha else "---" for i in range(len(columnas))]
-    salida = ["| " + " | ".join(columnas) + " |", "| " + " | ".join(sep) + " |"]
-    salida += ["| " + " | ".join(celda(c) for c in fila) + " |" for fila in filas]
-    return salida + [""]
-
-
-# --- secciones -----------------------------------------------------------
-
-def vivos_de(clasificados: list[dict]) -> list[dict]:
-    """Los que generan asiento: sin el otro lado de los traspasos ni los de importe cero."""
-    return [c for c in clasificados
-            if not c.get("contabilizado_en_otro") and abs(c["importe"]) >= 0.005]
-
-
-def cuentas_a_dar_de_alta(verificacion: dict) -> list[str]:
-    return sorted({c.strip()
-                   for a in (verificacion or {}).get("avisos", []) if "dar de alta" in a
-                   for c in a.split(":")[-1].split(",") if c.strip()})
-
-
-def seccion_cuadre(clasificados, cuentas, saldos_hist, saldos_final) -> list[str]:
-    filas, descuadres, sin_saldo = [], [], []
-    for banco, subcuenta in sorted(cuentas.get("bancos", {}).items()):
+def hoja_resumen(wb, clasificados, cuentas, saldos_hist, saldos_final) -> None:
+    ws = wb.create_sheet("Resumen")
+    fila = titulo(ws, 1, "CUADRE POR BANCO")
+    fila = cabecera(ws, fila, ["Banco", "Subcuenta", "Saldo inicial", "Cargos",
+                               "Abonos", "Saldo final calculado", "Saldo extracto",
+                               "Diferencia"])
+    primera = fila
+    mapa = cuentas.get("bancos", {})
+    for banco, subcuenta in sorted(mapa.items()):
         movs = [c for c in clasificados
                 if c["banco"] == banco and not c.get("contabilizado_en_otro")]
-        inicial = saldos_hist.get(subcuenta, 0.0)
-        cargos = round(sum(c["importe"] for c in movs if c["importe"] < 0), 2)
-        abonos = round(sum(c["importe"] for c in movs if c["importe"] > 0), 2)
-        calculado = round(inicial + cargos + abonos, 2)
-        extracto = saldos_final.get(subcuenta)
-        diferencia = None if extracto is None else round(calculado - extracto, 2)
-        if diferencia is None:
-            sin_saldo.append(banco)
-        elif abs(diferencia) >= 0.005:
-            descuadres.append(banco)
-        filas.append([banco, subcuenta, eur(inicial), eur(cargos), eur(abonos),
-                      eur(calculado), eur(extracto), eur(diferencia)])
+        cargos = sum(c["importe"] for c in movs if c["importe"] < 0)
+        abonos = sum(c["importe"] for c in movs if c["importe"] > 0)
+        ws.cell(fila, 1, banco)
+        ws.cell(fila, 2, subcuenta)
+        ws.cell(fila, 3, saldos_hist.get(subcuenta, 0.0))
+        ws.cell(fila, 4, round(cargos, 2))
+        ws.cell(fila, 5, round(abonos, 2))
+        # Formulas vivas: el revisor tiene que ver de donde sale el cuadre.
+        ws.cell(fila, 6, f"=C{fila}+D{fila}+E{fila}")
+        ws.cell(fila, 7, saldos_final.get(subcuenta))
+        ws.cell(fila, 8, f"=F{fila}-G{fila}")
+        for col in (3, 4, 5, 6, 7, 8):
+            ws.cell(fila, col).number_format = FORMATO_IMPORTE
+        fila += 1
 
-    lineas = ["## Cuadre por banco", ""]
-    lineas += tabla(["Banco", "Subcuenta", "Saldo inicial", "Cargos", "Abonos",
-                     "Saldo calculado", "Saldo del extracto", "Diferencia"],
-                    filas, derecha={2, 3, 4, 5, 6, 7})
-    lineas += ["`Saldo calculado = saldo inicial + cargos + abonos`. El saldo inicial es el "
-               "cierre del histórico; el del extracto, el que trae el banco.", ""]
-    if descuadres:
-        lineas += [f"> **La diferencia no es cero en: {', '.join(descuadres)}.** "
-                   "No importes el fichero: o el histórico no está cerrado, o faltan "
-                   "movimientos en el extracto.", ""]
-    if sin_saldo:
-        # Sin saldo final del extracto no hay descuadre: hay comprobacion que falta.
-        lineas += [f"> **No se ha podido comprobar el cuadre de: {', '.join(sin_saldo)}.** "
-                   "El extracto no traía saldo final. Cuadra esas cuentas a mano antes "
-                   "de importar.", ""]
-    if not descuadres and not sin_saldo:
-        lineas += ["La diferencia es cero en todas las cuentas: el fichero cuadra al "
-                   "céntimo con los extractos y con el cierre del ejercicio anterior.", ""]
-    return lineas
+    if fila > primera:
+        ws.cell(fila, 1, "TOTAL").font = Font(name=FUENTE, bold=True)
+        for col in (3, 4, 5, 6, 7, 8):
+            letra = get_column_letter(col)
+            c = ws.cell(fila, col, f"=SUM({letra}{primera}:{letra}{fila - 1})")
+            c.font = Font(name=FUENTE, bold=True)
+            c.number_format = FORMATO_IMPORTE
+        fila += 1
+        ws.cell(fila + 1, 1,
+                "La diferencia debe ser cero en todas las filas. Si no lo es, el fichero "
+                "no se entrega.").font = Font(name=FUENTE, italic=True, size=9)
 
-
-def seccion_verificacion(verificacion: dict) -> list[str]:
-    if not verificacion:
-        return ["## Verificación automática", "",
-                "> **No se ha ejecutado.** No entregues el fichero sin pasar "
-                "`verificar_xdiario.py`.", ""]
-    lineas = ["## Verificación automática", ""]
-    fallos = verificacion.get("fallos") or []
-    pruebas = verificacion.get("ok", [])
-    if verificacion.get("correcto") and not fallos:
-        lineas += [f"Pasa la verificación completa: {plural(len(pruebas), 'prueba', 'pruebas')}, "
-                   "ninguna fallida.", ""]
-    else:
-        lineas += ["> **El fichero NO ha pasado la verificación. No lo importes.**", ""]
-        # verificar_xdiario serializa cada fallo como {"prueba": ..., "detalle": ...};
-        # en memoria es una tupla. Se aceptan las dos formas.
-        lineas += tabla(["Comprobación", "Fallo"],
-                        [[f["prueba"], f.get("detalle", "")] if isinstance(f, dict)
-                         else list(f) for f in fallos])
-    def orden(t: str):
-        cabeza = t.split(" ")[0]
-        return (int("".join(d for d in cabeza if d.isdigit()) or 0), cabeza)
-
-    for prueba in sorted(pruebas, key=orden):
-        lineas.append(f"- {prueba}")
-    return lineas + [""]
-
-
-def seccion_contenido(clasificados, cuentas, asientos) -> list[str]:
-    puente = cuentas.get("puente", PUENTE_POR_DEFECTO)
-    vivos = vivos_de(clasificados)
-    en_puente = [c for c in vivos if c["contrapartida"] == puente]
-    marcados = [c for c in vivos if c.get("revisar")]
-    pct = len(en_puente) / len(vivos) * 100 if vivos else 0.0
-    cero = [c for c in clasificados
-            if not c.get("contabilizado_en_otro") and abs(c["importe"]) < 0.005]
-
-    filas = [
-        ["Movimientos leídos de los extractos", len(clasificados)],
-        ["Asientos generados", asientos],
-        ["Apuntes", asientos * 2],
-        ["Traspasos entre cuentas propias emparejados",
-         sum(1 for c in clasificados if c["regla"] == "10-traspaso")],
-        ["Movimientos de importe cero (sin asiento)", len(cero)],
-        [f"Movimientos en la cuenta puente {puente}",
-         f"{len(en_puente)} ({pct:.1f} % del total)"],
-        ["Movimientos marcados para revisar", len(marcados)],
-    ]
-    return ["## Qué contiene el fichero", ""] + tabla(["Concepto", ""], filas, derecha={1})
-
-
-def seccion_por_regla(clasificados) -> list[str]:
+    fila += 4
+    fila = titulo(ws, fila, "MOVIMIENTOS POR REGLA APLICADA")
+    fila = cabecera(ws, fila, ["Regla", "Movimientos", "Importe"])
+    primera = fila
     por_regla = defaultdict(lambda: [0, 0.0])
     for c in clasificados:
         por_regla[c["regla"]][0] += 1
         por_regla[c["regla"]][1] += abs(c["importe"])
-    filas = [[regla, n, eur(round(importe, 2))]
-             for regla, (n, importe) in sorted(por_regla.items(), key=lambda x: -x[1][0])]
-    return (["## Cómo se ha imputado", "",
-             "Cada regla lleva el número que tiene en `references/reglas-de-imputacion.md`.",
-             ""]
-            + tabla(["Regla aplicada", "Movimientos", "Importe"], filas, derecha={1, 2}))
+    for regla, (n, importe) in sorted(por_regla.items(), key=lambda x: -x[1][0]):
+        ws.cell(fila, 1, regla)
+        ws.cell(fila, 2, n)
+        ws.cell(fila, 3, round(importe, 2)).number_format = FORMATO_IMPORTE
+        fila += 1
+    ws.cell(fila, 1, "TOTAL").font = Font(name=FUENTE, bold=True)
+    for col in (2, 3):
+        letra = get_column_letter(col)
+        c = ws.cell(fila, col, f"=SUM({letra}{primera}:{letra}{fila - 1})")
+        c.font = Font(name=FUENTE, bold=True)
+        if col == 3:
+            c.number_format = FORMATO_IMPORTE
+
+    ajustar(ws, {1: 26, 2: 14, 3: 18, 4: 16, 5: 16, 6: 22, 7: 18, 8: 14})
 
 
-def seccion_puente(clasificados, cuentas) -> list[str]:
-    puente = cuentas.get("puente", PUENTE_POR_DEFECTO)
-    en_puente = [c for c in vivos_de(clasificados) if c["contrapartida"] == puente]
+def hoja_notas(wb, clasificados, cuentas, verificacion, extractos) -> None:
+    ws = wb.create_sheet("Notas y avisos")
+    puente = cuentas.get("puente", "5550000")
+    vivos = [c for c in clasificados if not c.get("contabilizado_en_otro")]
+    en_puente = [c for c in vivos if c["contrapartida"] == puente]
+    marcados = [c for c in vivos if c.get("revisar")]
+
+    fila = titulo(ws, 1, "QUÉ CONTIENE EL FICHERO")
+    for texto, valor in (
+        ("Movimientos leídos de los extractos", len(clasificados)),
+        ("Movimientos que generan asiento", len(vivos)),
+        ("Traspasos entre cuentas propias emparejados",
+         sum(1 for c in clasificados if c["regla"] == "10-traspaso")),
+        ("Movimientos en la cuenta puente " + puente, len(en_puente)),
+        ("Movimientos marcados para revisar", len(marcados)),
+    ):
+        ws.cell(fila, 1, texto)
+        ws.cell(fila, 2, valor)
+        fila += 1
+    if vivos:
+        ws.cell(fila, 1, "Porcentaje sin identificar")
+        ws.cell(fila, 2, f"=B{fila - 4}/B{fila - 6}").number_format = "0.0%"
+        fila += 1
+
+    fila += 2
+    fila = titulo(ws, fila, "CUENTAS QUE HAY QUE DAR DE ALTA ANTES DE IMPORTAR")
+    nuevas = [a.replace("Subcuentas que hay que dar de alta antes de importar: ", "")
+              for a in (verificacion or {}).get("avisos", [])
+              if "dar de alta" in a]
+    if nuevas:
+        for cuenta in sorted({c.strip() for a in nuevas for c in a.split(",")}):
+            ws.cell(fila, 1, cuenta).fill = PatternFill("solid", fgColor=AMBAR)
+            fila += 1
+    else:
+        ws.cell(fila, 1, "Ninguna: todas las subcuentas usadas existen en el plan.")
+        fila += 1
+
+    fila += 2
+    fila = titulo(ws, fila, "CUENTA PUENTE, POR MOTIVO")
+    fila = cabecera(ws, fila, ["Motivo", "Movimientos", "Importe"])
     por_motivo = defaultdict(lambda: [0, 0.0])
     for c in en_puente:
         clave = c.get("motivo_revision") or c["regla"]
         por_motivo[clave][0] += 1
         por_motivo[clave][1] += abs(c["importe"])
-    filas = [[motivo, n, eur(round(importe, 2))]
-             for motivo, (n, importe) in sorted(por_motivo.items(), key=lambda x: -x[1][0])]
-    return ([f"## Cuenta puente {puente}, por motivo", "",
-             "Se ha preferido dejar estos movimientos en la puente antes que imputarlos "
-             "sin respaldo en el histórico del cliente.", ""]
-            + tabla(["Motivo", "Movimientos", "Importe"], filas, derecha={1, 2}))
+    for motivo, (n, importe) in sorted(por_motivo.items(), key=lambda x: -x[1][0]):
+        ws.cell(fila, 1, motivo)
+        ws.cell(fila, 2, n)
+        ws.cell(fila, 3, round(importe, 2)).number_format = FORMATO_IMPORTE
+        fila += 1
 
-
-def seccion_tarjeta(clasificados) -> list[str]:
-    tarjeta = [c for c in vivos_de(clasificados) if c["regla"].startswith("15-tarjeta")]
-    if not tarjeta:
-        return ["## Compras con tarjeta", "",
-                "No hay compras con tarjeta en el periodo.", ""]
-    filas = [[c["texto"][:70], c["contrapartida"],
-              "validado" if c["regla"].endswith("lista-blanca") else "no validado → puente"]
-             for c in sorted(tarjeta, key=lambda x: -abs(x["importe"]))[:40]]
-    return (["## Compras con tarjeta", "",
-             "Solo se imputan a un proveedor las de comercios validados. Cargar una compra "
-             "con tarjeta contra la cuenta del proveedor **descuadra su saldo** si no hay "
-             "factura detrás.", ""]
-            + tabla(["Texto del extracto", "Cuenta", "Estado"], filas))
-
-
-def seccion_revisar(clasificados, cuentas) -> list[str]:
-    puente = cuentas.get("puente", PUENTE_POR_DEFECTO)
-    filas_mov = [c for c in vivos_de(clasificados)
-                 if c.get("revisar") or c["contrapartida"] == puente]
-    filas = [[c["fecha"], c["banco"], eur(c["importe"]), c["contrapartida"],
-              c["regla"], c.get("motivo_revision", ""), c["texto"][:80]]
-             for c in sorted(filas_mov, key=lambda x: (x["fecha"], -abs(x["importe"])))]
-    return (["## Movimientos a revisar", "",
-             "Los que van a la cuenta puente y los marcados. Se da el **texto original del "
-             "extracto** para poder localizar cada uno en el banco.", ""]
-            + tabla(["Fecha", "Banco", "Importe", "Cuenta asignada", "Regla", "Motivo",
-                     "Texto original del extracto"], filas, derecha={2}))
-
-
-def seccion_traspasos(clasificados) -> list[str]:
-    fuera = [c for c in clasificados if c.get("contabilizado_en_otro")]
-    if not fuera:
-        return []
-    filas = [[c["fecha"], c["banco"], eur(c["importe"]), c["texto"][:70]] for c in fuera]
-    return (["## Movimientos que no generan asiento propio", "",
-             "Es el otro lado de un traspaso entre cuentas propias: el asiento ya está "
-             "hecho desde la cuenta que paga, con la otra cuenta bancaria como "
-             "contrapartida. Aparecen aquí para que no parezca que se han perdido.", ""]
-            + tabla(["Fecha", "Banco", "Importe", "Texto del extracto"], filas, derecha={2}))
-
-
-def seccion_pasos(clasificados, cuentas, verificacion) -> list[str]:
-    puente = cuentas.get("puente", PUENTE_POR_DEFECTO)
-    vivos = vivos_de(clasificados)
-    en_puente = [c for c in vivos if c["contrapartida"] == puente]
-    marcados = [c for c in vivos if c.get("revisar") and c["contrapartida"] != puente]
-    nuevas = cuentas_a_dar_de_alta(verificacion)
-
-    pasos = []
-    if nuevas:
-        pasos.append(f"**Dar de alta {plural(len(nuevas), 'subcuenta', 'subcuentas')}** "
-                     "en el plan contable: "
-                     + ", ".join(f"`{c}`" for c in nuevas)
-                     + ". Sin esto la importación falla.")
+    fila += 2
+    fila = titulo(ws, fila, "COMERCIOS DE TARJETA IDENTIFICADOS")
+    tarjeta = [c for c in vivos if c["regla"].startswith("15-tarjeta")]
+    if tarjeta:
+        fila = cabecera(ws, fila, ["Texto del extracto", "Cuenta", "Estado"])
+        for c in sorted(tarjeta, key=lambda x: -abs(x["importe"]))[:40]:
+            ws.cell(fila, 1, c["texto"][:70])
+            ws.cell(fila, 2, c["contrapartida"])
+            ws.cell(fila, 3, "validado" if c["regla"].endswith("lista-blanca")
+                    else "no validado → puente")
+            fila += 1
     else:
-        pasos.append("Comprobar el plan contable: todas las subcuentas usadas ya existen, "
-                     "no hay que dar ninguna de alta.")
-    if en_puente:
-        cuantos = ("el movimiento" if len(en_puente) == 1
-                   else f"los {len(en_puente)} movimientos")
-        pasos.append(f"**Reimputar {cuantos} de la cuenta puente `{puente}`**, "
-                     "en «Movimientos a revisar».")
-    if marcados:
-        cuantos = ("el movimiento imputado pero marcado" if len(marcados) == 1
-                   else f"los {len(marcados)} movimientos imputados pero marcados")
-        pasos.append(f"**Revisar {cuantos}**: coincidencias aproximadas, cobros contra "
-                     "cuentas de proveedor y reconocimientos por nombre de pila.")
-    pasos.append("**Resolver las decisiones de criterio** del final de este documento.")
-    pasos.append("**Importar el `XDIARIO.DBF`** en ContaPlus y comprobar el cuadre de "
-                 "bancos contra los extractos.")
-    return (["## Qué hay que hacer antes de importar", ""]
-            + [f"{i}. {p}" for i, p in enumerate(pasos, 1)] + [""])
+        ws.cell(fila, 1, "No hay compras con tarjeta en el periodo.")
+        fila += 1
+
+    fila += 2
+    fila = titulo(ws, fila, "DECISIONES DE CRITERIO PENDIENTES")
+    for texto in (
+        "¿Las compras con tarjeta van a compras (600) o a gastos? Cargarlas contra la "
+        "cuenta del proveedor descuadra su saldo si no hay factura detrás.",
+        "Confirmar el periodo de las liquidaciones de Seguridad Social: se ha deducido "
+        "de la fecha de cargo.",
+        "Confirmar el tratamiento de las operaciones de valores e inversiones.",
+        "Revisar los cobros imputados contra cuentas de proveedor: pueden ser rappels, "
+        "devoluciones o clientes distintos.",
+    ):
+        ws.cell(fila, 1, texto).alignment = Alignment(wrap_text=True, vertical="top")
+        ws.row_dimensions[fila].height = 30
+        fila += 1
+
+    fila += 2
+    fila = titulo(ws, fila, "PARTIDAS SUELTAS DE IMPORTE RELEVANTE")
+    fila = cabecera(ws, fila, ["Fecha", "Banco", "Importe", "Texto del extracto"])
+    for c in sorted(en_puente, key=lambda x: -abs(x["importe"]))[:20]:
+        ws.cell(fila, 1, c["fecha"])
+        ws.cell(fila, 2, c["banco"])
+        ws.cell(fila, 3, c["importe"]).number_format = FORMATO_IMPORTE
+        ws.cell(fila, 4, c["texto"][:90])
+        fila += 1
+
+    fila += 2
+    fila = titulo(ws, fila, "CÓMO SE HA HECHO EL TRABAJO")
+    for texto in (
+        "Los criterios de imputación salen del XDIARIO del ejercicio anterior del propio "
+        "cliente: concepto → contrapartida emparejando por importe dentro de cada asiento, "
+        "y nombre de tercero → subcuenta a partir de las líneas 400*/410*.",
+        "Lo que no tiene respaldo en ese histórico va a la cuenta puente. No se ha "
+        "inventado ninguna cuenta ni ningún importe.",
+        "Los traspasos entre cuentas propias se han emparejado en una pasada global por "
+        "importe contrario, cuentas distintas y fecha dentro de ±5 días.",
+        "El fichero ha pasado las diez verificaciones automáticas, incluido el cuadre por "
+        "banco al céntimo.",
+        "EL FICHERO ESTÁ PENDIENTE DE REVISAR E IMPORTAR. No está contabilizado.",
+    ):
+        ws.cell(fila, 1, texto).alignment = Alignment(wrap_text=True, vertical="top")
+        ws.row_dimensions[fila].height = 30
+        fila += 1
+
+    ajustar(ws, {1: 78, 2: 18, 3: 16, 4: 60})
 
 
-def readme(clasificados, cuentas, verificacion, saldos_hist, saldos_final,
-           asientos: int, titulo: str, fichero: str) -> str:
-    lineas = [f"# {titulo}", "",
-              "> **Este fichero está pendiente de revisar e importar. No está "
-              "contabilizado.**", "",
-              f"`{fichero}` contiene {asientos} asientos ({asientos * 2} apuntes), "
-              "generados a partir de los extractos bancarios del periodo. La contrapartida "
-              "de cada movimiento se ha deducido del diario contable del ejercicio anterior "
-              "del propio cliente: no se ha aplicado ningún criterio genérico.", ""]
-    lineas += seccion_pasos(clasificados, cuentas, verificacion)
-    lineas += seccion_cuadre(clasificados, cuentas, saldos_hist, saldos_final)
-    lineas += seccion_verificacion(verificacion)
-    lineas += seccion_contenido(clasificados, cuentas, asientos)
-    lineas += seccion_por_regla(clasificados)
-    lineas += seccion_puente(clasificados, cuentas)
-    lineas += seccion_revisar(clasificados, cuentas)
-    lineas += seccion_traspasos(clasificados)
-    lineas += seccion_tarjeta(clasificados)
-    lineas += ["## Decisiones de criterio pendientes", ""]
-    lineas += [f"- {d}" for d in DECISIONES] + [""]
-    lineas += ["## Cómo se ha hecho el trabajo", ""]
-    lineas += [f"- {d}" for d in COMO_SE_HA_HECHO] + [""]
-    return "\n".join(lineas).rstrip() + "\n"
+def hoja_revisar(wb, clasificados, cuentas) -> None:
+    ws = wb.create_sheet("A revisar")
+    puente = cuentas.get("puente", "5550000")
+    filas = [c for c in clasificados
+             if not c.get("contabilizado_en_otro")
+             and (c.get("revisar") or c["contrapartida"] == puente)]
+    fila = cabecera(ws, 1, ["Fecha", "Banco", "Importe", "Contrapartida", "Concepto",
+                            "Regla", "Motivo", "Texto original del extracto"])
+    for i, c in enumerate(sorted(filas, key=lambda x: (x["fecha"], -abs(x["importe"])))):
+        ws.cell(fila, 1, c["fecha"])
+        ws.cell(fila, 2, c["banco"])
+        ws.cell(fila, 3, c["importe"]).number_format = FORMATO_IMPORTE
+        ws.cell(fila, 4, c["contrapartida"])
+        ws.cell(fila, 5, c["concepto"])
+        ws.cell(fila, 6, c["regla"])
+        ws.cell(fila, 7, c.get("motivo_revision", ""))
+        ws.cell(fila, 8, c["texto"])
+        if i % 2:
+            for col in range(1, 9):
+                ws.cell(fila, col).fill = PatternFill("solid", fgColor=GRIS)
+        fila += 1
+    ws.freeze_panes = "A2"
+    if fila > 2:
+        ws.auto_filter.ref = f"A1:H{fila - 1}"
+    ajustar(ws, {1: 12, 2: 14, 3: 14, 4: 14, 5: 28, 6: 24, 7: 42, 8: 70})
+
+
+def hoja_asientos(wb, clasificados, asiento_inicial: int) -> None:
+    ws = wb.create_sheet("Todos los asientos")
+    fila = cabecera(ws, 1, ["Asiento", "Fecha", "Banco", "Subcuenta banco",
+                            "Contrapartida", "Concepto", "Debe", "Haber", "Regla",
+                            "Texto original"])
+    vivos = sorted((c for c in clasificados if not c.get("contabilizado_en_otro")),
+                   key=lambda x: (x["fecha"], x.get("fila", 0)))
+    numero = asiento_inicial
+    for c in vivos:
+        if abs(c["importe"]) < 0.005:
+            continue
+        importe = abs(c["importe"])
+        cargo = c["importe"] < 0
+        ws.cell(fila, 1, numero)
+        ws.cell(fila, 2, c["fecha"])
+        ws.cell(fila, 3, c["banco"])
+        ws.cell(fila, 4, c["subcuenta_banco"])
+        ws.cell(fila, 5, c["contrapartida"])
+        ws.cell(fila, 6, c["concepto"])
+        ws.cell(fila, 7, importe if cargo else 0).number_format = FORMATO_IMPORTE
+        ws.cell(fila, 8, 0 if cargo else importe).number_format = FORMATO_IMPORTE
+        ws.cell(fila, 9, c["regla"])
+        ws.cell(fila, 10, c["texto"][:90])
+        fila += 1
+        numero += 1
+    ws.freeze_panes = "A2"
+    if fila > 2:
+        ws.auto_filter.ref = f"A1:J{fila - 1}"
+    ajustar(ws, {1: 10, 2: 12, 3: 14, 4: 16, 5: 15, 6: 28, 7: 14, 8: 14, 9: 24, 10: 70})
 
 
 def main() -> int:
@@ -321,43 +311,42 @@ def main() -> int:
     ap.add_argument("--diccionario", type=Path)
     ap.add_argument("--extractos", type=Path)
     ap.add_argument("--verificacion", type=Path)
-    ap.add_argument("--salida", required=True, type=Path,
-                    help="README.md que acompaña al DBF")
-    ap.add_argument("--titulo", default="XDIARIO para importar en ContaPlus")
-    ap.add_argument("--fichero", default="XDIARIO.DBF",
-                    help="nombre del DBF al que acompaña este README")
+    ap.add_argument("--salida", required=True, type=Path)
+    ap.add_argument("--asiento-inicial", type=int, default=1)
     args = ap.parse_args()
 
-    def cargar(ruta, defecto):
-        if ruta and ruta.exists():
-            return json.loads(ruta.read_text(encoding="utf-8"))
-        return defecto
-
     clasificados = json.loads(args.clasificado.read_text(encoding="utf-8"))
-    cuentas = cargar(args.cuentas, {})
-    verificacion = cargar(args.verificacion, {})
-    saldos_hist = {k: float(v)
-                   for k, v in cargar(args.diccionario, {}).get("bancos", {}).items()}
-
+    cuentas = (json.loads(args.cuentas.read_text(encoding="utf-8"))
+               if args.cuentas and args.cuentas.exists() else {})
+    verificacion = (json.loads(args.verificacion.read_text(encoding="utf-8"))
+                    if args.verificacion and args.verificacion.exists() else {})
+    saldos_hist = {}
+    if args.diccionario and args.diccionario.exists():
+        saldos_hist = {k: float(v) for k, v in json.loads(
+            args.diccionario.read_text(encoding="utf-8")).get("bancos", {}).items()}
     saldos_final = {}
-    mapa = cuentas.get("bancos", {})
-    for e in cargar(args.extractos, []):
-        subcuenta = mapa.get(e.get("banco"))
-        if subcuenta and e.get("saldo_final") is not None:
-            saldos_final[subcuenta] = float(e["saldo_final"])
+    if args.extractos and args.extractos.exists():
+        mapa = cuentas.get("bancos", {})
+        for e in json.loads(args.extractos.read_text(encoding="utf-8")):
+            cuenta = mapa.get(e.get("banco"))
+            if cuenta and e.get("saldo_final") is not None:
+                saldos_final[cuenta] = float(e["saldo_final"])
 
-    asientos = len(vivos_de(clasificados))
+    wb = openpyxl.Workbook()
+    wb.remove(wb.active)
+    hoja_resumen(wb, clasificados, cuentas, saldos_hist, saldos_final)
+    hoja_notas(wb, clasificados, cuentas, verificacion, args.extractos)
+    hoja_revisar(wb, clasificados, cuentas)
+    hoja_asientos(wb, clasificados, args.asiento_inicial)
     args.salida.parent.mkdir(parents=True, exist_ok=True)
-    args.salida.write_text(
-        readme(clasificados, cuentas, verificacion, saldos_hist, saldos_final,
-               asientos, args.titulo, args.fichero), encoding="utf-8")
+    wb.save(args.salida)
 
-    puente = cuentas.get("puente", PUENTE_POR_DEFECTO)
-    en_puente = sum(1 for c in vivos_de(clasificados) if c["contrapartida"] == puente)
-    print(f"README de revisión: {args.salida}")
-    print(f"  {asientos} asientos · {en_puente} movimientos en la cuenta puente")
-    print("\nSe entregan dos ficheros: el DBF y este README. "
-          "El fichero no está contabilizado.")
+    asientos = sum(1 for c in clasificados
+                   if not c.get("contabilizado_en_otro") and abs(c["importe"]) >= 0.005)
+    print(f"Excel de revisión: {args.salida}")
+    print(f"  4 hojas · {asientos} asientos")
+
+    print("\nRevisa el Excel antes de enviarlo. El fichero no está contabilizado.")
     return 0
 
 

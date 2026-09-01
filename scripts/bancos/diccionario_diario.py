@@ -40,7 +40,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lib_dbf import leer  # noqa: E402
+import lib_documento as ld  # noqa: E402
 
 # Palabras que NO identifican a un tercero: municipios, formas juridicas y
 # genericos de razon social. Son la primera fuente de errores de imputacion.
@@ -182,18 +182,21 @@ class Diccionario:
         return None, False
 
 
-def construir(ruta_dbf: Path) -> Diccionario:
+def construir(ruta_diario: Path) -> Diccionario:
+    """El diario del ejercicio anterior, venga en DBF de ContaPlus o en CSV de Sage."""
     dicc = Diccionario()
-    lineas = list(leer(ruta_dbf))
+    lineas = list(ld.leer(ruta_diario))
     if not lineas:
-        raise SystemExit(f"{ruta_dbf.name} no tiene registros")
+        raise SystemExit(f"{ruta_diario.name} no tiene registros")
 
     campos = set(lineas[0])
     for obligatorio in ("ASIEN", "SUBCTA", "CONCEPTO"):
         if obligatorio not in campos:
             raise SystemExit(
-                f"{ruta_dbf.name} no parece un XDIARIO: falta el campo {obligatorio}.\n"
-                f"Campos encontrados: {', '.join(sorted(campos))[:200]}")
+                f"{ruta_diario.name} no parece un diario contable: falta {obligatorio}.\n"
+                f"Campos encontrados: {', '.join(sorted(campos))[:200]}\n"
+                "Si es un CSV, comprueba que la cabecera nombre las columnas de asiento, "
+                "cuenta y concepto.")
 
     def debe(l):
         return float(l.get("EURODEBE") or 0)
@@ -290,7 +293,8 @@ def construir(ruta_dbf: Path) -> Diccionario:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("xdiario", type=Path, help="XDIARIO del ejercicio anterior (.dbf)")
+    ap.add_argument("xdiario", type=Path,
+                    help="Diario del ejercicio anterior (.dbf de ContaPlus o .csv de Sage)")
     ap.add_argument("--json", type=Path)
     ap.add_argument("--limite", type=int, default=25)
     args = ap.parse_args()
@@ -301,7 +305,8 @@ def main() -> int:
 
     d = construir(args.xdiario)
 
-    print(f"Diccionario deducido de {args.xdiario.name}\n")
+    print(f"Diccionario deducido de {args.xdiario.name} "
+          f"[{ld.nombre_formato(args.xdiario)}]\n")
     print(f"  Longitud de subcuenta:    {d.longitud_subcuenta} dígitos")
     print(f"  Subcuentas en el plan:    {len(d.subcuentas)}")
     print(f"  Conceptos con criterio:   {len(d.concepto_a_contrapartida)}")
